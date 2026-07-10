@@ -139,7 +139,8 @@ function signOut(){ if(accessToken) google.accounts.oauth2.revoke(accessToken, (
 function toastErr(e){ document.getElementById('content').innerHTML = `<div class="empty"><h3>ההתחברות נכשלה</h3><p>${x(e.error_description||e.error||'שגיאה לא ידועה')}</p><button onclick="signIn()">נסה שוב</button></div>`; }
 
 async function api(url){
-  const r = await fetch('https://www.googleapis.com/youtube/v3/'+url, { headers: { Authorization: 'Bearer '+accessToken } });
+  const sep = url.includes('?') ? '&' : '?';
+  const r = await fetch(`https://www.googleapis.com/youtube/v3/${url}${sep}access_token=${accessToken}`);
   if(!r.ok){ const e = await r.json().catch(()=>({})); throw new Error(e.error?.message || r.statusText); }
   return r.json();
 }
