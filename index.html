@@ -74,9 +74,10 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 #sidebar::-webkit-scrollbar{width:4px;}
 #sidebar::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:4px;}
 
-.nitem{display:flex;align-items:center;gap:14px;height:40px;padding:0 20px;cursor:pointer;color:var(--txt2);transition:background var(--ease),color var(--ease);white-space:nowrap;overflow:hidden;border-radius:0 20px 20px 0;margin-inline-end:10px;}
+.nitem{display:flex;align-items:center;gap:14px;height:40px;padding:0 20px;cursor:pointer;color:var(--txt2);transition:background var(--ease),color var(--ease);white-space:nowrap;overflow:hidden;border-radius:20px;margin:2px 10px;}
 .nitem:hover{background:var(--bg3);color:var(--txt);}
 .nitem.on{background:var(--bg3);color:var(--txt);font-weight:600;}
+.nitem.on .ni{color:var(--red);}
 .ni{width:22px;height:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .ni svg{width:20px;height:20px;fill:currentColor;}
 .nl{font-size:13.5px;overflow:hidden;text-overflow:ellipsis;}
@@ -115,6 +116,15 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 .refresh-btn.spin svg{animation:spin 1s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
 .section-title{font-size:18px;font-weight:700;margin-bottom:14px;}
+
+/* HOME PAGE SECTIONS */
+.home-section{margin-bottom:34px;}
+.home-section:last-child{margin-bottom:0;}
+.home-section-title{font-size:16.5px;font-weight:700;margin-bottom:14px;}
+.vgrid.shelf-scroll{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:14px;padding-bottom:8px;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent;}
+.vgrid.shelf-scroll::-webkit-scrollbar{height:6px;}
+.vgrid.shelf-scroll::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:4px;}
+.vgrid.shelf-scroll .vcard{flex:0 0 170px;}
 
 /* EMPTY / SIGN-IN STATE */
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 20px;color:var(--txt2);}
@@ -629,6 +639,11 @@ function renderContent() {
     return;
   }
 
+  if (section === 'all' && !activeChannelFilter) {
+    renderHomeSections(ct);
+    return;
+  }
+
   const vids = getSectionVideos();
   if (!vids.length) {
     ct.innerHTML = `
@@ -645,6 +660,69 @@ function renderContent() {
   grid.className = 'vgrid' + (section === 'shorts' ? ' shorts-grid' : '') + (isLarge ? ' vgrid-large' : '');
   grid.innerHTML = vids.map(v => videoCardHtml(v)).join('');
   ct.appendChild(grid);
+}
+
+/* ============ HOME PAGE: sectioned YouTube-style feed ============ */
+// דף הבית מחולק למקטעים בסגנון דף הבית של יוטיוב:
+// 1. "מומלץ" — קומץ מהסרטונים החדשים ביותר מכל הערוצים.
+// 2. "לא נצפו" — סרטונים שעדיין לא נפתחו דרך האתר (לא מופיעים בהיסטוריה).
+// 3. "שורטס" — כל הסרטונים שסומנו כשורטס (שורת גלילה אופקית).
+// 4. "מהערוצים שלך" — כל השאר, ממשיכים את הפיד הרגיל.
+const HOME_FEATURED_COUNT = 8;
+const HOME_UNWATCHED_COUNT = 12;
+const HOME_SHORTS_COUNT = 14;
+const HOME_REST_COUNT = 60;
+
+function renderHomeSections(ct) {
+  if (!allVideos.length) {
+    ct.innerHTML = `
+      <div class="empty">
+        <div class="eico"><svg viewBox="0 0 24 24"><path d="M10 8v8l6-4-6-4zm2-6C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg></div>
+        <h3>אין סרטונים להצגה</h3>
+        <p>${EMPTY_MESSAGES.following}</p>
+      </div>`;
+    return;
+  }
+
+  const large = inlineMode;
+  const usedIds = new Set();
+  const watchedIds = new Set(watchHistory.map(h => h.id));
+  const byDate = allVideos; // כבר ממוין מהחדש לישן
+
+  const sections = [];
+
+  const featured = byDate.slice(0, HOME_FEATURED_COUNT);
+  featured.forEach(v => usedIds.add(v.id));
+  if (featured.length) sections.push({ title: 'מומלץ', vids: featured, cls: 'vgrid' + (large ? ' vgrid-large' : '') });
+
+  const unwatched = byDate
+    .filter(v => !usedIds.has(v.id) && !watchedIds.has(v.id) && !v.isShort)
+    .slice(0, HOME_UNWATCHED_COUNT);
+  unwatched.forEach(v => usedIds.add(v.id));
+  if (unwatched.length) sections.push({ title: 'לא נצפו', vids: unwatched, cls: 'vgrid' + (large ? ' vgrid-large' : '') });
+
+  const shorts = byDate.filter(v => v.isShort && !usedIds.has(v.id)).slice(0, HOME_SHORTS_COUNT);
+  shorts.forEach(v => usedIds.add(v.id));
+  if (shorts.length) sections.push({ title: 'שורטס', vids: shorts, cls: 'vgrid shorts-grid shelf-scroll' });
+
+  const rest = byDate.filter(v => !usedIds.has(v.id)).slice(0, HOME_REST_COUNT);
+  if (rest.length) sections.push({ title: 'מהערוצים שלך', vids: rest, cls: 'vgrid' + (large ? ' vgrid-large' : '') });
+
+  if (!sections.length) {
+    ct.innerHTML = `
+      <div class="empty">
+        <div class="eico"><svg viewBox="0 0 24 24"><path d="M10 8v8l6-4-6-4zm2-6C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg></div>
+        <h3>אין סרטונים להצגה</h3>
+        <p>${EMPTY_MESSAGES.following}</p>
+      </div>`;
+    return;
+  }
+
+  ct.innerHTML = sections.map(s => `
+    <div class="home-section">
+      <div class="home-section-title">${x(s.title)}</div>
+      <div class="${s.cls}">${s.vids.map(v => videoCardHtml(v)).join('')}</div>
+    </div>`).join('');
 }
 
 function skelCard() {
