@@ -82,6 +82,7 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 .nl{font-size:13.5px;overflow:hidden;text-overflow:ellipsis;}
 .sb-div{height:1px;background:var(--border);margin:10px 12px;}
 #sidebar.col .nitem{justify-content:center;padding:0;margin-inline-end:0;border-radius:50%;width:44px;height:44px;margin-inline-start:14px;}
+#sidebar.col .nl{display:none;}
 
 .sb-label{font-size:11px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;padding:8px 20px 6px;white-space:nowrap;overflow:hidden;transition:opacity var(--ease),height var(--ease),padding var(--ease);height:26px;}
 #sidebar.col .sb-label{opacity:0;height:0;padding:0;}
@@ -147,6 +148,12 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 /* SHORTS GRID variant */
 .vgrid.shorts-grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));}
 .vgrid.shorts-grid .vthumb-wrap{aspect-ratio:9/16;}
+
+/* ENLARGED GRID (home page, when inline playback mode is on) */
+.vgrid.vgrid-large{grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:28px 22px;}
+.vgrid.vgrid-large .vtitle{font-size:15.5px;}
+.vgrid.vgrid-large .vch,.vgrid.vgrid-large .vmeta{font-size:12.5px;}
+.vgrid.vgrid-large .vav{width:40px;height:40px;}
 
 /* PLAYER MODAL */
 #player-modal{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
@@ -221,6 +228,9 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
         <div id="notif-list"></div>
       </div>
     </div>
+    <button class="tbtn" id="settings-btn" title="הגדרות" onclick="toggleSettings()">
+      <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"></path></svg>
+    </button>
     <div id="auth-area"></div>
     <div id="user-menu">
       <div class="um-item" onclick="window.open('https://www.youtube.com/feed/subscriptions','_blank')">
@@ -271,10 +281,6 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
   <div class="nitem" id="n-personal" onclick="setSection('personal',this)" style="display:none">
     <span class="ni"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"></path></svg></span>
     <span class="nl">אזור אישי</span>
-  </div>
-  <div class="nitem" onclick="toggleSettings()">
-    <span class="ni"><svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"></path></svg></span>
-    <span class="nl">הגדרות</span>
   </div>
   <div class="nitem" onclick="hardReload()">
     <span class="ni"><svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"></path></svg></span>
@@ -635,7 +641,8 @@ function renderContent() {
   }
 
   const grid = document.createElement('div');
-  grid.className = 'vgrid' + (section === 'shorts' ? ' shorts-grid' : '');
+  const isLarge = inlineMode && section === 'all';
+  grid.className = 'vgrid' + (section === 'shorts' ? ' shorts-grid' : '') + (isLarge ? ' vgrid-large' : '');
   grid.innerHTML = vids.map(v => videoCardHtml(v)).join('');
   ct.appendChild(grid);
 }
