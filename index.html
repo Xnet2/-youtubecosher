@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MyTube</title>
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 body.light {
   --bg:#ffffff; --bg2:#f9f9f9; --bg3:#f1f1f1; --bg4:#e0e0e0;
@@ -108,6 +107,7 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 .eico svg{width:30px;height:30px;fill:var(--txt3);}
 .empty h3{font-size:17px;font-weight:700;margin-bottom:8px;color:var(--txt);}
 .empty p{font-size:13px;color:var(--txt3);max-width:340px;line-height:1.6;margin-bottom:18px;}
+.empty code{background:var(--bg3);padding:2px 6px;border-radius:4px;font-size:11.5px;direction:ltr;display:inline-block;}
 
 /* VIDEO GRID */
 .vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px 16px;}
@@ -195,10 +195,6 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
         <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08a5.99 5.99 0 01-5.65 4c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
         רענן נתונים
       </div>
-      <div class="um-item" onclick="signOutUser()">
-        <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
-        התנתק
-      </div>
     </div>
   </div>
 </div>
@@ -239,24 +235,23 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 
 <script>
 /* ============ CONFIG ============ */
-const CLIENT_ID = '457052248992-jr4q9srbsuakp47e9puojhs1dea1uqcm.apps.googleusercontent.com';
-const SCOPES = 'https://www.googleapis.com/auth/youtube.readonly';
-const TOKEN_KEY = 'mytube_token';       // {access_token, expires_at}
+// הדבק כאן את כתובת ה-Web App שקיבלת מפריסת Apps Script (ראה הוראות בקובץ Code.gs)
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyEzNBWigU6a8PmWJKlQsiGnPLZLv39hUof15X3PgO0FXSszyx3Jk1aXZlLVF-5UOGSUA/exec';
+
 const SEEN_KEY  = 'mytube_seen';        // {channelId: isoTimestamp}
 const CHANNELS_CACHE_KEY = 'mytube_channels_cache';
 const VIDEOS_CACHE_KEY = 'mytube_videos_cache';
+const ME_CACHE_KEY = 'mytube_me_cache';
 const THEME_KEY = 'mytube_theme';
 const SIDEBAR_KEY = 'mytube_sidebar_col';
-const SHORT_MAX_SECONDS = 183; // YouTube treats videos up to ~3 min as Shorts
 
-let tokenClient = null;
-let accessToken = null;
 let currentUser = null;      // {name, picture, channelId}
 let channels = [];           // subscribed channels [{id,title,thumb}]
 let allVideos = [];          // merged videos from all channels
 let filter = 'all';
 let seenMap = {};
 let loading = false;
+let lastError = null;
 
 /* ============ INIT ============ */
 window.addEventListener('load', () => {
@@ -268,239 +263,56 @@ window.addEventListener('load', () => {
   try { seenMap = JSON.parse(localStorage.getItem(SEEN_KEY) || '{}'); } catch(e){ seenMap = {}; }
   loadCachedChannels();
   loadCachedVideos();
+  loadCachedMe();
+  renderAuthArea();
   renderChannels();
   renderContent();
   updateNotifBadge();
-  initGoogle();
   bindUI();
+  loadEverything(false);
 });
 
-function initGoogle() {
-  const check = setInterval(() => {
-    if (window.google && google.accounts && google.accounts.oauth2) {
-      clearInterval(check);
-      tokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: CLIENT_ID,
-        scope: SCOPES,
-        callback: onTokenResponse
-      });
-      restoreSession();
-    }
-  }, 100);
-}
-
-function restoreSession() {
-  const raw = localStorage.getItem(TOKEN_KEY);
-  if (!raw) { renderAuthArea(); return; }
-  try {
-    const t = JSON.parse(raw);
-    if (t.expires_at && t.expires_at > Date.now() + 60000) {
-      accessToken = t.access_token;
-      currentUser = t.user || null;
-      renderAuthArea();
-      loadEverything(false);
-      return;
-    }
-  } catch(e){}
-  // token expired — try silent re-auth
-  tokenClient && tokenClient.requestAccessToken({ prompt: '' });
-  renderAuthArea();
-}
-
-function onTokenResponse(resp) {
-  if (resp.error) {
-    if (resp.error !== 'immediate_failed' && resp.error !== 'user_logged_out') {
-      toast('ההתחברות נכשלה: ' + resp.error);
-    }
-    return;
-  }
-  accessToken = resp.access_token;
-  const expiresAt = Date.now() + (resp.expires_in || 3500) * 1000;
-  fetchUserInfo().then(() => {
-    localStorage.setItem(TOKEN_KEY, JSON.stringify({ access_token: accessToken, expires_at: expiresAt, user: currentUser }));
-    renderAuthArea();
-    loadEverything(true);
-  });
-}
-
-function signIn() {
-  if (!tokenClient) { toast('טוען את ספריית ההתחברות של גוגל...'); return; }
-  tokenClient.requestAccessToken({ prompt: 'consent' });
-}
-
-function signOutUser() {
-  if (accessToken && window.google) {
-    google.accounts.oauth2.revoke(accessToken, () => {});
-  }
-  accessToken = null; currentUser = null; channels = []; allVideos = [];
-  localStorage.removeItem(TOKEN_KEY);
-  localStorage.removeItem(CHANNELS_CACHE_KEY);
-  localStorage.removeItem(VIDEOS_CACHE_KEY);
-  toggleUserMenu(false);
-  renderAuthArea();
-  renderChannels();
-  renderContent();
-  updateNotifBadge();
-  toast('התנתקת בהצלחה');
-}
-
-/* ============ API HELPER ============ */
-async function ytApi(path, params) {
-  const url = new URL('https://www.googleapis.com/youtube/v3/' + path);
-  Object.entries(params || {}).forEach(([k,v]) => {
-    if (v === undefined || v === null || v === '') return;
-    url.searchParams.set(k, v);
-  });
-  let res;
-  try {
-    res = await fetch(url, { headers: { Authorization: 'Bearer ' + accessToken } });
-  } catch (networkErr) {
-    // fetch throws "Failed to fetch" both on real network errors and on CORS-blocked
-    // error responses from Google (e.g. API not enabled, or app not authorized) —
-    // surface it as an API-config error rather than a generic failure.
-    throw { code: 'blocked', message: 'הבקשה נחסמה. ודא שה-YouTube Data API v3 מופעל בפרויקט ושחשבונך רשום כ-test user במסך ההסכמה (אם האפליקציה במצב בדיקה).' };
-  }
-  if (res.status === 401) {
-    throw { code: 401 };
-  }
-  if (res.status === 403) {
-    const body = await res.text();
-    throw { code: 403, message: body };
-  }
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error('YouTube API error ' + res.status + ': ' + body);
-  }
-  return res.json();
-}
-
-async function fetchUserInfo() {
-  try {
-    const d = await ytApi('channels', { part: 'snippet', mine: 'true' });
-    const ch = d.items && d.items[0];
-    if (ch) {
-      currentUser = {
-        name: ch.snippet.title,
-        picture: ch.snippet.thumbnails && (ch.snippet.thumbnails.default || {}).url,
-        channelId: ch.id
-      };
-    }
-  } catch(e) { console.warn('fetchUserInfo failed', e); }
-}
-
-/* ============ DATA LOADING ============ */
+/* ============ DATA LOADING (Apps Script proxy) ============ */
 async function loadEverything(forceToast) {
   if (loading) return;
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.indexOf('PASTE_YOUR') === 0) {
+    lastError = 'not_configured';
+    renderContent();
+    return;
+  }
   loading = true;
+  lastError = null;
   setRefreshSpin(true);
   try {
-    await loadSubscriptions();
+    const url = APPS_SCRIPT_URL + (APPS_SCRIPT_URL.includes('?') ? '&' : '?') + 'action=all&t=' + Date.now();
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+
+    channels = data.channels || [];
+    allVideos = data.videos || [];
+    currentUser = data.me || null;
+
+    localStorage.setItem(CHANNELS_CACHE_KEY, JSON.stringify(channels));
+    localStorage.setItem(VIDEOS_CACHE_KEY, JSON.stringify(allVideos.slice(0, 300)));
+    localStorage.setItem(ME_CACHE_KEY, JSON.stringify(currentUser));
+
+    renderAuthArea();
     renderChannels();
-    await loadVideosForChannels();
     renderContent();
     updateNotifBadge();
     renderNotifPanel();
     if (forceToast) toast('הנתונים עודכנו');
   } catch (e) {
     console.error(e);
-    if (e && e.code === 401) {
-      toast('פג תוקף ההתחברות — יש להתחבר מחדש');
-      accessToken = null;
-      localStorage.removeItem(TOKEN_KEY);
-      renderAuthArea();
-    } else if (e && (e.code === 403 || e.code === 'blocked')) {
-      toast(e.message || 'הגישה נחסמה על ידי Google — בדוק את הגדרות ה-API');
-    } else {
-      toast('שגיאה בטעינת הנתונים');
-    }
+    lastError = (e && e.message) || 'שגיאה בטעינת הנתונים מה-Apps Script';
+    renderContent();
+    toast('שגיאה בטעינת הנתונים');
   } finally {
     loading = false;
     setRefreshSpin(false);
   }
-}
-
-async function loadSubscriptions() {
-  let items = [];
-  let pageToken = '';
-  do {
-    const d = await ytApi('subscriptions', {
-      part: 'snippet', mine: 'true', maxResults: 50, order: 'alphabetical',
-      pageToken: pageToken || undefined
-    });
-    items = items.concat(d.items || []);
-    pageToken = d.nextPageToken || '';
-  } while (pageToken);
-
-  channels = items.map(it => ({
-    id: it.snippet.resourceId.channelId,
-    title: it.snippet.title,
-    thumb: it.snippet.thumbnails && (it.snippet.thumbnails.default || {}).url
-  }));
-  localStorage.setItem(CHANNELS_CACHE_KEY, JSON.stringify(channels));
-}
-
-async function loadVideosForChannels() {
-  if (!channels.length) { allVideos = []; localStorage.setItem(VIDEOS_CACHE_KEY, '[]'); return; }
-
-  // 1) get uploads-playlist id for every channel, batched by 50
-  const uploadsMap = {};
-  for (let i = 0; i < channels.length; i += 50) {
-    const batch = channels.slice(i, i + 50).map(c => c.id).join(',');
-    const d = await ytApi('channels', { part: 'contentDetails', id: batch, maxResults: 50 });
-    (d.items || []).forEach(it => {
-      uploadsMap[it.id] = it.contentDetails.relatedPlaylists.uploads;
-    });
-  }
-
-  // 2) fetch latest videos from each uploads playlist (limit per channel to keep quota sane)
-  const videoRefs = [];
-  const chById = {}; channels.forEach(c => chById[c.id] = c);
-  const tasks = channels.map(async (c) => {
-    const playlistId = uploadsMap[c.id];
-    if (!playlistId) return;
-    try {
-      const d = await ytApi('playlistItems', { part: 'snippet', playlistId, maxResults: 12 });
-      (d.items || []).forEach(it => {
-        videoRefs.push({
-          id: it.snippet.resourceId.videoId,
-          title: it.snippet.title,
-          thumb: it.snippet.thumbnails && (it.snippet.thumbnails.medium || it.snippet.thumbnails.default || {}).url,
-          publishedAt: it.snippet.publishedAt,
-          channelId: c.id,
-          channelTitle: c.title,
-          channelThumb: c.thumb
-        });
-      });
-    } catch (e) { /* channel might have no uploads / private, skip */ }
-  });
-  await Promise.all(tasks);
-
-  // 3) fetch duration for all videos, batched by 50, to classify shorts
-  const durMap = {};
-  const ids = videoRefs.map(v => v.id).filter(Boolean);
-  for (let i = 0; i < ids.length; i += 50) {
-    const batch = ids.slice(i, i + 50).join(',');
-    if (!batch) continue;
-    const d = await ytApi('videos', { part: 'contentDetails', id: batch, maxResults: 50 });
-    (d.items || []).forEach(it => { durMap[it.id] = it.contentDetails.duration; });
-  }
-
-  allVideos = videoRefs
-    .filter(v => durMap[v.id])
-    .map(v => {
-      const seconds = parseISODuration(durMap[v.id]);
-      return { ...v, seconds, isShort: seconds > 0 && seconds <= SHORT_MAX_SECONDS };
-    })
-    .sort((a,b) => new Date(b.publishedAt) - new Date(a.publishedAt));
-
-  localStorage.setItem(VIDEOS_CACHE_KEY, JSON.stringify(allVideos.slice(0, 300)));
-}
-
-function parseISODuration(iso) {
-  const m = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/.exec(iso || '');
-  if (!m) return 0;
-  const h = parseInt(m[1]||0,10), mi = parseInt(m[2]||0,10), s = parseInt(m[3]||0,10);
-  return h*3600 + mi*60 + s;
 }
 
 function loadCachedChannels() {
@@ -509,17 +321,19 @@ function loadCachedChannels() {
 function loadCachedVideos() {
   try { allVideos = JSON.parse(localStorage.getItem(VIDEOS_CACHE_KEY) || '[]'); } catch(e){ allVideos = []; }
 }
+function loadCachedMe() {
+  try { currentUser = JSON.parse(localStorage.getItem(ME_CACHE_KEY) || 'null'); } catch(e){ currentUser = null; }
+}
 
 function manualRefresh() {
   toggleUserMenu(false);
-  if (!accessToken) { signIn(); return; }
   loadEverything(true);
 }
 
 /* ============ RENDER: AUTH AREA ============ */
 function renderAuthArea() {
   const el = document.getElementById('auth-area');
-  if (accessToken && currentUser) {
+  if (currentUser) {
     el.innerHTML = `
       <div class="yt-user-chip" onclick="toggleUserMenu()">
         ${currentUser.picture ? `<img class="yt-user-av" src="${x(currentUser.picture)}">` : `<div class="yt-user-av" style="display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">${x((currentUser.name||'?').slice(0,2))}</div>`}
@@ -527,9 +341,8 @@ function renderAuthArea() {
       </div>`;
   } else {
     el.innerHTML = `
-      <button class="yt-login-btn" onclick="signIn()">
-        <svg viewBox="0 0 24 24"><path fill="#fff" d="M21.35 11.1h-9.17v2.73h6.51c-.33 3.81-3.5 5.44-6.5 5.44C8.36 19.27 5 16.25 5 12c0-4.1 3.2-7.27 7.2-7.27 3.09 0 4.9 1.97 4.9 1.97L19 4.72S16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12c0 5.05 4.13 10 10.22 10 5.35 0 9.25-3.67 9.25-9.09 0-1.15-.15-1.81-.15-1.81z"/></svg>
-        התחבר עם Google
+      <button class="tbtn" onclick="toggleUserMenu()" title="תפריט">
+        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
       </button>`;
   }
 }
@@ -544,14 +357,9 @@ function toggleUserMenu(force) {
 function renderChannels() {
   const list = document.getElementById('channels-list');
   const label = document.getElementById('sb-label');
-  if (!accessToken) {
-    label.textContent = 'הערוצים שלי';
-    list.innerHTML = `<div class="sb-empty">התחבר עם חשבון Google כדי לראות את הערוצים שאתה עוקב אחריהם ביוטיוב.</div>`;
-    return;
-  }
   if (!channels.length) {
     label.textContent = 'הערוצים שלי';
-    list.innerHTML = `<div class="sb-empty">לא נמצאו מנויים בחשבון שלך.</div>`;
+    list.innerHTML = `<div class="sb-empty">${lastError ? 'לא ניתן לטעון ערוצים כרגע.' : 'טוען ערוצים...'}</div>`;
     return;
   }
   label.textContent = `הערוצים שלי (${channels.length})`;
@@ -611,16 +419,23 @@ function renderContent() {
   const ct = document.getElementById('content');
   ct.innerHTML = '';
 
-  if (!accessToken) {
+  if (lastError === 'not_configured') {
     ct.innerHTML = `
       <div class="empty">
         <div class="eico"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg></div>
-        <h3>לא מחובר ל-YouTube</h3>
-        <p>התחבר עם חשבון Google כדי להציג את כל הערוצים שאתה עוקב אחריהם, הסרטונים החדשים שלהם וההתראות שלך — במקום אחד.</p>
-        <button class="yt-login-btn" onclick="signIn()">
-          <svg viewBox="0 0 24 24"><path fill="#fff" d="M21.35 11.1h-9.17v2.73h6.51c-.33 3.81-3.5 5.44-6.5 5.44C8.36 19.27 5 16.25 5 12c0-4.1 3.2-7.27 7.2-7.27 3.09 0 4.9 1.97 4.9 1.97L19 4.72S16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12c0 5.05 4.13 10 10.22 10 5.35 0 9.25-3.67 9.25-9.09 0-1.15-.15-1.81-.15-1.81z"/></svg>
-          התחבר עם Google
-        </button>
+        <h3>עדיין לא הוגדר חיבור</h3>
+        <p>יש להדביק את כתובת ה-Web App של ה-Apps Script בשורת <code>APPS_SCRIPT_URL</code> בקוד, בהתאם להוראות שבקובץ Code.gs.</p>
+      </div>`;
+    return;
+  }
+
+  if (lastError && !allVideos.length) {
+    ct.innerHTML = `
+      <div class="empty">
+        <div class="eico"><svg viewBox="0 0 24 24"><path d="M13 13h-2V7h2m0 10h-2v-2h2M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg></div>
+        <h3>שגיאה בטעינת הנתונים</h3>
+        <p>${x(lastError)}</p>
+        <button class="yt-login-btn" onclick="manualRefresh()">נסה שוב</button>
       </div>`;
     return;
   }
@@ -636,7 +451,7 @@ function renderContent() {
       <div class="empty">
         <div class="eico"><svg viewBox="0 0 24 24"><path d="M10 8v8l6-4-6-4zm2-6C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg></div>
         <h3>אין סרטונים להצגה</h3>
-        <p>${channels.length ? 'לא נמצאו סרטונים התואמים לסינון הנוכחי.' : 'נראה שאין לך מנויים בחשבון היוטיוב שלך, או שהם עדיין נטענים.'}</p>
+        <p>${channels.length ? 'לא נמצאו סרטונים התואמים לסינון הנוכחי.' : 'טוען את רשימת המנויים...'}</p>
       </div>`;
     return;
   }
@@ -691,8 +506,7 @@ function fmtDuration(s) {
 function timeAgo(iso) {
   const d = new Date(iso);
   const diff = (Date.now() - d.getTime()) / 1000;
-  const units = [[60,'שניות'],[60,'דקות'],[24,'שעות'],[30,'ימים'],[12,'חודשים'],[Infinity,'שנים']];
-  let val = diff, i = 0, names = ['שניות','דקות','שעות','ימים','חודשים','שנים'];
+  let val = diff, names = ['שניות','דקות','שעות','ימים','חודשים','שנים'];
   const table = [60,60,24,30,12];
   let idx = 0;
   for (; idx < table.length; idx++) {
@@ -813,8 +627,8 @@ function bindUI() {
     if (e.target.id === 'player-modal') closePlayer();
   });
 
-  // auto refresh every 5 minutes if signed in
-  setInterval(() => { if (accessToken) loadEverything(false); }, 5 * 60 * 1000);
+  // רענון אוטומטי כל 5 דקות
+  setInterval(() => { loadEverything(false); }, 5 * 60 * 1000);
 }
 
 function setRefreshSpin(on) {
