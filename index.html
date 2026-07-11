@@ -58,7 +58,9 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 .notif-badge.show{display:flex;}
 #notif-panel{position:fixed;top:calc(var(--th) + 8px);left:60px;width:340px;max-height:70vh;overflow-y:auto;background:var(--bg2);border:1px solid var(--bg4);border-radius:12px;box-shadow:0 8px 32px var(--shadow);z-index:300;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;transform:translateY(-8px);}
 #notif-panel.open{opacity:1;pointer-events:all;transform:translateY(0);}
-.np-hdr{padding:14px 16px;font-size:14px;font-weight:700;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2);}
+.np-hdr{padding:12px 16px;font-size:14px;font-weight:700;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2);display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.np-hdr-btn{background:var(--bg3);border:1px solid var(--bg4);color:var(--txt2);border-radius:14px;padding:5px 10px;font-size:11px;font-weight:500;cursor:pointer;font-family:'Rubik',sans-serif;white-space:nowrap;transition:background var(--ease);}
+.np-hdr-btn:hover{background:var(--bg4);color:var(--txt);}
 .np-item{display:flex;gap:10px;padding:10px 14px;cursor:pointer;transition:background var(--ease);border-bottom:1px solid var(--border);}
 .np-item:hover{background:var(--bg3);}
 .np-thumb{width:100px;aspect-ratio:16/9;border-radius:6px;object-fit:cover;flex-shrink:0;background:var(--bg3);}
@@ -166,9 +168,11 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 .st-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);}
 .st-row:last-of-type{border-bottom:none;}
 .st-row span{font-size:13px;}
-.st-btn{background:var(--bg3);border:1px solid var(--bg4);color:var(--txt2);border-radius:16px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:'Rubik',sans-serif;flex-shrink:0;}
+.st-btn{background:var(--bg3);border:1px solid var(--bg4);color:var(--txt2);border-radius:16px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:'Rubik',sans-serif;flex-shrink:0;display:inline-flex;align-items:center;gap:6px;}
+.st-btn svg{width:14px;height:14px;fill:currentColor;}
 .st-btn:hover{background:var(--bg4);}
 .st-btn.danger{color:#ff5c5c;}
+.st-btn.on{background:var(--red);border-color:var(--red);color:#fff;}
 .st-close{margin-top:16px;width:100%;background:var(--red);color:#fff;border:none;border-radius:20px;padding:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Rubik',sans-serif;}
 
 /* SKELETON */
@@ -210,7 +214,10 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
         <span class="notif-badge" id="notif-badge">0</span>
       </button>
       <div id="notif-panel">
-        <div class="np-hdr">התראות</div>
+        <div class="np-hdr">
+          <span>התראות</span>
+          <button class="np-hdr-btn" onclick="markAllSeen()">סמן הכל כנקרא</button>
+        </div>
         <div id="notif-list"></div>
       </div>
     </div>
@@ -276,17 +283,6 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 </div>
 
 <div id="main">
-  <div class="filter-chips">
-    <button class="fchip" id="inline-mode-chip" onclick="toggleInlineMode()">
-      <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-      נגן מוטמע בדף
-    </button>
-    <div class="toolbar-spacer"></div>
-    <button class="refresh-btn" id="refresh-btn" onclick="manualRefresh()">
-      <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08a5.99 5.99 0 01-5.65 4c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
-      רענון
-    </button>
-  </div>
   <div id="content"></div>
 </div>
 
@@ -307,6 +303,17 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
   <div class="st-box">
     <h3>הגדרות</h3>
     <div class="st-row"><span>ערכת נושא</span><button class="st-btn" onclick="document.getElementById('theme-toggle').click()">החלף</button></div>
+    <div class="st-row">
+      <span>נגן מוטמע בדף</span>
+      <button class="st-btn" id="inline-mode-toggle" onclick="toggleInlineMode()">כבוי</button>
+    </div>
+    <div class="st-row">
+      <span>רענון נתונים</span>
+      <button class="st-btn refresh-btn" id="refresh-btn" onclick="manualRefresh()">
+        <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08a5.99 5.99 0 01-5.65 4c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+        רענן
+      </button>
+    </div>
     <div class="st-row"><span>סימוני "נצפה" בערוצים</span><button class="st-btn" onclick="clearSeenMarks()">נקה</button></div>
     <div class="st-row"><span>היסטוריית צפייה מקומית</span><button class="st-btn danger" onclick="clearWatchHistory()">נקה</button></div>
     <div class="st-row"><span>רשימת "לצפייה מאוחרת"</span><button class="st-btn danger" onclick="clearWatchLater()">נקה</button></div>
@@ -367,7 +374,7 @@ window.addEventListener('load', () => {
   loadCachedMe();
   loadLocalLists();
   inlineMode = localStorage.getItem(INLINE_MODE_KEY) === '1';
-  document.getElementById('inline-mode-chip').classList.toggle('on', inlineMode);
+  updateInlineToggleUI();
   renderAuthArea();
   renderChannels();
   renderContent();
@@ -798,6 +805,21 @@ function markChannelSeen(channelId) {
   renderChannels();
 }
 
+// מסמן את כל הערוצים (ולא רק את אחד מהם) כ"נצפו" עד הרגע הזה, כך שכל
+// ההתראות הקיימות ייעלמו מרשימת "חדש" ומהפעמון.
+function markAllSeen() {
+  const now = new Date().toISOString();
+  channels.forEach(c => { seenMap[c.id] = now; });
+  // גם עבור ערוצים שאולי כבר לא ברשימת channels אבל יש להם סרטונים ב-allVideos
+  allVideos.forEach(v => { if (!seenMap[v.channelId]) seenMap[v.channelId] = now; });
+  localStorage.setItem(SEEN_KEY, JSON.stringify(seenMap));
+  updateNotifBadge();
+  renderChannels();
+  renderNotifPanel();
+  renderContent();
+  toast('כל ההתראות סומנו כנקראו');
+}
+
 function toggleNotifPanel(force) {
   const p = document.getElementById('notif-panel');
   const open = typeof force === 'boolean' ? force : !p.classList.contains('open');
@@ -827,9 +849,16 @@ function closePlayer() {
 function toggleInlineMode() {
   inlineMode = !inlineMode;
   localStorage.setItem(INLINE_MODE_KEY, inlineMode ? '1' : '0');
-  document.getElementById('inline-mode-chip').classList.toggle('on', inlineMode);
+  updateInlineToggleUI();
   activeInlineId = null;
   renderContent();
+}
+
+function updateInlineToggleUI() {
+  const btn = document.getElementById('inline-mode-toggle');
+  if (!btn) return;
+  btn.textContent = inlineMode ? 'מופעל' : 'כבוי';
+  btn.classList.toggle('on', inlineMode);
 }
 
 function toggleInlinePlay(id) {
