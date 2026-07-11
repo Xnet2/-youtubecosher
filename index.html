@@ -120,11 +120,24 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 /* HOME PAGE SECTIONS */
 .home-section{margin-bottom:34px;}
 .home-section:last-child{margin-bottom:0;}
-.home-section-title{font-size:16.5px;font-weight:700;margin-bottom:14px;}
-.vgrid.shelf-scroll{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:14px;padding-bottom:8px;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent;}
+.home-section-title{
+  font-size:19px;
+  font-weight:800;
+  margin-bottom:16px;
+  padding-inline-start:14px;
+  border-inline-start:4px solid var(--red);
+  letter-spacing:-.2px;
+  line-height:1.2;
+}
+.shelf-wrap{display:flex;align-items:center;gap:10px;}
+.shelf-nav{flex:0 0 auto;width:36px;height:36px;border-radius:50%;background:var(--bg3);border:1px solid var(--bg4);color:var(--txt2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background var(--ease),color var(--ease);}
+.shelf-nav:hover{background:var(--bg4);color:var(--txt);}
+.shelf-nav svg{width:18px;height:18px;fill:currentColor;}
+.vgrid.shelf-scroll{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:14px;padding-bottom:8px;flex:1;min-width:0;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent;}
 .vgrid.shelf-scroll::-webkit-scrollbar{height:6px;}
 .vgrid.shelf-scroll::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:4px;}
-.vgrid.shelf-scroll .vcard{flex:0 0 170px;}
+.vgrid.shelf-scroll .vcard{flex:0 0 260px;}
+.vgrid.shelf-scroll.shorts-grid .vcard{flex:0 0 170px;}
 
 /* EMPTY / SIGN-IN STATE */
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 20px;color:var(--txt2);}
@@ -693,20 +706,20 @@ function renderHomeSections(ct) {
 
   const featured = byDate.slice(0, HOME_FEATURED_COUNT);
   featured.forEach(v => usedIds.add(v.id));
-  if (featured.length) sections.push({ title: 'מומלץ', vids: featured, cls: 'vgrid' + (large ? ' vgrid-large' : '') });
+  if (featured.length) sections.push({ id: 'shelf-featured', title: 'מומלץ', vids: featured, cls: 'vgrid' });
 
   const unwatched = byDate
     .filter(v => !usedIds.has(v.id) && !watchedIds.has(v.id) && !v.isShort)
     .slice(0, HOME_UNWATCHED_COUNT);
   unwatched.forEach(v => usedIds.add(v.id));
-  if (unwatched.length) sections.push({ title: 'לא נצפו', vids: unwatched, cls: 'vgrid' + (large ? ' vgrid-large' : '') });
+  if (unwatched.length) sections.push({ id: 'shelf-unwatched', title: 'לא נצפו', vids: unwatched, cls: 'vgrid' });
 
   const shorts = byDate.filter(v => v.isShort && !usedIds.has(v.id)).slice(0, HOME_SHORTS_COUNT);
   shorts.forEach(v => usedIds.add(v.id));
-  if (shorts.length) sections.push({ title: 'שורטס', vids: shorts, cls: 'vgrid shorts-grid shelf-scroll' });
+  if (shorts.length) sections.push({ id: 'shelf-shorts', title: 'שורטס', vids: shorts, cls: 'vgrid shorts-grid' });
 
   const rest = byDate.filter(v => !usedIds.has(v.id)).slice(0, HOME_REST_COUNT);
-  if (rest.length) sections.push({ title: 'מהערוצים שלך', vids: rest, cls: 'vgrid' + (large ? ' vgrid-large' : '') });
+  if (rest.length) sections.push({ id: null, title: 'מהערוצים שלך', vids: rest, cls: 'vgrid' + (large ? ' vgrid-large' : '') });
 
   if (!sections.length) {
     ct.innerHTML = `
@@ -718,11 +731,31 @@ function renderHomeSections(ct) {
     return;
   }
 
-  ct.innerHTML = sections.map(s => `
+  const prevIcon = `<svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>`;
+  const nextIcon = `<svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>`;
+
+  ct.innerHTML = sections.map(s => {
+    const gridHtml = `<div class="${s.cls}${s.id ? ' shelf-scroll' : ''}"${s.id ? ` id="${s.id}"` : ''}>${s.vids.map(v => videoCardHtml(v)).join('')}</div>`;
+    const body = s.id
+      ? `<div class="shelf-wrap">
+          <button class="shelf-nav" onclick="scrollShelf('${s.id}',-1)" title="הקודם">${prevIcon}</button>
+          ${gridHtml}
+          <button class="shelf-nav" onclick="scrollShelf('${s.id}',1)" title="הבא">${nextIcon}</button>
+        </div>`
+      : gridHtml;
+    return `
     <div class="home-section">
       <div class="home-section-title">${x(s.title)}</div>
-      <div class="${s.cls}">${s.vids.map(v => videoCardHtml(v)).join('')}</div>
-    </div>`).join('');
+      ${body}
+    </div>`;
+  }).join('');
+}
+
+function scrollShelf(id, dir) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const amount = Math.max(el.clientWidth * 0.85, 240);
+  el.scrollBy({ left: -dir * amount, behavior: 'smooth' });
 }
 
 function skelCard() {
