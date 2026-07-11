@@ -71,6 +71,16 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 #sidebar.col{width:var(--sc);}
 #sidebar::-webkit-scrollbar{width:4px;}
 #sidebar::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:4px;}
+
+.nitem{display:flex;align-items:center;gap:14px;height:40px;padding:0 20px;cursor:pointer;color:var(--txt2);transition:background var(--ease),color var(--ease);white-space:nowrap;overflow:hidden;border-radius:0 20px 20px 0;margin-inline-end:10px;}
+.nitem:hover{background:var(--bg3);color:var(--txt);}
+.nitem.on{background:var(--bg3);color:var(--txt);font-weight:600;}
+.ni{width:22px;height:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ni svg{width:20px;height:20px;fill:currentColor;}
+.nl{font-size:13.5px;overflow:hidden;text-overflow:ellipsis;}
+.sb-div{height:1px;background:var(--border);margin:10px 12px;}
+#sidebar.col .nitem{justify-content:center;padding:0;margin-inline-end:0;border-radius:50%;width:44px;height:44px;margin-inline-start:14px;}
+
 .sb-label{font-size:11px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;padding:8px 20px 6px;white-space:nowrap;overflow:hidden;transition:opacity var(--ease),height var(--ease),padding var(--ease);height:26px;}
 #sidebar.col .sb-label{opacity:0;height:0;padding:0;}
 .chitem{display:flex;align-items:center;gap:10px;height:42px;padding:0 12px 0 8px;cursor:pointer;border-radius:10px;margin:2px 8px;transition:background var(--ease);color:var(--txt);white-space:nowrap;overflow:hidden;}
@@ -89,17 +99,19 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 #main{margin-top:var(--th);margin-right:var(--sw);padding:22px 28px;transition:margin-right var(--ease);min-height:calc(100vh - var(--th));}
 #main.col{margin-right:var(--sc);}
 
-/* FILTER CHIPS */
+/* FILTER CHIPS / TOOLBAR */
 .filter-chips{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;align-items:center;}
-.fchip{background:var(--bg3);border:1px solid var(--bg4);color:var(--txt2);border-radius:20px;padding:7px 16px;font-size:13px;font-weight:500;cursor:pointer;font-family:'Rubik',sans-serif;transition:all var(--ease);white-space:nowrap;}
+.fchip{background:var(--bg3);border:1px solid var(--bg4);color:var(--txt2);border-radius:20px;padding:7px 16px;font-size:13px;font-weight:500;cursor:pointer;font-family:'Rubik',sans-serif;transition:all var(--ease);white-space:nowrap;display:flex;align-items:center;gap:6px;}
 .fchip:hover{border-color:var(--red);color:var(--red);}
 .fchip.on{background:var(--red);border-color:var(--red);color:#fff;}
+.fchip svg{width:14px;height:14px;fill:currentColor;}
 .toolbar-spacer{flex:1;}
 .refresh-btn{background:var(--bg3);border:1px solid var(--bg4);color:var(--txt2);border-radius:20px;padding:7px 14px;font-size:12.5px;cursor:pointer;font-family:'Rubik',sans-serif;display:flex;align-items:center;gap:6px;transition:all var(--ease);}
 .refresh-btn:hover{background:var(--bg4);}
 .refresh-btn svg{width:14px;height:14px;fill:currentColor;}
 .refresh-btn.spin svg{animation:spin 1s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
+.section-title{font-size:18px;font-weight:700;margin-bottom:14px;}
 
 /* EMPTY / SIGN-IN STATE */
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 20px;color:var(--txt2);}
@@ -118,6 +130,10 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 .vdur{position:absolute;bottom:6px;left:6px;background:rgba(0,0,0,.8);color:#fff;font-size:11px;font-weight:600;padding:2px 6px;border-radius:4px;}
 .short-flag{position:absolute;top:8px;right:8px;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:12px;letter-spacing:.3px;}
 .new-flag{position:absolute;top:8px;left:8px;background:var(--blue);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:12px;}
+.wl-btn{position:absolute;bottom:6px;right:6px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.6);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,transform .15s;z-index:2;}
+.wl-btn svg{width:14px;height:14px;fill:#fff;}
+.wl-btn:hover{transform:scale(1.12);}
+.wl-btn.on{background:var(--red);}
 .vinfo{display:flex;gap:10px;}
 .vav{width:34px;height:34px;border-radius:50%;flex-shrink:0;overflow:hidden;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
 .vav img{width:100%;height:100%;object-fit:cover;}
@@ -141,6 +157,19 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 .pm-close svg{width:26px;height:26px;fill:currentColor;}
 .pm-title{color:#fff;font-size:15px;font-weight:600;margin-top:14px;line-height:1.4;}
 .pm-ch{color:rgba(255,255,255,.65);font-size:12.5px;margin-top:6px;}
+
+/* SETTINGS MODAL */
+#settings-modal{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:550;display:none;align-items:center;justify-content:center;padding:20px;}
+#settings-modal.open{display:flex;}
+.st-box{width:100%;max-width:380px;background:var(--bg2);border-radius:16px;padding:20px;box-shadow:0 8px 40px var(--shadow);}
+.st-box h3{font-size:16px;margin-bottom:14px;}
+.st-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);}
+.st-row:last-of-type{border-bottom:none;}
+.st-row span{font-size:13px;}
+.st-btn{background:var(--bg3);border:1px solid var(--bg4);color:var(--txt2);border-radius:16px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:'Rubik',sans-serif;flex-shrink:0;}
+.st-btn:hover{background:var(--bg4);}
+.st-btn.danger{color:#ff5c5c;}
+.st-close{margin-top:16px;width:100%;background:var(--red);color:#fff;border:none;border-radius:20px;padding:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Rubik',sans-serif;}
 
 /* SKELETON */
 .skel{background:linear-gradient(90deg,var(--skel1) 25%,var(--skel2) 37%,var(--skel1) 63%);background-size:400% 100%;animation:shimmer 1.4s infinite;border-radius:12px;}
@@ -200,15 +229,58 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 </div>
 
 <div id="sidebar">
-  <div class="sb-label" id="sb-label">הערוצים שלי</div>
-  <div id="channels-list"></div>
+  <div class="nitem on" id="n-all" onclick="setSection('all',this)">
+    <span class="ni"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg></span>
+    <span class="nl">דף הבית</span>
+  </div>
+  <div class="nitem" id="n-recommended" onclick="setSection('recommended',this)">
+    <span class="ni"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg></span>
+    <span class="nl">מומלצים</span>
+  </div>
+  <div class="nitem" id="n-liked" onclick="setSection('liked',this)">
+    <span class="ni"><svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg></span>
+    <span class="nl">אהבתי</span>
+  </div>
+  <div class="nitem" id="n-following" onclick="setSection('following',this)">
+    <span class="ni"><svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"></path></svg></span>
+    <span class="nl">עוקב אחרי</span>
+  </div>
+  <div class="nitem" id="n-watched" onclick="setSection('watched',this)">
+    <span class="ni"><svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"></path></svg></span>
+    <span class="nl">צפיתי</span>
+  </div>
+  <div class="nitem" id="n-watchlater" onclick="setSection('watchlater',this)">
+    <span class="ni"><svg viewBox="0 0 24 24"><path d="M22 5.18L10.59 16.6l-4.24-4.24 1.41-1.41 2.83 2.83 10-10L22 5.18zm-2.21 5.04c.13.57.21 1.16.21 1.78 0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8c1.58 0 3.04.46 4.28 1.25l1.44-1.44A9.9 9.9 0 0 0 12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10c0-1.19-.22-2.33-.6-3.39l-1.61 1.61z"></path></svg></span>
+    <span class="nl">לצפייה מאוחרת</span>
+  </div>
+  <div class="nitem" id="n-shorts" onclick="setSection('shorts',this)">
+    <span class="ni"><svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.84 1.55V6.79a4.85 4.85 0 01-1.07-.1z"></path></svg></span>
+    <span class="nl">Shorts</span>
+  </div>
+  <div class="sb-div"></div>
+  <div class="sb-label" id="sb-label">ערוצים שלי</div>
+  <div id="sb-chs"></div>
+  <div class="sb-div"></div>
+  <div class="nitem" id="n-personal" onclick="setSection('personal',this)" style="display:none">
+    <span class="ni"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"></path></svg></span>
+    <span class="nl">אזור אישי</span>
+  </div>
+  <div class="nitem" onclick="toggleSettings()">
+    <span class="ni"><svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"></path></svg></span>
+    <span class="nl">הגדרות</span>
+  </div>
+  <div class="nitem" onclick="hardReload()">
+    <span class="ni"><svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"></path></svg></span>
+    <span class="nl">רענן</span>
+  </div>
 </div>
 
 <div id="main">
   <div class="filter-chips">
-    <button class="fchip on" data-f="all" onclick="setFilter('all')">הכל</button>
-    <button class="fchip" data-f="video" onclick="setFilter('video')">סרטונים</button>
-    <button class="fchip" data-f="short" onclick="setFilter('short')">שורטס</button>
+    <button class="fchip" id="inline-mode-chip" onclick="toggleInlineMode()">
+      <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      נגן מוטמע בדף
+    </button>
     <div class="toolbar-spacer"></div>
     <button class="refresh-btn" id="refresh-btn" onclick="manualRefresh()">
       <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08a5.99 5.99 0 01-5.65 4c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
@@ -231,6 +303,17 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
   </div>
 </div>
 
+<div id="settings-modal">
+  <div class="st-box">
+    <h3>הגדרות</h3>
+    <div class="st-row"><span>ערכת נושא</span><button class="st-btn" onclick="document.getElementById('theme-toggle').click()">החלף</button></div>
+    <div class="st-row"><span>סימוני "נצפה" בערוצים</span><button class="st-btn" onclick="clearSeenMarks()">נקה</button></div>
+    <div class="st-row"><span>היסטוריית צפייה מקומית</span><button class="st-btn danger" onclick="clearWatchHistory()">נקה</button></div>
+    <div class="st-row"><span>רשימת "לצפייה מאוחרת"</span><button class="st-btn danger" onclick="clearWatchLater()">נקה</button></div>
+    <button class="st-close" onclick="toggleSettings(false)">סגור</button>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -244,14 +327,32 @@ const VIDEOS_CACHE_KEY = 'mytube_videos_cache';
 const ME_CACHE_KEY = 'mytube_me_cache';
 const THEME_KEY = 'mytube_theme';
 const SIDEBAR_KEY = 'mytube_sidebar_col';
+const WATCH_HISTORY_KEY = 'mytube_watch_history';
+const WATCH_LATER_KEY = 'mytube_watch_later';
+const INLINE_MODE_KEY = 'mytube_inline_mode';
 
 let currentUser = null;      // {name, picture, channelId}
 let channels = [];           // subscribed channels [{id,title,thumb}]
-let allVideos = [];          // merged videos from all channels
-let filter = 'all';
-let seenMap = {};
+let allVideos = [];          // merged videos from all subscribed channels
+let likedVideos = null;      // lazy-loaded, null = not fetched yet
+let recommendedVideos = null;// lazy-loaded, null = not fetched yet
+let watchHistory = [];       // local-only "watched" list
+let watchLater = [];         // local-only "watch later" list
+let section = 'all';         // all | shorts | following | liked | recommended | watched | watchlater | personal
+let activeChannelFilter = null;
+let inlineMode = false;
+let activeInlineId = null;
 let loading = false;
 let lastError = null;
+
+const EMPTY_MESSAGES = {
+  shorts: 'לא נמצאו שורטס מהערוצים שאתה עוקב אחריהם.',
+  following: 'לא נמצאו סרטונים מהערוצים שאתה עוקב אחריהם.',
+  liked: 'לא נמצאו סרטונים שסימנת "אהבתי" ביוטיוב.',
+  recommended: 'אין כרגע המלצות להצגה.',
+  watched: 'עדיין לא צפית בסרטונים דרך האתר. כל סרטון שתפתח יופיע כאן.',
+  watchlater: 'הרשימה ריקה. אפשר להוסיף סרטון דרך כפתור הסימנייה שמופיע על כל כרטיס.'
+};
 
 /* ============ INIT ============ */
 window.addEventListener('load', () => {
@@ -264,6 +365,9 @@ window.addEventListener('load', () => {
   loadCachedChannels();
   loadCachedVideos();
   loadCachedMe();
+  loadLocalLists();
+  inlineMode = localStorage.getItem(INLINE_MODE_KEY) === '1';
+  document.getElementById('inline-mode-chip').classList.toggle('on', inlineMode);
   renderAuthArea();
   renderChannels();
   renderContent();
@@ -271,6 +375,13 @@ window.addEventListener('load', () => {
   bindUI();
   loadEverything(false);
 });
+
+let seenMap = {};
+
+function loadLocalLists() {
+  try { watchHistory = JSON.parse(localStorage.getItem(WATCH_HISTORY_KEY) || '[]'); } catch(e){ watchHistory = []; }
+  try { watchLater = JSON.parse(localStorage.getItem(WATCH_LATER_KEY) || '[]'); } catch(e){ watchLater = []; }
+}
 
 /* ============ DATA LOADING (Apps Script proxy) ============ */
 async function loadEverything(forceToast) {
@@ -315,6 +426,38 @@ async function loadEverything(forceToast) {
   }
 }
 
+async function fetchLiked() {
+  likedVideos = [];
+  if (section === 'liked') renderContent();
+  try {
+    const url = APPS_SCRIPT_URL + (APPS_SCRIPT_URL.includes('?') ? '&' : '?') + 'action=liked&t=' + Date.now();
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    likedVideos = data.videos || [];
+  } catch (e) {
+    console.error(e);
+    toast('שגיאה בטעינת סרטונים שאהבת');
+  }
+  if (section === 'liked') renderContent();
+}
+
+async function fetchRecommended() {
+  recommendedVideos = [];
+  if (section === 'recommended') renderContent();
+  try {
+    const url = APPS_SCRIPT_URL + (APPS_SCRIPT_URL.includes('?') ? '&' : '?') + 'action=recommended&t=' + Date.now();
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    recommendedVideos = data.videos || [];
+  } catch (e) {
+    console.error(e);
+    toast('שגיאה בטעינת המלצות');
+  }
+  if (section === 'recommended') renderContent();
+}
+
 function loadCachedChannels() {
   try { channels = JSON.parse(localStorage.getItem(CHANNELS_CACHE_KEY) || '[]'); } catch(e){ channels = []; }
 }
@@ -326,8 +469,9 @@ function loadCachedMe() {
 }
 
 function manualRefresh() {
-  toggleUserMenu(false);
   loadEverything(true);
+  if (section === 'liked') fetchLiked();
+  if (section === 'recommended') fetchRecommended();
 }
 
 /* ============ RENDER: AUTH AREA ============ */
@@ -353,20 +497,20 @@ function toggleUserMenu(force) {
   m.classList.toggle('open', open);
 }
 
-/* ============ RENDER: SIDEBAR ============ */
+/* ============ RENDER: SIDEBAR CHANNELS ============ */
 function renderChannels() {
-  const list = document.getElementById('channels-list');
+  const list = document.getElementById('sb-chs');
   const label = document.getElementById('sb-label');
   if (!channels.length) {
-    label.textContent = 'הערוצים שלי';
+    label.textContent = 'ערוצים שלי';
     list.innerHTML = `<div class="sb-empty">${lastError ? 'לא ניתן לטעון ערוצים כרגע.' : 'טוען ערוצים...'}</div>`;
     return;
   }
-  label.textContent = `הערוצים שלי (${channels.length})`;
+  label.textContent = `ערוצים שלי (${channels.length})`;
   list.innerHTML = channels.map(c => {
     const hasNew = channelHasNew(c.id);
     return `
-    <div class="chitem" onclick="filterByChannel('${x(c.id)}')" title="${x(c.title)}">
+    <div class="chitem ${activeChannelFilter === c.id ? 'active' : ''}" onclick="filterByChannel('${x(c.id)}')" title="${x(c.title)}">
       <div class="chdot ${hasNew ? 'hn' : ''}">
         ${c.thumb ? `<img src="${x(c.thumb)}">` : x((c.title||'?').slice(0,2))}
         <span class="ndot"></span>
@@ -376,13 +520,14 @@ function renderChannels() {
   }).join('');
 }
 
-let activeChannelFilter = null;
 function filterByChannel(channelId) {
   activeChannelFilter = activeChannelFilter === channelId ? null : channelId;
-  document.querySelectorAll('.chitem').forEach(el => el.classList.remove('active'));
-  if (activeChannelFilter) {
-    event.currentTarget.classList.add('active');
+  if (activeChannelFilter && !['all','following','shorts'].includes(section)) {
+    section = 'all';
+    document.querySelectorAll('.nitem').forEach(n => n.classList.remove('on'));
+    document.getElementById('n-all').classList.add('on');
   }
+  renderChannels();
   renderContent();
 }
 
@@ -394,42 +539,65 @@ function channelHasNew(channelId) {
   return allVideos.some(v => v.channelId === channelId && new Date(v.publishedAt) > new Date(seenAt));
 }
 
-/* ============ RENDER: CONTENT ============ */
-function setFilter(f) {
-  filter = f;
-  document.querySelectorAll('.fchip').forEach(el => el.classList.toggle('on', el.dataset.f === f));
+/* ============ SECTIONS ============ */
+function setSection(name, el) {
+  section = name;
+  document.querySelectorAll('.nitem').forEach(n => n.classList.remove('on'));
+  if (el) el.classList.add('on');
+  activeInlineId = null;
+  if (name === 'liked' && likedVideos === null) fetchLiked();
+  if (name === 'recommended' && recommendedVideos === null) fetchRecommended();
   renderContent();
 }
 
 function resetHome() {
+  setSection('all', document.getElementById('n-all'));
   activeChannelFilter = null;
-  document.querySelectorAll('.chitem').forEach(el => el.classList.remove('active'));
-  renderContent();
+  renderChannels();
 }
 
-function getFilteredVideos() {
-  let list = allVideos;
-  if (activeChannelFilter) list = list.filter(v => v.channelId === activeChannelFilter);
-  if (filter === 'video') list = list.filter(v => !v.isShort);
-  if (filter === 'short') list = list.filter(v => v.isShort);
-  return list;
+function applyChannelFilter(v) {
+  return !activeChannelFilter || v.channelId === activeChannelFilter;
 }
 
+function getSectionVideos() {
+  if (section === 'shorts') return allVideos.filter(v => v.isShort).filter(applyChannelFilter);
+  if (section === 'following') return allVideos.filter(applyChannelFilter);
+  if (section === 'liked') return likedVideos || [];
+  if (section === 'recommended') return recommendedVideos || [];
+  if (section === 'watched') return watchHistory;
+  if (section === 'watchlater') return watchLater;
+  return allVideos.filter(applyChannelFilter); // 'all' + fallback
+}
+
+function findVideoById(id) {
+  const pools = [allVideos, likedVideos, recommendedVideos, watchHistory, watchLater];
+  for (let i = 0; i < pools.length; i++) {
+    const p = pools[i];
+    if (!p) continue;
+    const found = p.find(v => v.id === id);
+    if (found) return found;
+  }
+  return null;
+}
+
+/* ============ RENDER: CONTENT ============ */
 function renderContent() {
   const ct = document.getElementById('content');
   ct.innerHTML = '';
+  activeInlineId = null; // any inline iframe DOM node is about to be destroyed
 
   if (lastError === 'not_configured') {
     ct.innerHTML = `
       <div class="empty">
         <div class="eico"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg></div>
         <h3>עדיין לא הוגדר חיבור</h3>
-        <p>יש להדביק את כתובת ה-Web App של ה-Apps Script בשורת <code>APPS_SCRIPT_URL</code> בקוד, בהתאם להוראות שבקובץ Code.gs.</p>
+        <p>יש להדביק את כתובת ה-Web App של ה-Apps Script בשורת <code>APPS_SCRIPT_URL</code> בקוד.</p>
       </div>`;
     return;
   }
 
-  if (lastError && !allVideos.length) {
+  if (lastError && !allVideos.length && ['all','following','shorts'].includes(section)) {
     ct.innerHTML = `
       <div class="empty">
         <div class="eico"><svg viewBox="0 0 24 24"><path d="M13 13h-2V7h2m0 10h-2v-2h2M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg></div>
@@ -440,24 +608,27 @@ function renderContent() {
     return;
   }
 
-  if (loading && !allVideos.length) {
-    ct.innerHTML = `<div class="vgrid">${Array(8).fill(0).map(()=>skelCard()).join('')}</div>`;
+  const subscriptionLoading = loading && !allVideos.length && ['all','following','shorts'].includes(section);
+  const likedLoading = section === 'liked' && likedVideos === null;
+  const recommendedLoading = section === 'recommended' && recommendedVideos === null;
+  if (subscriptionLoading || likedLoading || recommendedLoading) {
+    ct.innerHTML = `<div class="vgrid">${Array(8).fill(0).map(() => skelCard()).join('')}</div>`;
     return;
   }
 
-  const vids = getFilteredVideos();
+  const vids = getSectionVideos();
   if (!vids.length) {
     ct.innerHTML = `
       <div class="empty">
         <div class="eico"><svg viewBox="0 0 24 24"><path d="M10 8v8l6-4-6-4zm2-6C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg></div>
         <h3>אין סרטונים להצגה</h3>
-        <p>${channels.length ? 'לא נמצאו סרטונים התואמים לסינון הנוכחי.' : 'טוען את רשימת המנויים...'}</p>
+        <p>${EMPTY_MESSAGES[section] || 'לא נמצאו סרטונים התואמים לסינון הנוכחי.'}</p>
       </div>`;
     return;
   }
 
   const grid = document.createElement('div');
-  grid.className = 'vgrid' + (filter === 'short' ? ' shorts-grid' : '');
+  grid.className = 'vgrid' + (section === 'shorts' ? ' shorts-grid' : '');
   grid.innerHTML = vids.map(v => videoCardHtml(v)).join('');
   ct.appendChild(grid);
 }
@@ -470,21 +641,32 @@ function skelCard() {
   </div>`;
 }
 
-function videoCardHtml(v) {
+function thumbInnerHtml(v) {
   const isNew = isVideoNew(v);
-  return `
-  <div class="vcard" onclick="openPlayer('${x(v.id)}', ${v.isShort ? 'true' : 'false'}, '${x(v.title).replace(/'/g,"&#39;")}', '${x(v.channelTitle).replace(/'/g,"&#39;")}')">
-    <div class="vthumb-wrap">
-      <img src="${x(v.thumb || '')}" loading="lazy" onerror="this.style.opacity=0">
+  return `<img src="${x(v.thumb || '')}" loading="lazy" onerror="this.style.opacity=0">
       ${v.isShort ? '<span class="short-flag">שורטס</span>' : `<span class="vdur">${fmtDuration(v.seconds)}</span>`}
       ${isNew ? '<span class="new-flag">חדש</span>' : ''}
-    </div>
+      <button class="wl-btn ${isInWatchLater(v.id) ? 'on' : ''}" data-vid="${x(v.id)}" onclick="event.stopPropagation();toggleWatchLater('${x(v.id)}')" title="לצפייה מאוחרת">
+        <svg viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
+      </button>`;
+}
+
+function videoCardHtml(v) {
+  let vmetaText;
+  if (section === 'watched' && v.watchedAt) vmetaText = 'נצפה ' + timeAgo(v.watchedAt);
+  else if (section === 'watchlater' && v.addedAt) vmetaText = 'נוסף ' + timeAgo(v.addedAt);
+  else vmetaText = timeAgo(v.publishedAt);
+
+  const clickFn = inlineMode ? `toggleInlinePlay('${x(v.id)}')` : `openPlayer('${x(v.id)}')`;
+  return `
+  <div class="vcard" data-vid="${x(v.id)}" onclick="${clickFn}">
+    <div class="vthumb-wrap" id="thumb-${x(v.id)}">${thumbInnerHtml(v)}</div>
     <div class="vinfo">
       <div class="vav">${v.channelThumb ? `<img src="${x(v.channelThumb)}">` : x((v.channelTitle||'?').slice(0,2))}</div>
       <div class="vtext">
         <div class="vtitle">${x(v.title)}</div>
         <div class="vch">${x(v.channelTitle)}</div>
-        <div class="vmeta">${timeAgo(v.publishedAt)}</div>
+        <div class="vmeta">${vmetaText}</div>
       </div>
     </div>
   </div>`;
@@ -517,6 +699,63 @@ function timeAgo(iso) {
   return `לפני ${val} ${names[idx]}`;
 }
 
+/* ============ WATCH LATER (local) ============ */
+function isInWatchLater(id) {
+  return watchLater.some(v => v.id === id);
+}
+
+function toggleWatchLater(id) {
+  const idx = watchLater.findIndex(v => v.id === id);
+  if (idx >= 0) {
+    watchLater.splice(idx, 1);
+    toast('הוסר מלצפייה מאוחרת');
+  } else {
+    const v = findVideoById(id);
+    if (!v) return;
+    const copy = {}; for (const k in v) copy[k] = v[k];
+    copy.addedAt = new Date().toISOString();
+    watchLater.unshift(copy);
+    toast('נוסף לצפייה מאוחרת');
+  }
+  localStorage.setItem(WATCH_LATER_KEY, JSON.stringify(watchLater.slice(0,300)));
+  if (section === 'watchlater') renderContent();
+  else updateWatchLaterButtons();
+}
+
+function updateWatchLaterButtons() {
+  document.querySelectorAll('.wl-btn').forEach(btn => {
+    const id = btn.getAttribute('data-vid');
+    btn.classList.toggle('on', isInWatchLater(id));
+  });
+}
+
+function clearWatchLater() {
+  watchLater = [];
+  localStorage.removeItem(WATCH_LATER_KEY);
+  if (section === 'watchlater') renderContent();
+  updateWatchLaterButtons();
+  toast('רשימת "לצפייה מאוחרת" נוקתה');
+}
+
+/* ============ WATCH HISTORY (local) ============ */
+function recordWatch(v) {
+  if (!v) return;
+  watchHistory = watchHistory.filter(h => h.id !== v.id);
+  const copy = {}; for (const k in v) copy[k] = v[k];
+  copy.watchedAt = new Date().toISOString();
+  watchHistory.unshift(copy);
+  watchHistory = watchHistory.slice(0, 200);
+  localStorage.setItem(WATCH_HISTORY_KEY, JSON.stringify(watchHistory));
+  if (section === 'watched') renderContent();
+}
+
+function clearWatchHistory() {
+  watchHistory = [];
+  localStorage.removeItem(WATCH_HISTORY_KEY);
+  if (section === 'watched') renderContent();
+  toast('היסטוריית הצפייה נוקתה');
+}
+
 /* ============ NOTIFICATIONS ============ */
 function updateNotifBadge() {
   const count = getNewVideos().length;
@@ -537,7 +776,7 @@ function renderNotifPanel() {
     return;
   }
   list.innerHTML = items.map(v => `
-    <div class="np-item" onclick="openFromNotif('${x(v.id)}', '${x(v.channelId)}', ${v.isShort ? 'true':'false'}, '${x(v.title).replace(/'/g,"&#39;")}', '${x(v.channelTitle).replace(/'/g,"&#39;")}')">
+    <div class="np-item" onclick="openFromNotif('${x(v.id)}', '${x(v.channelId)}')">
       <img class="np-thumb" src="${x(v.thumb||'')}" loading="lazy">
       <div>
         <div class="np-title">${x(v.title)}</div>
@@ -546,10 +785,10 @@ function renderNotifPanel() {
     </div>`).join('');
 }
 
-function openFromNotif(id, channelId, isShort, title, channelTitle) {
+function openFromNotif(id, channelId) {
   markChannelSeen(channelId);
   toggleNotifPanel(false);
-  openPlayer(id, isShort, title, channelTitle);
+  openPlayer(id);
 }
 
 function markChannelSeen(channelId) {
@@ -557,15 +796,6 @@ function markChannelSeen(channelId) {
   localStorage.setItem(SEEN_KEY, JSON.stringify(seenMap));
   updateNotifBadge();
   renderChannels();
-}
-
-function markAllSeen() {
-  const now = new Date().toISOString();
-  channels.forEach(c => seenMap[c.id] = now);
-  localStorage.setItem(SEEN_KEY, JSON.stringify(seenMap));
-  updateNotifBadge();
-  renderChannels();
-  renderContent();
 }
 
 function toggleNotifPanel(force) {
@@ -576,18 +806,72 @@ function toggleNotifPanel(force) {
 }
 
 /* ============ PLAYER MODAL ============ */
-function openPlayer(id, isShort, title, channelTitle) {
+function openPlayer(id) {
+  const v = findVideoById(id);
+  recordWatch(v);
+  const isShort = v && v.isShort;
   const wrap = document.getElementById('pm-frame-wrap');
   wrap.className = 'pm-frame-wrap' + (isShort ? ' short-mode' : '');
   document.getElementById('pm-iframe-host').innerHTML =
     `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(id)}?autoplay=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
-  document.getElementById('pm-title').textContent = title || '';
-  document.getElementById('pm-ch').textContent = channelTitle || '';
+  document.getElementById('pm-title').textContent = (v && v.title) || '';
+  document.getElementById('pm-ch').textContent = (v && v.channelTitle) || '';
   document.getElementById('player-modal').classList.add('open');
 }
 function closePlayer() {
   document.getElementById('player-modal').classList.remove('open');
   document.getElementById('pm-iframe-host').innerHTML = '';
+}
+
+/* ============ INLINE (IN-PAGE) PLAYBACK ============ */
+function toggleInlineMode() {
+  inlineMode = !inlineMode;
+  localStorage.setItem(INLINE_MODE_KEY, inlineMode ? '1' : '0');
+  document.getElementById('inline-mode-chip').classList.toggle('on', inlineMode);
+  activeInlineId = null;
+  renderContent();
+}
+
+function toggleInlinePlay(id) {
+  if (activeInlineId === id) {
+    closeInlinePlay(id);
+    activeInlineId = null;
+    return;
+  }
+  if (activeInlineId) closeInlinePlay(activeInlineId);
+  activeInlineId = id;
+  const v = findVideoById(id);
+  recordWatch(v);
+  const wrap = document.getElementById('thumb-' + id);
+  if (!wrap) return;
+  wrap.innerHTML = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(id)}?autoplay=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
+}
+
+function closeInlinePlay(id) {
+  const v = findVideoById(id);
+  const wrap = document.getElementById('thumb-' + id);
+  if (!wrap || !v) return;
+  wrap.innerHTML = thumbInnerHtml(v);
+}
+
+/* ============ SETTINGS ============ */
+function toggleSettings(force) {
+  const m = document.getElementById('settings-modal');
+  const open = typeof force === 'boolean' ? force : !m.classList.contains('open');
+  m.classList.toggle('open', open);
+}
+
+function clearSeenMarks() {
+  seenMap = {};
+  localStorage.removeItem(SEEN_KEY);
+  updateNotifBadge();
+  renderChannels();
+  renderContent();
+  toast('סימוני "נצפה" נוקו');
+}
+
+function hardReload() {
+  location.reload();
 }
 
 /* ============ UI BINDINGS ============ */
@@ -627,8 +911,16 @@ function bindUI() {
     if (e.target.id === 'player-modal') closePlayer();
   });
 
+  document.getElementById('settings-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'settings-modal') toggleSettings(false);
+  });
+
   // רענון אוטומטי כל 5 דקות
-  setInterval(() => { loadEverything(false); }, 5 * 60 * 1000);
+  setInterval(() => {
+    loadEverything(false);
+    if (section === 'liked') fetchLiked();
+    if (section === 'recommended') fetchRecommended();
+  }, 5 * 60 * 1000);
 }
 
 function setRefreshSpin(on) {
