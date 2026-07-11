@@ -347,10 +347,25 @@ function signOutUser() {
 /* ============ API HELPER ============ */
 async function ytApi(path, params) {
   const url = new URL('https://www.googleapis.com/youtube/v3/' + path);
-  Object.entries(params || {}).forEach(([k,v]) => url.searchParams.set(k, v));
-  const res = await fetch(url, { headers: { Authorization: 'Bearer ' + accessToken } });
+  Object.entries(params || {}).forEach(([k,v]) => {
+    if (v === undefined || v === null || v === '') return;
+    url.searchParams.set(k, v);
+  });
+  let res;
+  try {
+    res = await fetch(url, { headers: { Authorization: 'Bearer ' + accessToken } });
+  } catch (networkErr) {
+    // fetch throws "Failed to fetch" both on real network errors and on CORS-blocked
+    // error responses from Google (e.g. API not enabled, or app not authorized) —
+    // surface it as an API-config error rather than a generic failure.
+    throw { code: 'blocked', message: 'הבקשה נחסמה. ודא שה-YouTube Data API v3 מופעל בפרויקט ושחשבונך רשום כ-test user במסך ההסכמה (אם האפליקציה במצב בדיקה).' };
+  }
   if (res.status === 401) {
     throw { code: 401 };
+  }
+  if (res.status === 403) {
+    const body = await res.text();
+    throw { code: 403, message: body };
   }
   if (!res.ok) {
     const body = await res.text();
@@ -387,13 +402,15 @@ async function loadEverything(forceToast) {
     renderNotifPanel();
     if (forceToast) toast('הנתונים עודכנו');
   } catch (e) {
+    console.error(e);
     if (e && e.code === 401) {
       toast('פג תוקף ההתחברות — יש להתחבר מחדש');
       accessToken = null;
       localStorage.removeItem(TOKEN_KEY);
       renderAuthArea();
+    } else if (e && (e.code === 403 || e.code === 'blocked')) {
+      toast(e.message || 'הגישה נחסמה על ידי Google — בדוק את הגדרות ה-API');
     } else {
-      console.error(e);
       toast('שגיאה בטעינת הנתונים');
     }
   } finally {
