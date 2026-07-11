@@ -133,11 +133,17 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 .shelf-nav{flex:0 0 auto;width:36px;height:36px;border-radius:50%;background:var(--bg3);border:1px solid var(--bg4);color:var(--txt2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background var(--ease),color var(--ease);}
 .shelf-nav:hover{background:var(--bg4);color:var(--txt);}
 .shelf-nav svg{width:18px;height:18px;fill:currentColor;}
-.vgrid.shelf-scroll{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:14px;padding-bottom:8px;flex:1;min-width:0;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent;}
-.vgrid.shelf-scroll::-webkit-scrollbar{height:6px;}
-.vgrid.shelf-scroll::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:4px;}
+.vgrid.shelf-scroll{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:14px;padding-bottom:0;flex:1;min-width:0;scrollbar-width:none;-ms-overflow-style:none;}
+.vgrid.shelf-scroll::-webkit-scrollbar{display:none;}
 .vgrid.shelf-scroll .vcard{flex:0 0 260px;}
 .vgrid.shelf-scroll.shorts-grid .vcard{flex:0 0 170px;}
+
+/* CHANNEL PAGE HEADER */
+.channel-header{display:flex;align-items:center;gap:16px;margin-bottom:24px;}
+.channel-header .ch-av{width:56px;height:56px;border-radius:50%;flex-shrink:0;overflow:hidden;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;}
+.channel-header .ch-av img{width:100%;height:100%;object-fit:cover;}
+.channel-header .ch-name{font-size:20px;font-weight:800;}
+.channel-header .ch-sub{font-size:12.5px;color:var(--txt3);margin-top:3px;}
 
 /* EMPTY / SIGN-IN STATE */
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 20px;color:var(--txt2);}
@@ -161,11 +167,12 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 .wl-btn:hover{transform:scale(1.12);}
 .wl-btn.on{background:var(--red);}
 .vinfo{display:flex;gap:10px;}
-.vav{width:34px;height:34px;border-radius:50%;flex-shrink:0;overflow:hidden;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+.vav{width:34px;height:34px;border-radius:50%;flex-shrink:0;overflow:hidden;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;cursor:pointer;}
 .vav img{width:100%;height:100%;object-fit:cover;}
 .vtext{min-width:0;flex:1;}
 .vtitle{font-size:14px;font-weight:600;line-height:1.35;color:var(--txt);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:4px;}
-.vch{font-size:12.5px;color:var(--txt3);}
+.vch{font-size:12.5px;color:var(--txt3);cursor:pointer;}
+.vch:hover{color:var(--txt);text-decoration:underline;}
 .vmeta{font-size:11.5px;color:var(--txt3);}
 
 /* SHORTS GRID variant */
@@ -374,7 +381,7 @@ let likedVideos = null;      // lazy-loaded, null = not fetched yet
 let recommendedVideos = null;// lazy-loaded, null = not fetched yet
 let watchHistory = [];       // local-only "watched" list
 let watchLater = [];         // local-only "watch later" list
-let section = 'all';         // all | shorts | following | liked | recommended | watched | watchlater | personal
+let section = 'all';         // all | shorts | following | liked | recommended | watched | watchlater | personal | channel
 let activeChannelFilter = null;
 let inlineMode = false;
 let activeInlineId = null;
@@ -387,11 +394,108 @@ const EMPTY_MESSAGES = {
   liked: 'לא נמצאו סרטונים שסימנת "אהבתי" ביוטיוב.',
   recommended: 'אין כרגע המלצות להצגה.',
   watched: 'עדיין לא צפית בסרטונים דרך האתר. כל סרטון שתפתח יופיע כאן.',
-  watchlater: 'הרשימה ריקה. אפשר להוסיף סרטון דרך כפתור הסימנייה שמופיע על כל כרטיס.'
+  watchlater: 'הרשימה ריקה. אפשר להוסיף סרטון דרך כפתור הסימנייה שמופיע על כל כרטיס.',
+  channel: 'לא נמצאו סרטונים מהערוץ הזה.'
 };
+
+/* ============ URL ROUTING ============ */
+// כל מקטע (section) מקבל נתיב עברי משלו בכתובת (למשל /דף-הבית), וכל ערוץ
+// מקבל נתיב ייעודי (למשל /ערוץ/<channelId>). זה מבוסס על history.pushState
+// כך שכתובת האתר תמיד תשקף את מה שמוצג, וניתן לשמור/לשתף קישור ישיר.
+//
+// שים לב: GitHub Pages הוא אחסון סטטי בלבד — הוא לא יודע "לנתב" נתיב כמו
+// /דף-הבית לקובץ ה-HTML שלך אם מישהו נכנס לכתובת הזו ישירות (למשל דרך
+// רענון דף או קישור ששותף). כדי שזה יעבוד גם במקרה כזה, יש קובץ 404.html
+// נלווה שצריך להוסיף לאותה תיקייה באתר (ראה הסבר בהודעה).
+const SECTION_PATH = {
+  all: 'דף-הבית',
+  recommended: 'מומלצים',
+  liked: 'אהבתי',
+  following: 'עוקב-אחרי',
+  watched: 'צפיתי',
+  watchlater: 'לצפייה-מאוחרת',
+  shorts: 'שורטס',
+  personal: 'אזור-אישי'
+};
+const PATH_SECTION = Object.keys(SECTION_PATH).reduce(function (acc, k) {
+  acc[SECTION_PATH[k]] = k;
+  return acc;
+}, {});
+const CHANNEL_SEG = 'ערוץ';
+let basePath = '';
+
+// משחזר נתיב "אמיתי" אחרי הפניית 404.html (ראה קובץ 404.html הנלווה).
+function restoreRedirectFromNotFound() {
+  const params = new URLSearchParams(location.search);
+  const redirect = params.get('__redirect');
+  if (redirect == null) return;
+  const q = params.get('__q');
+  const newPath = location.pathname.replace(/\/+$/, '') + redirect;
+  const newUrl = newPath + (q ? ('?' + q) : '') + location.hash;
+  history.replaceState(null, '', newUrl);
+}
+
+// מזהה מהו "שורש" האתר (התיקייה שבה נמצא הדף עצמו), כדי לדעת להוסיף את
+// מקטע הנתיב אחריו, גם אם הדף מתארח בתת-תיקייה (כמו /-youtubecosher/).
+function computeBasePath() {
+  const path = location.pathname.replace(/\/+$/, '');
+  const segs = path.split('/');
+  if (segs.length >= 2 && decodeURIComponent(segs[segs.length - 2] || '') === CHANNEL_SEG) {
+    return segs.slice(0, segs.length - 2).join('/');
+  }
+  const last = decodeURIComponent(segs[segs.length - 1] || '');
+  if (PATH_SECTION[last]) {
+    return segs.slice(0, segs.length - 1).join('/');
+  }
+  return path;
+}
+
+function restoreStateFromUrl() {
+  let rel = location.pathname.replace(/\/+$/, '');
+  if (basePath && rel.indexOf(basePath) === 0) rel = rel.slice(basePath.length);
+  rel = rel.replace(/^\/+/, '');
+  const segs = rel.split('/').filter(Boolean).map(decodeURIComponent);
+  if (segs.length === 2 && segs[0] === CHANNEL_SEG) {
+    section = 'channel';
+    activeChannelFilter = segs[1];
+    return;
+  }
+  if (segs.length === 1 && PATH_SECTION[segs[0]]) {
+    section = PATH_SECTION[segs[0]];
+    activeChannelFilter = null;
+    return;
+  }
+  section = 'all';
+  activeChannelFilter = null;
+}
+
+function pathSegmentForState() {
+  if (section === 'channel' && activeChannelFilter) {
+    return CHANNEL_SEG + '/' + encodeURIComponent(activeChannelFilter);
+  }
+  return SECTION_PATH[section] || SECTION_PATH.all;
+}
+
+function updateUrl() {
+  const seg = pathSegmentForState();
+  const newPath = (basePath || '') + '/' + seg;
+  if (location.pathname.replace(/\/+$/, '') !== newPath.replace(/\/+$/, '')) {
+    history.pushState({ section: section, activeChannelFilter: activeChannelFilter }, '', newPath);
+  }
+}
+
+function syncSidebarActiveClass() {
+  document.querySelectorAll('.nitem').forEach(function (n) { n.classList.remove('on'); });
+  const el = document.getElementById('n-' + section);
+  if (el) el.classList.add('on');
+}
 
 /* ============ INIT ============ */
 window.addEventListener('load', () => {
+  restoreRedirectFromNotFound();
+  basePath = computeBasePath();
+  restoreStateFromUrl();
+
   document.body.className = localStorage.getItem(THEME_KEY) || 'dark';
   if (localStorage.getItem(SIDEBAR_KEY) === '1') {
     document.getElementById('sidebar').classList.add('col');
@@ -406,10 +510,24 @@ window.addEventListener('load', () => {
   updateInlineToggleUI();
   renderAuthArea();
   renderChannels();
+  syncSidebarActiveClass();
+  updateUrl();
   renderContent();
   updateNotifBadge();
   bindUI();
+  if (section === 'liked' && likedVideos === null) fetchLiked();
+  if (section === 'recommended' && recommendedVideos === null) fetchRecommended();
   loadEverything(false);
+});
+
+window.addEventListener('popstate', () => {
+  restoreStateFromUrl();
+  syncSidebarActiveClass();
+  activeInlineId = null;
+  if (section === 'liked' && likedVideos === null) fetchLiked();
+  if (section === 'recommended' && recommendedVideos === null) fetchRecommended();
+  renderChannels();
+  renderContent();
 });
 
 let seenMap = {};
@@ -560,8 +678,7 @@ function filterByChannel(channelId) {
   activeChannelFilter = activeChannelFilter === channelId ? null : channelId;
   if (activeChannelFilter && !['all','following','shorts'].includes(section)) {
     section = 'all';
-    document.querySelectorAll('.nitem').forEach(n => n.classList.remove('on'));
-    document.getElementById('n-all').classList.add('on');
+    syncSidebarActiveClass();
   }
   renderChannels();
   renderContent();
@@ -578,18 +695,30 @@ function channelHasNew(channelId) {
 /* ============ SECTIONS ============ */
 function setSection(name, el) {
   section = name;
-  document.querySelectorAll('.nitem').forEach(n => n.classList.remove('on'));
+  activeChannelFilter = null;
+  syncSidebarActiveClass();
   if (el) el.classList.add('on');
   activeInlineId = null;
   if (name === 'liked' && likedVideos === null) fetchLiked();
   if (name === 'recommended' && recommendedVideos === null) fetchRecommended();
+  renderChannels();
   renderContent();
+  updateUrl();
 }
 
 function resetHome() {
   setSection('all', document.getElementById('n-all'));
-  activeChannelFilter = null;
+}
+
+// עמוד ייעודי לערוץ, בלחיצה על תמונת הפרופיל / שם הערוץ בכרטיס סרטון.
+function openChannelPage(channelId) {
+  section = 'channel';
+  activeChannelFilter = channelId;
+  syncSidebarActiveClass();
+  activeInlineId = null;
   renderChannels();
+  renderContent();
+  updateUrl();
 }
 
 function applyChannelFilter(v) {
@@ -597,6 +726,7 @@ function applyChannelFilter(v) {
 }
 
 function getSectionVideos() {
+  if (section === 'channel') return allVideos.filter(v => v.channelId === activeChannelFilter);
   if (section === 'shorts') return allVideos.filter(v => v.isShort).filter(applyChannelFilter);
   if (section === 'following') return allVideos.filter(applyChannelFilter);
   if (section === 'liked') return likedVideos || [];
@@ -633,7 +763,7 @@ function renderContent() {
     return;
   }
 
-  if (lastError && !allVideos.length && ['all','following','shorts'].includes(section)) {
+  if (lastError && !allVideos.length && ['all','following','shorts','channel'].includes(section)) {
     ct.innerHTML = `
       <div class="empty">
         <div class="eico"><svg viewBox="0 0 24 24"><path d="M13 13h-2V7h2m0 10h-2v-2h2M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg></div>
@@ -644,7 +774,7 @@ function renderContent() {
     return;
   }
 
-  const subscriptionLoading = loading && !allVideos.length && ['all','following','shorts'].includes(section);
+  const subscriptionLoading = loading && !allVideos.length && ['all','following','shorts','channel'].includes(section);
   const likedLoading = section === 'liked' && likedVideos === null;
   const recommendedLoading = section === 'recommended' && recommendedVideos === null;
   if (subscriptionLoading || likedLoading || recommendedLoading) {
@@ -658,8 +788,25 @@ function renderContent() {
   }
 
   const vids = getSectionVideos();
+
+  let headerHtml = '';
+  if (section === 'channel') {
+    const chInfo = channels.find(c => c.id === activeChannelFilter) ||
+      (vids[0] ? { id: activeChannelFilter, title: vids[0].channelTitle, thumb: vids[0].channelThumb } : null);
+    if (chInfo) {
+      headerHtml = `
+        <div class="channel-header">
+          <div class="ch-av">${chInfo.thumb ? `<img src="${x(chInfo.thumb)}">` : x((chInfo.title||'?').slice(0,2))}</div>
+          <div>
+            <div class="ch-name">${x(chInfo.title||'')}</div>
+            <div class="ch-sub">${vids.length} סרטונים</div>
+          </div>
+        </div>`;
+    }
+  }
+
   if (!vids.length) {
-    ct.innerHTML = `
+    ct.innerHTML = headerHtml + `
       <div class="empty">
         <div class="eico"><svg viewBox="0 0 24 24"><path d="M10 8v8l6-4-6-4zm2-6C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg></div>
         <h3>אין סרטונים להצגה</h3>
@@ -669,9 +816,11 @@ function renderContent() {
   }
 
   const grid = document.createElement('div');
-  const isLarge = inlineMode && section === 'all';
+  const isLarge = inlineMode && (section === 'all' || section === 'channel');
   grid.className = 'vgrid' + (section === 'shorts' ? ' shorts-grid' : '') + (isLarge ? ' vgrid-large' : '');
   grid.innerHTML = vids.map(v => videoCardHtml(v)).join('');
+
+  if (headerHtml) ct.insertAdjacentHTML('beforeend', headerHtml);
   ct.appendChild(grid);
 }
 
@@ -736,11 +885,14 @@ function renderHomeSections(ct) {
 
   ct.innerHTML = sections.map(s => {
     const gridHtml = `<div class="${s.cls}${s.id ? ' shelf-scroll' : ''}"${s.id ? ` id="${s.id}"` : ''}>${s.vids.map(v => videoCardHtml(v)).join('')}</div>`;
+    // הכפתור "הבא" נמצא ראשון (בצד ימין, כי האתר מימין-לשמאל) והכפתור
+    // "הקודם" שני (בצד שמאל) — כך שהחיצים מצביעים לכיוון שאליו הם
+    // מגלגלים בפועל.
     const body = s.id
       ? `<div class="shelf-wrap">
-          <button class="shelf-nav" onclick="scrollShelf('${s.id}',-1)" title="הקודם">${prevIcon}</button>
-          ${gridHtml}
           <button class="shelf-nav" onclick="scrollShelf('${s.id}',1)" title="הבא">${nextIcon}</button>
+          ${gridHtml}
+          <button class="shelf-nav" onclick="scrollShelf('${s.id}',-1)" title="הקודם">${prevIcon}</button>
         </div>`
       : gridHtml;
     return `
@@ -755,7 +907,7 @@ function scrollShelf(id, dir) {
   const el = document.getElementById(id);
   if (!el) return;
   const amount = Math.max(el.clientWidth * 0.85, 240);
-  el.scrollBy({ left: -dir * amount, behavior: 'smooth' });
+  el.scrollBy({ left: dir * amount, behavior: 'smooth' });
 }
 
 function skelCard() {
@@ -787,10 +939,10 @@ function videoCardHtml(v) {
   <div class="vcard" data-vid="${x(v.id)}" onclick="${clickFn}">
     <div class="vthumb-wrap" id="thumb-${x(v.id)}">${thumbInnerHtml(v)}</div>
     <div class="vinfo">
-      <div class="vav">${v.channelThumb ? `<img src="${x(v.channelThumb)}">` : x((v.channelTitle||'?').slice(0,2))}</div>
+      <div class="vav" onclick="event.stopPropagation();openChannelPage('${x(v.channelId)}')" title="${x(v.channelTitle||'')}">${v.channelThumb ? `<img src="${x(v.channelThumb)}">` : x((v.channelTitle||'?').slice(0,2))}</div>
       <div class="vtext">
         <div class="vtitle">${x(v.title)}</div>
-        <div class="vch">${x(v.channelTitle)}</div>
+        <div class="vch" onclick="event.stopPropagation();openChannelPage('${x(v.channelId)}')">${x(v.channelTitle)}</div>
         <div class="vmeta">${vmetaText}</div>
       </div>
     </div>
