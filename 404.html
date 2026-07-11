@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>MyTube</title>
+<script>
+  // GitHub Pages הוא אחסון סטטי — אין לו שרת שיודע "לנתב" כתובת כמו
+  // /-youtubecosher/דף-הבית לקובץ ה-HTML של האתר, אז כל כתובת שאינה קובץ
+  // אמיתי מגיעה לכאן (לדף 404). הסקריפט הזה מפנה בחזרה לשורש האתר, ושומר
+  // את הנתיב המקורי כפרמטר בכתובת כדי שהקוד ב-mytube.html ישחזר אותו.
+  //
+  // segmentsToKeep = כמות חלקי הנתיב שיש לשמור לפני שמוסיפים את הפרמטר.
+  // עבור אתר בכתובת https://xnet2.github.io/-youtubecosher/... יש לשמור
+  // חלק אחד (שם הריפו "-youtubecosher"), ולכן הערך הוא 1.
+  var segmentsToKeep = 1;
+
+  var loc = window.location;
+  var pathParts = loc.pathname.split('/').slice(1); // בלי ה-'/' הראשון
+  var kept = pathParts.slice(0, segmentsToKeep);
+  var rest = pathParts.slice(segmentsToKeep);
+
+  var redirectUrl =
+    loc.protocol + '//' + loc.host + '/' + kept.join('/') +
+    '/?__redirect=' + encodeURIComponent('/' + rest.join('/')) +
+    (loc.search ? '&__q=' + encodeURIComponent(loc.search.slice(1)) : '') +
+    (loc.hash || '');
+
+  loc.replace(redirectUrl);
+</script>
+</head>
+<body></body>
+</html>
