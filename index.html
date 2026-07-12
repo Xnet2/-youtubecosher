@@ -43,13 +43,11 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 .yt-user-chip{display:flex;align-items:center;gap:7px;background:var(--bg3);border:1px solid var(--bg4);border-radius:20px;padding:3px 12px 3px 3px;cursor:pointer;transition:background var(--ease);}
 .yt-user-chip:hover{background:var(--bg4);}
 .yt-user-av{width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;background:var(--bg4);}
-.yt-user-name{font-size:12px;font-weight:500;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.yt-user-chip.no-channel{border-color:#ffb020;}
+.yt-user-name{font-size:12px;font-weight:500;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
 /* USER MENU */
-#user-menu{position:fixed;top:calc(var(--th) + 8px);left:12px;width:250px;background:var(--bg2);border:1px solid var(--bg4);border-radius:12px;box-shadow:0 8px 32px var(--shadow);z-index:300;padding:8px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;transform:translateY(-8px);}
+#user-menu{position:fixed;top:calc(var(--th) + 8px);left:12px;width:230px;background:var(--bg2);border:1px solid var(--bg4);border-radius:12px;box-shadow:0 8px 32px var(--shadow);z-index:300;padding:8px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;transform:translateY(-8px);}
 #user-menu.open{opacity:1;pointer-events:all;transform:translateY(0);}
-.um-account{padding:10px 12px 6px;font-size:11.5px;color:var(--txt3);border-bottom:1px solid var(--border);margin-bottom:6px;word-break:break-all;}
 .um-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px;transition:background var(--ease);}
 .um-item:hover{background:var(--bg3);}
 .um-item svg{width:17px;height:17px;fill:currentColor;flex-shrink:0;}
@@ -152,9 +150,8 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 .eico{width:64px;height:64px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;margin-bottom:18px;}
 .eico svg{width:30px;height:30px;fill:var(--txt3);}
 .empty h3{font-size:17px;font-weight:700;margin-bottom:8px;color:var(--txt);}
-.empty p{font-size:13px;color:var(--txt3);max-width:380px;line-height:1.6;margin-bottom:18px;}
+.empty p{font-size:13px;color:var(--txt3);max-width:340px;line-height:1.6;margin-bottom:18px;}
 .empty code{background:var(--bg3);padding:2px 6px;border-radius:4px;font-size:11.5px;direction:ltr;display:inline-block;}
-.empty .acct-note{font-size:12px;color:var(--blue);background:var(--bg3);border:1px solid var(--bg4);border-radius:8px;padding:8px 12px;margin-top:4px;direction:ltr;}
 
 /* VIDEO GRID */
 .vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px 16px;}
@@ -271,7 +268,6 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
     </button>
     <div id="auth-area"></div>
     <div id="user-menu">
-      <div class="um-account" id="um-account"></div>
       <div class="um-item" onclick="window.open('https://www.youtube.com/feed/subscriptions','_blank')">
         <svg viewBox="0 0 24 24"><path d="M10 15l5.19-3L10 9v6zm11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-4.19 0-6.8-.16-7.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L2 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 5c4.19 0 6.8.16 7.83.44.9.25 1.48.83 1.73 1.73z"/></svg>
         פתח ב-YouTube
@@ -317,6 +313,10 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
   <div class="sb-label" id="sb-label">ערוצים שלי</div>
   <div id="sb-chs"></div>
   <div class="sb-div"></div>
+  <div class="nitem" id="n-personal" onclick="setSection('personal',this)" style="display:none">
+    <span class="ni"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"></path></svg></span>
+    <span class="nl">אזור אישי</span>
+  </div>
   <div class="nitem" onclick="hardReload()">
     <span class="ni"><svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"></path></svg></span>
     <span class="nl">רענן</span>
@@ -367,10 +367,8 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 
 <script>
 /* ============ CONFIG ============ */
-// אין כאן שום כתובת URL חיצונית. הנתונים נטענים דרך google.script.run,
-// שזו תקשורת פנימית של Apps Script בין הדפדפן לשרת (לא fetch לכתובת
-// חיצונית). כל משתמש שנכנס לאתר מזוהה אוטומטית מול Google (הרשאת
-// youtube.readonly), ורואה את המנויים והסרטונים שלו-עצמו.
+// הדבק כאן את כתובת ה-Web App שקיבלת מפריסת Apps Script (ראה הוראות בקובץ Code.gs)
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyEzNBWigU6a8PmWJKlQsiGnPLZLv39hUof15X3PgO0FXSszyx3Jk1aXZlLVF-5UOGSUA/exec';
 
 const SEEN_KEY  = 'mytube_seen';        // {channelId: isoTimestamp}
 const CHANNELS_CACHE_KEY = 'mytube_channels_cache';
@@ -383,13 +381,13 @@ const WATCH_LATER_KEY = 'mytube_watch_later';
 const LIKED_KEY = 'mytube_liked';
 const INLINE_MODE_KEY = 'mytube_inline_mode';
 
-let currentUser = null;      // {name, picture, channelId, email, hasChannel}
+let currentUser = null;      // {name, picture, channelId}
 let channels = [];           // subscribed channels [{id,title,thumb}]
 let allVideos = [];          // merged videos from all subscribed channels
 let likedVideos = [];        // local-only "liked" list (heart button)
 let watchHistory = [];       // local-only "watched" list
 let watchLater = [];         // local-only "watch later" list
-let section = 'all';         // all | shorts | following | liked | recommended | watched | watchlater | channel
+let section = 'all';         // all | shorts | following | liked | recommended | watched | watchlater | personal | channel
 let activeChannelFilter = null;
 let inlineMode = false;
 let activeInlineId = null;
@@ -406,29 +404,70 @@ const EMPTY_MESSAGES = {
   channel: 'לא נמצאו סרטונים מהערוץ הזה.'
 };
 
-/* ============ ROUTING (hash-based) ============ */
-// שים לב: אתר Apps Script חי תחת נתיב יחיד (.../exec), בלי אפשרות
-// לנתיבי-משנה אמיתיים בשרת. לכן הניווט כאן מבוסס על "#" (hash) בלבד —
-// זה עובד לגמרי בצד הלקוח, בלי צורך בשום דבר מיוחד בשרת, ועדיין שומר
-// קישור שאפשר לשתף לכל מקטע/ערוץ.
-const SECTION_HASH = {
-  all: '', recommended: 'מומלצים', liked: 'אהבתי', following: 'עוקב-אחרי',
-  watched: 'צפיתי', watchlater: 'לצפייה-מאוחרת', shorts: 'שורטס'
+/* ============ URL ROUTING ============ */
+// כל מקטע (section) מקבל נתיב עברי משלו בכתובת (למשל /דף-הבית), וכל ערוץ
+// מקבל נתיב ייעודי (למשל /ערוץ/<channelId>). זה מבוסס על history.pushState
+// כך שכתובת האתר תמיד תשקף את מה שמוצג, וניתן לשמור/לשתף קישור ישיר.
+//
+// שים לב: GitHub Pages הוא אחסון סטטי בלבד — הוא לא יודע "לנתב" נתיב כמו
+// /דף-הבית לקובץ ה-HTML שלך אם מישהו נכנס לכתובת הזו ישירות (למשל דרך
+// רענון דף או קישור ששותף). כדי שזה יעבוד גם במקרה כזה, יש קובץ 404.html
+// נלווה שצריך להוסיף לאותה תיקייה באתר (ראה הסבר בהודעה).
+const SECTION_PATH = {
+  all: 'דף-הבית',
+  recommended: 'מומלצים',
+  liked: 'אהבתי',
+  following: 'עוקב-אחרי',
+  watched: 'צפיתי',
+  watchlater: 'לצפייה-מאוחרת',
+  shorts: 'שורטס',
+  personal: 'אזור-אישי'
 };
-const HASH_SECTION = Object.keys(SECTION_HASH).reduce(function (acc, k) {
-  acc[SECTION_HASH[k]] = k; return acc;
+const PATH_SECTION = Object.keys(SECTION_PATH).reduce(function (acc, k) {
+  acc[SECTION_PATH[k]] = k;
+  return acc;
 }, {});
-const CHANNEL_PREFIX = 'ערוץ/';
+const CHANNEL_SEG = 'ערוץ';
+let basePath = '';
 
-function restoreStateFromHash() {
-  const raw = decodeURIComponent((location.hash || '').replace(/^#/, ''));
-  if (raw.indexOf(CHANNEL_PREFIX) === 0) {
+// משחזר נתיב "אמיתי" אחרי הפניית 404.html (ראה קובץ 404.html הנלווה).
+function restoreRedirectFromNotFound() {
+  const params = new URLSearchParams(location.search);
+  const redirect = params.get('__redirect');
+  if (redirect == null) return;
+  const q = params.get('__q');
+  const newPath = location.pathname.replace(/\/+$/, '') + redirect;
+  const newUrl = newPath + (q ? ('?' + q) : '') + location.hash;
+  history.replaceState(null, '', newUrl);
+}
+
+// מזהה מהו "שורש" האתר (התיקייה שבה נמצא הדף עצמו), כדי לדעת להוסיף את
+// מקטע הנתיב אחריו, גם אם הדף מתארח בתת-תיקייה (כמו /-youtubecosher/).
+function computeBasePath() {
+  const path = location.pathname.replace(/\/+$/, '');
+  const segs = path.split('/');
+  if (segs.length >= 2 && decodeURIComponent(segs[segs.length - 2] || '') === CHANNEL_SEG) {
+    return segs.slice(0, segs.length - 2).join('/');
+  }
+  const last = decodeURIComponent(segs[segs.length - 1] || '');
+  if (PATH_SECTION[last]) {
+    return segs.slice(0, segs.length - 1).join('/');
+  }
+  return path;
+}
+
+function restoreStateFromUrl() {
+  let rel = location.pathname.replace(/\/+$/, '');
+  if (basePath && rel.indexOf(basePath) === 0) rel = rel.slice(basePath.length);
+  rel = rel.replace(/^\/+/, '');
+  const segs = rel.split('/').filter(Boolean).map(decodeURIComponent);
+  if (segs.length === 2 && segs[0] === CHANNEL_SEG) {
     section = 'channel';
-    activeChannelFilter = raw.slice(CHANNEL_PREFIX.length);
+    activeChannelFilter = segs[1];
     return;
   }
-  if (raw in HASH_SECTION) {
-    section = HASH_SECTION[raw];
+  if (segs.length === 1 && PATH_SECTION[segs[0]]) {
+    section = PATH_SECTION[segs[0]];
     activeChannelFilter = null;
     return;
   }
@@ -436,12 +475,19 @@ function restoreStateFromHash() {
   activeChannelFilter = null;
 }
 
-function updateHash() {
-  const seg = section === 'channel' && activeChannelFilter
-    ? CHANNEL_PREFIX + encodeURIComponent(activeChannelFilter)
-    : encodeURIComponent(SECTION_HASH[section] || '');
-  const newHash = seg ? ('#' + seg) : '#';
-  if (location.hash !== newHash) history.pushState(null, '', newHash);
+function pathSegmentForState() {
+  if (section === 'channel' && activeChannelFilter) {
+    return CHANNEL_SEG + '/' + encodeURIComponent(activeChannelFilter);
+  }
+  return SECTION_PATH[section] || SECTION_PATH.all;
+}
+
+function updateUrl() {
+  const seg = pathSegmentForState();
+  const newPath = (basePath || '') + '/' + seg;
+  if (location.pathname.replace(/\/+$/, '') !== newPath.replace(/\/+$/, '')) {
+    history.pushState({ section: section, activeChannelFilter: activeChannelFilter }, '', newPath);
+  }
 }
 
 function syncSidebarActiveClass() {
@@ -452,7 +498,9 @@ function syncSidebarActiveClass() {
 
 /* ============ INIT ============ */
 window.addEventListener('load', () => {
-  restoreStateFromHash();
+  restoreRedirectFromNotFound();
+  basePath = computeBasePath();
+  restoreStateFromUrl();
 
   document.body.className = localStorage.getItem(THEME_KEY) || 'dark';
   if (localStorage.getItem(SIDEBAR_KEY) === '1') {
@@ -469,14 +517,15 @@ window.addEventListener('load', () => {
   renderAuthArea();
   renderChannels();
   syncSidebarActiveClass();
+  updateUrl();
   renderContent();
   updateNotifBadge();
   bindUI();
   loadEverything(false);
 });
 
-window.addEventListener('hashchange', () => {
-  restoreStateFromHash();
+window.addEventListener('popstate', () => {
+  restoreStateFromUrl();
   syncSidebarActiveClass();
   activeInlineId = null;
   renderChannels();
@@ -491,41 +540,47 @@ function loadLocalLists() {
   try { likedVideos = JSON.parse(localStorage.getItem(LIKED_KEY) || '[]'); } catch(e){ likedVideos = []; }
 }
 
-/* ============ DATA LOADING (google.script.run — no external fetch) ============ */
-function loadEverything(forceToast) {
+/* ============ DATA LOADING (Apps Script proxy) ============ */
+async function loadEverything(forceToast) {
   if (loading) return;
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.indexOf('PASTE_YOUR') === 0) {
+    lastError = 'not_configured';
+    renderContent();
+    return;
+  }
   loading = true;
   lastError = null;
   setRefreshSpin(true);
+  try {
+    const url = APPS_SCRIPT_URL + (APPS_SCRIPT_URL.includes('?') ? '&' : '?') + 'action=all&t=' + Date.now();
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
 
-  google.script.run
-    .withSuccessHandler(function (data) {
-      channels = data.channels || [];
-      allVideos = data.videos || [];
-      currentUser = data.me || null;
+    channels = data.channels || [];
+    allVideos = data.videos || [];
+    currentUser = data.me || null;
 
-      localStorage.setItem(CHANNELS_CACHE_KEY, JSON.stringify(channels));
-      localStorage.setItem(VIDEOS_CACHE_KEY, JSON.stringify(allVideos.slice(0, 300)));
-      localStorage.setItem(ME_CACHE_KEY, JSON.stringify(currentUser));
+    localStorage.setItem(CHANNELS_CACHE_KEY, JSON.stringify(channels));
+    localStorage.setItem(VIDEOS_CACHE_KEY, JSON.stringify(allVideos.slice(0, 300)));
+    localStorage.setItem(ME_CACHE_KEY, JSON.stringify(currentUser));
 
-      renderAuthArea();
-      renderChannels();
-      renderContent();
-      updateNotifBadge();
-      renderNotifPanel();
-      if (forceToast) toast('הנתונים עודכנו');
-      loading = false;
-      setRefreshSpin(false);
-    })
-    .withFailureHandler(function (err) {
-      console.error(err);
-      lastError = (err && err.message) || 'שגיאה בטעינת הנתונים מהשרת';
-      renderContent();
-      toast('שגיאה בטעינת הנתונים');
-      loading = false;
-      setRefreshSpin(false);
-    })
-    .getAllData();
+    renderAuthArea();
+    renderChannels();
+    renderContent();
+    updateNotifBadge();
+    renderNotifPanel();
+    if (forceToast) toast('הנתונים עודכנו');
+  } catch (e) {
+    console.error(e);
+    lastError = (e && e.message) || 'שגיאה בטעינת הנתונים מה-Apps Script';
+    renderContent();
+    toast('שגיאה בטעינת הנתונים');
+  } finally {
+    loading = false;
+    setRefreshSpin(false);
+  }
 }
 
 function loadCachedChannels() {
@@ -543,31 +598,19 @@ function manualRefresh() {
 }
 
 /* ============ RENDER: AUTH AREA ============ */
-// currentUser תמיד מכיל email (גם אם hasChannel==false), כדי שאפשר
-// יהיה לראות ישירות בממשק איזה חשבון גוגל פעיל כרגע — בלי DevTools.
 function renderAuthArea() {
   const el = document.getElementById('auth-area');
-  const umAccount = document.getElementById('um-account');
-
-  if (currentUser && (currentUser.email || currentUser.name)) {
-    const label = currentUser.name || currentUser.email || '';
-    const noChannel = !currentUser.hasChannel;
+  if (currentUser) {
     el.innerHTML = `
-      <div class="yt-user-chip ${noChannel ? 'no-channel' : ''}" onclick="toggleUserMenu()" title="${x(currentUser.email||'')}">
-        ${currentUser.picture ? `<img class="yt-user-av" src="${x(currentUser.picture)}">` : `<div class="yt-user-av" style="display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">${x((label||'?').slice(0,2))}</div>`}
-        <span class="yt-user-name">${x(label)}</span>
+      <div class="yt-user-chip" onclick="toggleUserMenu()">
+        ${currentUser.picture ? `<img class="yt-user-av" src="${x(currentUser.picture)}">` : `<div class="yt-user-av" style="display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">${x((currentUser.name||'?').slice(0,2))}</div>`}
+        <span class="yt-user-name">${x(currentUser.name||'')}</span>
       </div>`;
-    if (umAccount) {
-      umAccount.textContent = currentUser.email
-        ? ('מחובר כ: ' + currentUser.email + (noChannel ? ' (אין ערוץ YouTube לחשבון הזה)' : ''))
-        : '';
-    }
   } else {
     el.innerHTML = `
       <button class="tbtn" onclick="toggleUserMenu()" title="תפריט">
         <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
       </button>`;
-    if (umAccount) umAccount.textContent = 'לא זוהה חשבון גוגל פעיל';
   }
 }
 
@@ -583,17 +626,7 @@ function renderChannels() {
   const label = document.getElementById('sb-label');
   if (!channels.length) {
     label.textContent = 'ערוצים שלי';
-    let msg;
-    if (lastError) {
-      msg = 'לא ניתן לטעון ערוצים כרגע.';
-    } else if (!loading && currentUser) {
-      msg = currentUser.email
-        ? ('אין מנויים לחשבון ' + currentUser.email + '.')
-        : 'לא נמצאו מנויים לחשבון הפעיל.';
-    } else {
-      msg = 'טוען ערוצים...';
-    }
-    list.innerHTML = `<div class="sb-empty">${x(msg)}</div>`;
+    list.innerHTML = `<div class="sb-empty">${lastError ? 'לא ניתן לטעון ערוצים כרגע.' : 'טוען ערוצים...'}</div>`;
     return;
   }
   label.textContent = `ערוצים שלי (${channels.length})`;
@@ -637,7 +670,7 @@ function setSection(name, el) {
   activeInlineId = null;
   renderChannels();
   renderContent();
-  updateHash();
+  updateUrl();
 }
 
 function resetHome() {
@@ -652,7 +685,7 @@ function openChannelPage(channelId) {
   activeInlineId = null;
   renderChannels();
   renderContent();
-  updateHash();
+  updateUrl();
 }
 
 function applyChannelFilter(v) {
@@ -709,6 +742,16 @@ function renderContent() {
   ct.innerHTML = '';
   activeInlineId = null; // any inline iframe DOM node is about to be destroyed
 
+  if (lastError === 'not_configured') {
+    ct.innerHTML = `
+      <div class="empty">
+        <div class="eico"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg></div>
+        <h3>עדיין לא הוגדר חיבור</h3>
+        <p>יש להדביק את כתובת ה-Web App של ה-Apps Script בשורת <code>APPS_SCRIPT_URL</code> בקוד.</p>
+      </div>`;
+    return;
+  }
+
   if (lastError && !allVideos.length && ['all','following','shorts','channel'].includes(section)) {
     ct.innerHTML = `
       <div class="empty">
@@ -755,7 +798,6 @@ function renderContent() {
         <div class="eico"><svg viewBox="0 0 24 24"><path d="M10 8v8l6-4-6-4zm2-6C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg></div>
         <h3>אין סרטונים להצגה</h3>
         <p>${EMPTY_MESSAGES[section] || 'לא נמצאו סרטונים התואמים לסינון הנוכחי.'}</p>
-        ${accountNoteHtml()}
       </div>`;
     return;
   }
@@ -769,15 +811,12 @@ function renderContent() {
   ct.appendChild(grid);
 }
 
-// כשאין ערוצים/סרטונים בכלל, מציג בבירור איזה חשבון גוגל פעיל —
-// כך שקל לזהות מיד אם הבעיה היא "חשבון לא נכון" ולא תקלה טכנית.
-function accountNoteHtml() {
-  if (loading || channels.length) return '';
-  if (!currentUser || !currentUser.email) return '';
-  return `<div class="acct-note">מחובר כרגע כ: ${x(currentUser.email)}${!currentUser.hasChannel ? ' — לחשבון הזה אין ערוץ YouTube' : ''}</div>`;
-}
-
 /* ============ HOME PAGE: sectioned YouTube-style feed ============ */
+// דף הבית מחולק למקטעים בסגנון דף הבית של יוטיוב:
+// 1. "מומלץ" — קומץ מהסרטונים החדשים ביותר מכל הערוצים.
+// 2. "לא נצפו" — סרטונים שעדיין לא נפתחו דרך האתר (לא מופיעים בהיסטוריה).
+// 3. "שורטס" — כל הסרטונים שסומנו כשורטס (שורת גלילה אופקית).
+// 4. "מהערוצים שלך" — כל השאר, ממשיכים את הפיד הרגיל.
 const HOME_FEATURED_COUNT = 8;
 const HOME_UNWATCHED_COUNT = 12;
 const HOME_SHORTS_COUNT = 14;
@@ -788,9 +827,8 @@ function renderHomeSections(ct) {
     ct.innerHTML = `
       <div class="empty">
         <div class="eico"><svg viewBox="0 0 24 24"><path d="M10 8v8l6-4-6-4zm2-6C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg></div>
-        <h3>${loading ? 'טוען את הערוצים והסרטונים שלך...' : 'אין סרטונים להצגה'}</h3>
-        <p>${loading ? 'זו הפעם הראשונה שגוגל שולפת את המנויים שלך — זה יכול לקחת כמה שניות.' : EMPTY_MESSAGES.following}</p>
-        ${accountNoteHtml()}
+        <h3>אין סרטונים להצגה</h3>
+        <p>${EMPTY_MESSAGES.following}</p>
       </div>`;
     return;
   }
@@ -825,7 +863,6 @@ function renderHomeSections(ct) {
         <div class="eico"><svg viewBox="0 0 24 24"><path d="M10 8v8l6-4-6-4zm2-6C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg></div>
         <h3>אין סרטונים להצגה</h3>
         <p>${EMPTY_MESSAGES.following}</p>
-        ${accountNoteHtml()}
       </div>`;
     return;
   }
@@ -835,6 +872,9 @@ function renderHomeSections(ct) {
 
   ct.innerHTML = sections.map(s => {
     const gridHtml = `<div class="${s.cls}${s.id ? ' shelf-scroll' : ''}"${s.id ? ` id="${s.id}"` : ''}>${s.vids.map(v => videoCardHtml(v)).join('')}</div>`;
+    // הכפתור "הבא" נמצא ראשון (בצד ימין, כי האתר מימין-לשמאל) והכפתור
+    // "הקודם" שני (בצד שמאל) — כך שהחיצים מצביעים לכיוון שאליו הם
+    // מגלגלים בפועל.
     const body = s.id
       ? `<div class="shelf-wrap">
           <button class="shelf-nav" onclick="scrollShelf('${s.id}',1)" title="הבא">${nextIcon}</button>
@@ -1066,9 +1106,12 @@ function markChannelSeen(channelId) {
   renderChannels();
 }
 
+// מסמן את כל הערוצים (ולא רק את אחד מהם) כ"נצפו" עד הרגע הזה, כך שכל
+// ההתראות הקיימות ייעלמו מרשימת "חדש" ומהפעמון.
 function markAllSeen() {
   const now = new Date().toISOString();
   channels.forEach(c => { seenMap[c.id] = now; });
+  // גם עבור ערוצים שאולי כבר לא ברשימת channels אבל יש להם סרטונים ב-allVideos
   allVideos.forEach(v => { if (!seenMap[v.channelId]) seenMap[v.channelId] = now; });
   localStorage.setItem(SEEN_KEY, JSON.stringify(seenMap));
   updateNotifBadge();
@@ -1202,7 +1245,7 @@ function bindUI() {
     if (e.target.id === 'settings-modal') toggleSettings(false);
   });
 
-  // רענון אוטומטי כל 5 דקות (עדיין דרך google.script.run בלבד)
+  // רענון אוטומטי כל 5 דקות
   setInterval(() => {
     loadEverything(false);
   }, 5 * 60 * 1000);
