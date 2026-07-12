@@ -160,12 +160,17 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 .vthumb-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s;}
 .vcard:hover .vthumb-wrap img{transform:scale(1.03);}
 .vdur{position:absolute;bottom:6px;left:6px;background:rgba(0,0,0,.8);color:#fff;font-size:11px;font-weight:600;padding:2px 6px;border-radius:4px;}
-.short-flag{position:absolute;top:8px;right:8px;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:12px;letter-spacing:.3px;}
+.short-flag{position:absolute;top:8px;right:8px;width:24px;height:24px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;}
+.short-flag svg{width:13px;height:13px;fill:#fff;}
 .new-flag{position:absolute;top:8px;left:8px;background:var(--blue);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:12px;}
 .wl-btn{position:absolute;bottom:6px;right:6px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.6);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,transform .15s;z-index:2;}
 .wl-btn svg{width:14px;height:14px;fill:#fff;}
 .wl-btn:hover{transform:scale(1.12);}
 .wl-btn.on{background:var(--red);}
+.like-btn{position:absolute;bottom:6px;right:38px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.6);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,transform .15s;z-index:2;}
+.like-btn svg{width:14px;height:14px;fill:#fff;}
+.like-btn:hover{transform:scale(1.12);}
+.like-btn.on svg{fill:var(--red);}
 .vinfo{display:flex;gap:10px;}
 .vav{width:34px;height:34px;border-radius:50%;flex-shrink:0;overflow:hidden;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;cursor:pointer;}
 .vav img{width:100%;height:100%;object-fit:cover;}
@@ -352,6 +357,7 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
     </div>
     <div class="st-row"><span>סימוני "נצפה" בערוצים</span><button class="st-btn" onclick="clearSeenMarks()">נקה</button></div>
     <div class="st-row"><span>היסטוריית צפייה מקומית</span><button class="st-btn danger" onclick="clearWatchHistory()">נקה</button></div>
+    <div class="st-row"><span>רשימת "אהבתי" מקומית</span><button class="st-btn danger" onclick="clearLiked()">נקה</button></div>
     <div class="st-row"><span>רשימת "לצפייה מאוחרת"</span><button class="st-btn danger" onclick="clearWatchLater()">נקה</button></div>
     <button class="st-close" onclick="toggleSettings(false)">סגור</button>
   </div>
@@ -372,13 +378,13 @@ const THEME_KEY = 'mytube_theme';
 const SIDEBAR_KEY = 'mytube_sidebar_col';
 const WATCH_HISTORY_KEY = 'mytube_watch_history';
 const WATCH_LATER_KEY = 'mytube_watch_later';
+const LIKED_KEY = 'mytube_liked';
 const INLINE_MODE_KEY = 'mytube_inline_mode';
 
 let currentUser = null;      // {name, picture, channelId}
 let channels = [];           // subscribed channels [{id,title,thumb}]
 let allVideos = [];          // merged videos from all subscribed channels
-let likedVideos = null;      // lazy-loaded, null = not fetched yet
-let recommendedVideos = null;// lazy-loaded, null = not fetched yet
+let likedVideos = [];        // local-only "liked" list (heart button)
 let watchHistory = [];       // local-only "watched" list
 let watchLater = [];         // local-only "watch later" list
 let section = 'all';         // all | shorts | following | liked | recommended | watched | watchlater | personal | channel
@@ -391,8 +397,8 @@ let lastError = null;
 const EMPTY_MESSAGES = {
   shorts: 'לא נמצאו שורטס מהערוצים שאתה עוקב אחריהם.',
   following: 'לא נמצאו סרטונים מהערוצים שאתה עוקב אחריהם.',
-  liked: 'לא נמצאו סרטונים שסימנת "אהבתי" ביוטיוב.',
-  recommended: 'אין כרגע המלצות להצגה.',
+  liked: 'עדיין לא סימנת "אהבתי" לאף סרטון דרך האתר. אפשר לסמן דרך הלב הקטן שמופיע על כל כרטיס.',
+  recommended: 'עדיין אין מספיק היסטוריית צפייה כדי להמליץ על משהו. ככל שתצפה ביותר סרטונים דרך האתר, ההמלצות כאן ישתפרו.',
   watched: 'עדיין לא צפית בסרטונים דרך האתר. כל סרטון שתפתח יופיע כאן.',
   watchlater: 'הרשימה ריקה. אפשר להוסיף סרטון דרך כפתור הסימנייה שמופיע על כל כרטיס.',
   channel: 'לא נמצאו סרטונים מהערוץ הזה.'
@@ -515,8 +521,6 @@ window.addEventListener('load', () => {
   renderContent();
   updateNotifBadge();
   bindUI();
-  if (section === 'liked' && likedVideos === null) fetchLiked();
-  if (section === 'recommended' && recommendedVideos === null) fetchRecommended();
   loadEverything(false);
 });
 
@@ -524,8 +528,6 @@ window.addEventListener('popstate', () => {
   restoreStateFromUrl();
   syncSidebarActiveClass();
   activeInlineId = null;
-  if (section === 'liked' && likedVideos === null) fetchLiked();
-  if (section === 'recommended' && recommendedVideos === null) fetchRecommended();
   renderChannels();
   renderContent();
 });
@@ -535,6 +537,7 @@ let seenMap = {};
 function loadLocalLists() {
   try { watchHistory = JSON.parse(localStorage.getItem(WATCH_HISTORY_KEY) || '[]'); } catch(e){ watchHistory = []; }
   try { watchLater = JSON.parse(localStorage.getItem(WATCH_LATER_KEY) || '[]'); } catch(e){ watchLater = []; }
+  try { likedVideos = JSON.parse(localStorage.getItem(LIKED_KEY) || '[]'); } catch(e){ likedVideos = []; }
 }
 
 /* ============ DATA LOADING (Apps Script proxy) ============ */
@@ -580,38 +583,6 @@ async function loadEverything(forceToast) {
   }
 }
 
-async function fetchLiked() {
-  likedVideos = [];
-  if (section === 'liked') renderContent();
-  try {
-    const url = APPS_SCRIPT_URL + (APPS_SCRIPT_URL.includes('?') ? '&' : '?') + 'action=liked&t=' + Date.now();
-    const res = await fetch(url);
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
-    likedVideos = data.videos || [];
-  } catch (e) {
-    console.error(e);
-    toast('שגיאה בטעינת סרטונים שאהבת');
-  }
-  if (section === 'liked') renderContent();
-}
-
-async function fetchRecommended() {
-  recommendedVideos = [];
-  if (section === 'recommended') renderContent();
-  try {
-    const url = APPS_SCRIPT_URL + (APPS_SCRIPT_URL.includes('?') ? '&' : '?') + 'action=recommended&t=' + Date.now();
-    const res = await fetch(url);
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
-    recommendedVideos = data.videos || [];
-  } catch (e) {
-    console.error(e);
-    toast('שגיאה בטעינת המלצות');
-  }
-  if (section === 'recommended') renderContent();
-}
-
 function loadCachedChannels() {
   try { channels = JSON.parse(localStorage.getItem(CHANNELS_CACHE_KEY) || '[]'); } catch(e){ channels = []; }
 }
@@ -624,8 +595,6 @@ function loadCachedMe() {
 
 function manualRefresh() {
   loadEverything(true);
-  if (section === 'liked') fetchLiked();
-  if (section === 'recommended') fetchRecommended();
 }
 
 /* ============ RENDER: AUTH AREA ============ */
@@ -699,8 +668,6 @@ function setSection(name, el) {
   syncSidebarActiveClass();
   if (el) el.classList.add('on');
   activeInlineId = null;
-  if (name === 'liked' && likedVideos === null) fetchLiked();
-  if (name === 'recommended' && recommendedVideos === null) fetchRecommended();
   renderChannels();
   renderContent();
   updateUrl();
@@ -729,15 +696,37 @@ function getSectionVideos() {
   if (section === 'channel') return allVideos.filter(v => v.channelId === activeChannelFilter);
   if (section === 'shorts') return allVideos.filter(v => v.isShort).filter(applyChannelFilter);
   if (section === 'following') return allVideos.filter(applyChannelFilter);
-  if (section === 'liked') return likedVideos || [];
-  if (section === 'recommended') return recommendedVideos || [];
+  if (section === 'liked') return likedVideos;
+  if (section === 'recommended') return computeRecommended();
   if (section === 'watched') return watchHistory;
   if (section === 'watchlater') return watchLater;
   return allVideos.filter(applyChannelFilter); // 'all' + fallback
 }
 
+// ממליץ על סרטונים מהערוצים שהכי הרבה צפית/סימנת אהבתי בהם (על בסיס
+// היסטוריית הצפייה וה"אהבתי" המקומיים בדפדפן שלך — לא נתוני יוטיוב).
+function computeRecommended() {
+  const freq = {};
+  watchHistory.forEach(function (h) { freq[h.channelId] = (freq[h.channelId] || 0) + 1; });
+  likedVideos.forEach(function (h) { freq[h.channelId] = (freq[h.channelId] || 0) + 1; });
+  if (!Object.keys(freq).length) return [];
+
+  const watchedIds = new Set(watchHistory.map(function (h) { return h.id; }));
+  const rankedChannels = Object.keys(freq).sort(function (a, b) { return freq[b] - freq[a]; });
+  const topSet = new Set(rankedChannels.slice(0, 8));
+
+  return allVideos
+    .filter(function (v) { return topSet.has(v.channelId) && !watchedIds.has(v.id); })
+    .sort(function (a, b) {
+      const fa = freq[a.channelId] || 0, fb = freq[b.channelId] || 0;
+      if (fb !== fa) return fb - fa;
+      return new Date(b.publishedAt) - new Date(a.publishedAt);
+    })
+    .slice(0, 60);
+}
+
 function findVideoById(id) {
-  const pools = [allVideos, likedVideos, recommendedVideos, watchHistory, watchLater];
+  const pools = [allVideos, likedVideos, watchHistory, watchLater];
   for (let i = 0; i < pools.length; i++) {
     const p = pools[i];
     if (!p) continue;
@@ -775,9 +764,7 @@ function renderContent() {
   }
 
   const subscriptionLoading = loading && !allVideos.length && ['all','following','shorts','channel'].includes(section);
-  const likedLoading = section === 'liked' && likedVideos === null;
-  const recommendedLoading = section === 'recommended' && recommendedVideos === null;
-  if (subscriptionLoading || likedLoading || recommendedLoading) {
+  if (subscriptionLoading) {
     ct.innerHTML = `<div class="vgrid">${Array(8).fill(0).map(() => skelCard()).join('')}</div>`;
     return;
   }
@@ -918,11 +905,17 @@ function skelCard() {
   </div>`;
 }
 
+const SHORT_ICON_SVG = '<svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.84 1.55V6.79a4.85 4.85 0 01-1.07-.1z"></path></svg>';
+const HEART_ICON_SVG = '<svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>';
+
 function thumbInnerHtml(v) {
   const isNew = isVideoNew(v);
   return `<img src="${x(v.thumb || '')}" loading="lazy" onerror="this.style.opacity=0">
-      ${v.isShort ? '<span class="short-flag">שורטס</span>' : `<span class="vdur">${fmtDuration(v.seconds)}</span>`}
+      ${v.isShort ? `<span class="short-flag" title="שורטס">${SHORT_ICON_SVG}</span>` : `<span class="vdur">${fmtDuration(v.seconds)}</span>`}
       ${isNew ? '<span class="new-flag">חדש</span>' : ''}
+      <button class="like-btn ${isLiked(v.id) ? 'on' : ''}" data-vid="${x(v.id)}" onclick="event.stopPropagation();toggleLiked('${x(v.id)}')" title="אהבתי">
+        ${HEART_ICON_SVG}
+      </button>
       <button class="wl-btn ${isInWatchLater(v.id) ? 'on' : ''}" data-vid="${x(v.id)}" onclick="event.stopPropagation();toggleWatchLater('${x(v.id)}')" title="לצפייה מאוחרת">
         <svg viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
       </button>`;
@@ -974,6 +967,44 @@ function timeAgo(iso) {
   }
   val = Math.max(1, Math.floor(val));
   return `לפני ${val} ${names[idx]}`;
+}
+
+/* ============ LIKED (local) ============ */
+function isLiked(id) {
+  return likedVideos.some(v => v.id === id);
+}
+
+function toggleLiked(id) {
+  const idx = likedVideos.findIndex(v => v.id === id);
+  if (idx >= 0) {
+    likedVideos.splice(idx, 1);
+    toast('הוסר מ"אהבתי"');
+  } else {
+    const v = findVideoById(id);
+    if (!v) return;
+    const copy = {}; for (const k in v) copy[k] = v[k];
+    copy.likedAt = new Date().toISOString();
+    likedVideos.unshift(copy);
+    toast('נוסף ל"אהבתי"');
+  }
+  localStorage.setItem(LIKED_KEY, JSON.stringify(likedVideos.slice(0,300)));
+  if (section === 'liked' || section === 'recommended') renderContent();
+  else updateLikeButtons();
+}
+
+function updateLikeButtons() {
+  document.querySelectorAll('.like-btn').forEach(btn => {
+    const id = btn.getAttribute('data-vid');
+    btn.classList.toggle('on', isLiked(id));
+  });
+}
+
+function clearLiked() {
+  likedVideos = [];
+  localStorage.removeItem(LIKED_KEY);
+  if (section === 'liked' || section === 'recommended') renderContent();
+  updateLikeButtons();
+  toast('רשימת "אהבתי" נוקתה');
 }
 
 /* ============ WATCH LATER (local) ============ */
@@ -1217,8 +1248,6 @@ function bindUI() {
   // רענון אוטומטי כל 5 דקות
   setInterval(() => {
     loadEverything(false);
-    if (section === 'liked') fetchLiked();
-    if (section === 'recommended') fetchRecommended();
   }, 5 * 60 * 1000);
 }
 
