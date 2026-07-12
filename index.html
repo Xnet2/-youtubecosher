@@ -272,9 +272,13 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
         <svg viewBox="0 0 24 24"><path d="M10 15l5.19-3L10 9v6zm11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-4.19 0-6.8-.16-7.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L2 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 5c4.19 0 6.8.16 7.83.44.9.25 1.48.83 1.73 1.73z"/></svg>
         פתח ב-YouTube
       </div>
-      <div class="um-item" onclick="manualRefresh()">
+      <div class="um-item" id="um-refresh" onclick="manualRefresh()">
         <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08a5.99 5.99 0 01-5.65 4c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
         רענן נתונים
+      </div>
+      <div class="um-item" id="um-signout" onclick="signOut()" style="display:none">
+        <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L17.17 10H9v2h8.17l-1.58 1.59L17 15l4-4zM5 5h7V3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h7v-2H5V5z"/></svg>
+        התנתק
       </div>
     </div>
   </div>
@@ -365,10 +369,11 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 
 <div id="toast"></div>
 
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
 /* ============ CONFIG ============ */
-// הדבק כאן את כתובת ה-Web App שקיבלת מפריסת Apps Script (ראה הוראות בקובץ Code.gs)
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyEzNBWigU6a8PmWJKlQsiGnPLZLv39hUof15X3PgO0FXSszyx3Jk1aXZlLVF-5UOGSUA/exec';
+const GOOGLE_CLIENT_ID = '426523025549-7c50rkn7cun4vmm2r802u0ij6egjehtg.apps.googleusercontent.com';
+const YT_SCOPE = 'https://www.googleapis.com/auth/youtube.readonly';
 
 const SEEN_KEY  = 'mytube_seen';        // {channelId: isoTimestamp}
 const CHANNELS_CACHE_KEY = 'mytube_channels_cache';
@@ -380,6 +385,7 @@ const WATCH_HISTORY_KEY = 'mytube_watch_history';
 const WATCH_LATER_KEY = 'mytube_watch_later';
 const LIKED_KEY = 'mytube_liked';
 const INLINE_MODE_KEY = 'mytube_inline_mode';
+const TOKEN_KEY = 'mytube_gtoken'; // sessionStorage: {access_token, expires_at}
 
 let currentUser = null;      // {name, picture, channelId}
 let channels = [];           // subscribed channels [{id,title,thumb}]
@@ -405,14 +411,6 @@ const EMPTY_MESSAGES = {
 };
 
 /* ============ URL ROUTING ============ */
-// כל מקטע (section) מקבל נתיב עברי משלו בכתובת (למשל /דף-הבית), וכל ערוץ
-// מקבל נתיב ייעודי (למשל /ערוץ/<channelId>). זה מבוסס על history.pushState
-// כך שכתובת האתר תמיד תשקף את מה שמוצג, וניתן לשמור/לשתף קישור ישיר.
-//
-// שים לב: GitHub Pages הוא אחסון סטטי בלבד — הוא לא יודע "לנתב" נתיב כמו
-// /דף-הבית לקובץ ה-HTML שלך אם מישהו נכנס לכתובת הזו ישירות (למשל דרך
-// רענון דף או קישור ששותף). כדי שזה יעבוד גם במקרה כזה, יש קובץ 404.html
-// נלווה שצריך להוסיף לאותה תיקייה באתר (ראה הסבר בהודעה).
 const SECTION_PATH = {
   all: 'דף-הבית',
   recommended: 'מומלצים',
@@ -430,7 +428,6 @@ const PATH_SECTION = Object.keys(SECTION_PATH).reduce(function (acc, k) {
 const CHANNEL_SEG = 'ערוץ';
 let basePath = '';
 
-// משחזר נתיב "אמיתי" אחרי הפניית 404.html (ראה קובץ 404.html הנלווה).
 function restoreRedirectFromNotFound() {
   const params = new URLSearchParams(location.search);
   const redirect = params.get('__redirect');
@@ -441,8 +438,6 @@ function restoreRedirectFromNotFound() {
   history.replaceState(null, '', newUrl);
 }
 
-// מזהה מהו "שורש" האתר (התיקייה שבה נמצא הדף עצמו), כדי לדעת להוסיף את
-// מקטע הנתיב אחריו, גם אם הדף מתארח בתת-תיקייה (כמו /-youtubecosher/).
 function computeBasePath() {
   const path = location.pathname.replace(/\/+$/, '');
   const segs = path.split('/');
@@ -521,7 +516,8 @@ window.addEventListener('load', () => {
   renderContent();
   updateNotifBadge();
   bindUI();
-  loadEverything(false);
+  initGoogleAuth();
+  restoreSessionAndMaybeLoad();
 });
 
 window.addEventListener('popstate', () => {
@@ -540,11 +536,248 @@ function loadLocalLists() {
   try { likedVideos = JSON.parse(localStorage.getItem(LIKED_KEY) || '[]'); } catch(e){ likedVideos = []; }
 }
 
-/* ============ DATA LOADING (Apps Script proxy) ============ */
+/* ============ GOOGLE SIGN-IN (client-side OAuth, no backend) ============ */
+// כל משתמש מתחבר עם חשבון הגוגל שלו ישירות מהדפדפן (ללא Apps Script
+// ביניים). ה-token שמתקבל משמש לקריאה ישירה ל-YouTube Data API v3 עבור
+// המנויים והסרטונים *של אותו משתמש בלבד*. שים לב: הדפדפן חייב להיות
+// מסוגל לגשת ל-googleapis.com ו-accounts.google.com (בניגוד לגרסה
+// הקודמת שהתגברה על חסימת רשת דרך שרת ביניים).
+let tokenClient = null;
+let accessToken = null;
+let tokenExpiresAt = 0; // epoch ms
+let gsiReady = false;
+
+function initGoogleAuth() {
+  function tryInit() {
+    if (!(window.google && google.accounts && google.accounts.oauth2)) {
+      setTimeout(tryInit, 200);
+      return;
+    }
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_CLIENT_ID,
+      scope: YT_SCOPE,
+      callback: onTokenResponse
+    });
+    gsiReady = true;
+  }
+  tryInit();
+}
+
+function restoreSessionAndMaybeLoad() {
+  const stored = getStoredToken();
+  if (stored && stored.access_token && stored.expires_at > Date.now() + 60000) {
+    accessToken = stored.access_token;
+    tokenExpiresAt = stored.expires_at;
+    renderAuthArea();
+    loadEverything(false);
+  } else if (!currentUser) {
+    lastError = 'not_authenticated';
+    renderContent();
+  }
+}
+
+function getStoredToken() {
+  try { return JSON.parse(sessionStorage.getItem(TOKEN_KEY) || 'null'); } catch (e) { return null; }
+}
+function setStoredToken(tok) {
+  sessionStorage.setItem(TOKEN_KEY, JSON.stringify(tok));
+}
+function clearStoredToken() {
+  sessionStorage.removeItem(TOKEN_KEY);
+}
+
+function onTokenResponse(resp) {
+  if (!resp || resp.error) {
+    console.error('OAuth error', resp);
+    toast('ההתחברות עם Google נכשלה או בוטלה');
+    loading = false;
+    setRefreshSpin(false);
+    return;
+  }
+  accessToken = resp.access_token;
+  tokenExpiresAt = Date.now() + (Number(resp.expires_in || 3500) * 1000);
+  setStoredToken({ access_token: accessToken, expires_at: tokenExpiresAt });
+  lastError = null;
+  loadEverything(true);
+}
+
+function signIn() {
+  if (!gsiReady || !tokenClient) {
+    toast('טוען את מסך ההתחברות של Google...');
+    setTimeout(() => { if (gsiReady) signIn(); }, 400);
+    return;
+  }
+  tokenClient.requestAccessToken({ prompt: accessToken ? '' : 'consent' });
+}
+
+function signOut() {
+  const tok = accessToken;
+  accessToken = null;
+  tokenExpiresAt = 0;
+  clearStoredToken();
+  currentUser = null;
+  channels = [];
+  allVideos = [];
+  lastError = 'not_authenticated';
+  localStorage.removeItem(CHANNELS_CACHE_KEY);
+  localStorage.removeItem(VIDEOS_CACHE_KEY);
+  localStorage.removeItem(ME_CACHE_KEY);
+  renderAuthArea();
+  renderChannels();
+  renderContent();
+  updateNotifBadge();
+  toggleUserMenu(false);
+  toast('התנתקת');
+  if (tok && window.google && google.accounts && google.accounts.oauth2) {
+    try { google.accounts.oauth2.revoke(tok, () => {}); } catch (e) {}
+  }
+}
+
+/* ============ DATA LOADING (direct YouTube Data API v3 calls) ============ */
+const YT_API_BASE = 'https://www.googleapis.com/youtube/v3';
+const SHORT_MAX_SECONDS = 60;
+
+// עוטף fetch לקריאות YouTube API עם ה-token של המשתמש המחובר. אם
+// השרת מחזיר 401 (טוקן פג/לא תקף), מנקה את הסשן ומבקש התחברות מחדש.
+async function ytFetch(path, params) {
+  if (!accessToken) throw new Error('not_authenticated');
+  const qs = new URLSearchParams(Object.assign({}, params));
+  const res = await fetch(`${YT_API_BASE}/${path}?${qs.toString()}`, {
+    headers: { Authorization: 'Bearer ' + accessToken }
+  });
+  if (res.status === 401) {
+    accessToken = null;
+    clearStoredToken();
+    throw new Error('auth_expired');
+  }
+  if (!res.ok) {
+    let msg = 'HTTP ' + res.status;
+    try { const j = await res.json(); msg = (j.error && j.error.message) || msg; } catch (e) {}
+    throw new Error(msg);
+  }
+  return res.json();
+}
+
+async function getMyChannelClient() {
+  const resp = await ytFetch('channels', { part: 'snippet', mine: 'true' });
+  const ch = resp.items && resp.items[0];
+  if (!ch) return null;
+  return {
+    name: ch.snippet.title,
+    picture: ch.snippet.thumbnails && (ch.snippet.thumbnails.default || {}).url,
+    channelId: ch.id
+  };
+}
+
+async function getSubscriptionsClient() {
+  const result = [];
+  let pageToken = '';
+  do {
+    const resp = await ytFetch('subscriptions', {
+      part: 'snippet', mine: 'true', maxResults: '50', order: 'alphabetical',
+      pageToken: pageToken || undefined
+    });
+    (resp.items || []).forEach(function (it) {
+      result.push({
+        id: it.snippet.resourceId.channelId,
+        title: it.snippet.title,
+        thumb: it.snippet.thumbnails && (it.snippet.thumbnails.default || {}).url
+      });
+    });
+    pageToken = resp.nextPageToken || '';
+  } while (pageToken);
+  return result;
+}
+
+async function getVideosForChannelsClient(chs) {
+  if (!chs.length) return [];
+
+  // 1) uploads playlist id לכל ערוץ, בקבוצות של 50
+  const uploadsMap = {};
+  for (let i = 0; i < chs.length; i += 50) {
+    const batchIds = chs.slice(i, i + 50).map(c => c.id).join(',');
+    const resp = await ytFetch('channels', { part: 'contentDetails', id: batchIds, maxResults: '50' });
+    (resp.items || []).forEach(function (it) {
+      uploadsMap[it.id] = it.contentDetails.relatedPlaylists.uploads;
+    });
+  }
+
+  // 2) כל הסרטונים מכל פלייליסט uploads (דפדוף מלא)
+  const videoRefs = [];
+  for (const c of chs) {
+    const playlistId = uploadsMap[c.id];
+    if (!playlistId) continue;
+    try {
+      let pageToken = '';
+      do {
+        const resp = await ytFetch('playlistItems', {
+          part: 'snippet', playlistId: playlistId, maxResults: '50',
+          pageToken: pageToken || undefined
+        });
+        (resp.items || []).forEach(function (it) {
+          videoRefs.push({
+            id: it.snippet.resourceId.videoId,
+            title: it.snippet.title,
+            thumb: it.snippet.thumbnails && (it.snippet.thumbnails.medium || it.snippet.thumbnails.default || {}).url,
+            publishedAt: it.snippet.publishedAt,
+            channelId: c.id,
+            channelTitle: c.title,
+            channelThumb: c.thumb
+          });
+        });
+        pageToken = resp.nextPageToken || '';
+      } while (pageToken);
+    } catch (err) {
+      // ערוץ בלי uploads ציבוריים / הוסר — מדלגים
+    }
+  }
+
+  // 3) אורך כל סרטון + זיהוי שורטס, בקבוצות של 50
+  const durMap = {};
+  const vertMap = {};
+  const ids = videoRefs.map(v => v.id).filter(Boolean);
+  for (let i = 0; i < ids.length; i += 50) {
+    const batch = ids.slice(i, i + 50).join(',');
+    if (!batch) continue;
+    const resp = await ytFetch('videos', { part: 'contentDetails,snippet', id: batch, maxResults: '50' });
+    (resp.items || []).forEach(function (it) {
+      durMap[it.id] = it.contentDetails.duration;
+      vertMap[it.id] = isVerticalFromThumbnails(it.snippet && it.snippet.thumbnails);
+    });
+  }
+
+  return videoRefs
+    .filter(v => durMap[v.id])
+    .map(v => {
+      const seconds = parseISODuration(durMap[v.id]);
+      const out = Object.assign({}, v);
+      out.seconds = seconds;
+      out.isShort = (seconds > 0 && seconds <= SHORT_MAX_SECONDS) || vertMap[v.id] === true;
+      return out;
+    })
+    .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+}
+
+function isVerticalFromThumbnails(thumbs) {
+  if (!thumbs) return false;
+  for (const key in thumbs) {
+    const t = thumbs[key];
+    if (t && t.width && t.height && t.height > t.width) return true;
+  }
+  return false;
+}
+
+function parseISODuration(iso) {
+  const m = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/.exec(iso || '');
+  if (!m) return 0;
+  const h = parseInt(m[1] || 0, 10), mi = parseInt(m[2] || 0, 10), s = parseInt(m[3] || 0, 10);
+  return h * 3600 + mi * 60 + s;
+}
+
 async function loadEverything(forceToast) {
   if (loading) return;
-  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.indexOf('PASTE_YOUR') === 0) {
-    lastError = 'not_configured';
+  if (!accessToken) {
+    lastError = 'not_authenticated';
     renderContent();
     return;
   }
@@ -552,15 +785,13 @@ async function loadEverything(forceToast) {
   lastError = null;
   setRefreshSpin(true);
   try {
-    const url = APPS_SCRIPT_URL + (APPS_SCRIPT_URL.includes('?') ? '&' : '?') + 'action=all&t=' + Date.now();
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
+    const me = await getMyChannelClient();
+    const subs = await getSubscriptionsClient();
+    const vids = await getVideosForChannelsClient(subs);
 
-    channels = data.channels || [];
-    allVideos = data.videos || [];
-    currentUser = data.me || null;
+    currentUser = me;
+    channels = subs;
+    allVideos = vids;
 
     localStorage.setItem(CHANNELS_CACHE_KEY, JSON.stringify(channels));
     localStorage.setItem(VIDEOS_CACHE_KEY, JSON.stringify(allVideos.slice(0, 300)));
@@ -574,9 +805,15 @@ async function loadEverything(forceToast) {
     if (forceToast) toast('הנתונים עודכנו');
   } catch (e) {
     console.error(e);
-    lastError = (e && e.message) || 'שגיאה בטעינת הנתונים מה-Apps Script';
+    if (e && e.message === 'auth_expired') {
+      lastError = 'not_authenticated';
+      currentUser = null;
+      toast('פג תוקף ההתחברות, יש להתחבר מחדש');
+    } else {
+      lastError = (e && e.message) || 'שגיאה בטעינת הנתונים מ-YouTube';
+      toast('שגיאה בטעינת הנתונים');
+    }
     renderContent();
-    toast('שגיאה בטעינת הנתונים');
   } finally {
     loading = false;
     setRefreshSpin(false);
@@ -600,17 +837,24 @@ function manualRefresh() {
 /* ============ RENDER: AUTH AREA ============ */
 function renderAuthArea() {
   const el = document.getElementById('auth-area');
+  const signoutItem = document.getElementById('um-signout');
+  const refreshItem = document.getElementById('um-refresh');
   if (currentUser) {
     el.innerHTML = `
       <div class="yt-user-chip" onclick="toggleUserMenu()">
         ${currentUser.picture ? `<img class="yt-user-av" src="${x(currentUser.picture)}">` : `<div class="yt-user-av" style="display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">${x((currentUser.name||'?').slice(0,2))}</div>`}
         <span class="yt-user-name">${x(currentUser.name||'')}</span>
       </div>`;
+    if (signoutItem) signoutItem.style.display = '';
+    if (refreshItem) refreshItem.style.display = '';
   } else {
     el.innerHTML = `
-      <button class="tbtn" onclick="toggleUserMenu()" title="תפריט">
-        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+      <button class="yt-login-btn" onclick="signIn()">
+        <svg viewBox="0 0 24 24"><path fill="#fff" d="M21.35 11.1h-9.17v2.73h6.51c-.33 3.81-3.5 5.44-6.5 5.44C8.36 19.27 5 16.25 5 12c0-4.1 3.2-7.27 7.2-7.27 3.09 0 4.9 1.97 4.9 1.97L19 4.72S16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12c0 5.05 4.13 10 10.22 10 5.35 0 9.25-3.67 9.25-9.09 0-1.15-.15-1.81-.15-1.81z"/></svg>
+        התחבר עם Google
       </button>`;
+    if (signoutItem) signoutItem.style.display = 'none';
+    if (refreshItem) refreshItem.style.display = 'none';
   }
 }
 
@@ -677,7 +921,6 @@ function resetHome() {
   setSection('all', document.getElementById('n-all'));
 }
 
-// עמוד ייעודי לערוץ, בלחיצה על תמונת הפרופיל / שם הערוץ בכרטיס סרטון.
 function openChannelPage(channelId) {
   section = 'channel';
   activeChannelFilter = channelId;
@@ -703,8 +946,6 @@ function getSectionVideos() {
   return allVideos.filter(applyChannelFilter); // 'all' + fallback
 }
 
-// ממליץ על סרטונים מהערוצים שהכי הרבה צפית/סימנת אהבתי בהם (על בסיס
-// היסטוריית הצפייה וה"אהבתי" המקומיים בדפדפן שלך — לא נתוני יוטיוב).
 function computeRecommended() {
   const freq = {};
   watchHistory.forEach(function (h) { freq[h.channelId] = (freq[h.channelId] || 0) + 1; });
@@ -740,14 +981,18 @@ function findVideoById(id) {
 function renderContent() {
   const ct = document.getElementById('content');
   ct.innerHTML = '';
-  activeInlineId = null; // any inline iframe DOM node is about to be destroyed
+  activeInlineId = null;
 
-  if (lastError === 'not_configured') {
+  if (lastError === 'not_authenticated' && !allVideos.length) {
     ct.innerHTML = `
       <div class="empty">
-        <div class="eico"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg></div>
-        <h3>עדיין לא הוגדר חיבור</h3>
-        <p>יש להדביק את כתובת ה-Web App של ה-Apps Script בשורת <code>APPS_SCRIPT_URL</code> בקוד.</p>
+        <div class="eico"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>
+        <h3>יש להתחבר עם Google</h3>
+        <p>כדי לראות כאן את הסרטונים החדשים מהערוצים שאתה עוקב אחריהם ביוטיוב, יש להתחבר עם חשבון Google שלך. הנתונים שיוצגו יהיו של המנויים שלך בלבד, ולא של אף משתמש אחר.</p>
+        <button class="yt-login-btn" onclick="signIn()">
+          <svg viewBox="0 0 24 24"><path fill="#fff" d="M21.35 11.1h-9.17v2.73h6.51c-.33 3.81-3.5 5.44-6.5 5.44C8.36 19.27 5 16.25 5 12c0-4.1 3.2-7.27 7.2-7.27 3.09 0 4.9 1.97 4.9 1.97L19 4.72S16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12c0 5.05 4.13 10 10.22 10 5.35 0 9.25-3.67 9.25-9.09 0-1.15-.15-1.81-.15-1.81z"/></svg>
+          התחבר עם Google
+        </button>
       </div>`;
     return;
   }
@@ -811,12 +1056,7 @@ function renderContent() {
   ct.appendChild(grid);
 }
 
-/* ============ HOME PAGE: sectioned YouTube-style feed ============ */
-// דף הבית מחולק למקטעים בסגנון דף הבית של יוטיוב:
-// 1. "מומלץ" — קומץ מהסרטונים החדשים ביותר מכל הערוצים.
-// 2. "לא נצפו" — סרטונים שעדיין לא נפתחו דרך האתר (לא מופיעים בהיסטוריה).
-// 3. "שורטס" — כל הסרטונים שסומנו כשורטס (שורת גלילה אופקית).
-// 4. "מהערוצים שלך" — כל השאר, ממשיכים את הפיד הרגיל.
+/* ============ HOME PAGE ============ */
 const HOME_FEATURED_COUNT = 8;
 const HOME_UNWATCHED_COUNT = 12;
 const HOME_SHORTS_COUNT = 14;
@@ -836,7 +1076,7 @@ function renderHomeSections(ct) {
   const large = inlineMode;
   const usedIds = new Set();
   const watchedIds = new Set(watchHistory.map(h => h.id));
-  const byDate = allVideos; // כבר ממוין מהחדש לישן
+  const byDate = allVideos;
 
   const sections = [];
 
@@ -872,9 +1112,6 @@ function renderHomeSections(ct) {
 
   ct.innerHTML = sections.map(s => {
     const gridHtml = `<div class="${s.cls}${s.id ? ' shelf-scroll' : ''}"${s.id ? ` id="${s.id}"` : ''}>${s.vids.map(v => videoCardHtml(v)).join('')}</div>`;
-    // הכפתור "הבא" נמצא ראשון (בצד ימין, כי האתר מימין-לשמאל) והכפתור
-    // "הקודם" שני (בצד שמאל) — כך שהחיצים מצביעים לכיוון שאליו הם
-    // מגלגלים בפועל.
     const body = s.id
       ? `<div class="shelf-wrap">
           <button class="shelf-nav" onclick="scrollShelf('${s.id}',1)" title="הבא">${nextIcon}</button>
@@ -1106,12 +1343,9 @@ function markChannelSeen(channelId) {
   renderChannels();
 }
 
-// מסמן את כל הערוצים (ולא רק את אחד מהם) כ"נצפו" עד הרגע הזה, כך שכל
-// ההתראות הקיימות ייעלמו מרשימת "חדש" ומהפעמון.
 function markAllSeen() {
   const now = new Date().toISOString();
   channels.forEach(c => { seenMap[c.id] = now; });
-  // גם עבור ערוצים שאולי כבר לא ברשימת channels אבל יש להם סרטונים ב-allVideos
   allVideos.forEach(v => { if (!seenMap[v.channelId]) seenMap[v.channelId] = now; });
   localStorage.setItem(SEEN_KEY, JSON.stringify(seenMap));
   updateNotifBadge();
@@ -1245,7 +1479,6 @@ function bindUI() {
     if (e.target.id === 'settings-modal') toggleSettings(false);
   });
 
-  // רענון אוטומטי כל 5 דקות
   setInterval(() => {
     loadEverything(false);
   }, 5 * 60 * 1000);
