@@ -43,11 +43,13 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 .yt-user-chip{display:flex;align-items:center;gap:7px;background:var(--bg3);border:1px solid var(--bg4);border-radius:20px;padding:3px 12px 3px 3px;cursor:pointer;transition:background var(--ease);}
 .yt-user-chip:hover{background:var(--bg4);}
 .yt-user-av{width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;background:var(--bg4);}
-.yt-user-name{font-size:12px;font-weight:500;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.yt-user-name{font-size:12px;font-weight:500;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.yt-user-chip.no-channel{border-color:#ffb020;}
 
 /* USER MENU */
-#user-menu{position:fixed;top:calc(var(--th) + 8px);left:12px;width:230px;background:var(--bg2);border:1px solid var(--bg4);border-radius:12px;box-shadow:0 8px 32px var(--shadow);z-index:300;padding:8px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;transform:translateY(-8px);}
+#user-menu{position:fixed;top:calc(var(--th) + 8px);left:12px;width:250px;background:var(--bg2);border:1px solid var(--bg4);border-radius:12px;box-shadow:0 8px 32px var(--shadow);z-index:300;padding:8px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;transform:translateY(-8px);}
 #user-menu.open{opacity:1;pointer-events:all;transform:translateY(0);}
+.um-account{padding:10px 12px 6px;font-size:11.5px;color:var(--txt3);border-bottom:1px solid var(--border);margin-bottom:6px;word-break:break-all;}
 .um-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px;transition:background var(--ease);}
 .um-item:hover{background:var(--bg3);}
 .um-item svg{width:17px;height:17px;fill:currentColor;flex-shrink:0;}
@@ -150,8 +152,9 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 .eico{width:64px;height:64px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;margin-bottom:18px;}
 .eico svg{width:30px;height:30px;fill:var(--txt3);}
 .empty h3{font-size:17px;font-weight:700;margin-bottom:8px;color:var(--txt);}
-.empty p{font-size:13px;color:var(--txt3);max-width:340px;line-height:1.6;margin-bottom:18px;}
+.empty p{font-size:13px;color:var(--txt3);max-width:380px;line-height:1.6;margin-bottom:18px;}
 .empty code{background:var(--bg3);padding:2px 6px;border-radius:4px;font-size:11.5px;direction:ltr;display:inline-block;}
+.empty .acct-note{font-size:12px;color:var(--blue);background:var(--bg3);border:1px solid var(--bg4);border-radius:8px;padding:8px 12px;margin-top:4px;direction:ltr;}
 
 /* VIDEO GRID */
 .vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px 16px;}
@@ -268,6 +271,7 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
     </button>
     <div id="auth-area"></div>
     <div id="user-menu">
+      <div class="um-account" id="um-account"></div>
       <div class="um-item" onclick="window.open('https://www.youtube.com/feed/subscriptions','_blank')">
         <svg viewBox="0 0 24 24"><path d="M10 15l5.19-3L10 9v6zm11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-4.19 0-6.8-.16-7.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L2 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 5c4.19 0 6.8.16 7.83.44.9.25 1.48.83 1.73 1.73z"/></svg>
         פתח ב-YouTube
@@ -379,7 +383,7 @@ const WATCH_LATER_KEY = 'mytube_watch_later';
 const LIKED_KEY = 'mytube_liked';
 const INLINE_MODE_KEY = 'mytube_inline_mode';
 
-let currentUser = null;      // {name, picture, channelId, email}
+let currentUser = null;      // {name, picture, channelId, email, hasChannel}
 let channels = [];           // subscribed channels [{id,title,thumb}]
 let allVideos = [];          // merged videos from all subscribed channels
 let likedVideos = [];        // local-only "liked" list (heart button)
@@ -539,19 +543,31 @@ function manualRefresh() {
 }
 
 /* ============ RENDER: AUTH AREA ============ */
+// currentUser תמיד מכיל email (גם אם hasChannel==false), כדי שאפשר
+// יהיה לראות ישירות בממשק איזה חשבון גוגל פעיל כרגע — בלי DevTools.
 function renderAuthArea() {
   const el = document.getElementById('auth-area');
-  if (currentUser) {
+  const umAccount = document.getElementById('um-account');
+
+  if (currentUser && (currentUser.email || currentUser.name)) {
+    const label = currentUser.name || currentUser.email || '';
+    const noChannel = !currentUser.hasChannel;
     el.innerHTML = `
-      <div class="yt-user-chip" onclick="toggleUserMenu()">
-        ${currentUser.picture ? `<img class="yt-user-av" src="${x(currentUser.picture)}">` : `<div class="yt-user-av" style="display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">${x((currentUser.name||'?').slice(0,2))}</div>`}
-        <span class="yt-user-name">${x(currentUser.name||'')}</span>
+      <div class="yt-user-chip ${noChannel ? 'no-channel' : ''}" onclick="toggleUserMenu()" title="${x(currentUser.email||'')}">
+        ${currentUser.picture ? `<img class="yt-user-av" src="${x(currentUser.picture)}">` : `<div class="yt-user-av" style="display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">${x((label||'?').slice(0,2))}</div>`}
+        <span class="yt-user-name">${x(label)}</span>
       </div>`;
+    if (umAccount) {
+      umAccount.textContent = currentUser.email
+        ? ('מחובר כ: ' + currentUser.email + (noChannel ? ' (אין ערוץ YouTube לחשבון הזה)' : ''))
+        : '';
+    }
   } else {
     el.innerHTML = `
       <button class="tbtn" onclick="toggleUserMenu()" title="תפריט">
         <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
       </button>`;
+    if (umAccount) umAccount.textContent = 'לא זוהה חשבון גוגל פעיל';
   }
 }
 
@@ -567,7 +583,17 @@ function renderChannels() {
   const label = document.getElementById('sb-label');
   if (!channels.length) {
     label.textContent = 'ערוצים שלי';
-    list.innerHTML = `<div class="sb-empty">${lastError ? 'לא ניתן לטעון ערוצים כרגע.' : 'טוען ערוצים...'}</div>`;
+    let msg;
+    if (lastError) {
+      msg = 'לא ניתן לטעון ערוצים כרגע.';
+    } else if (!loading && currentUser) {
+      msg = currentUser.email
+        ? ('אין מנויים לחשבון ' + currentUser.email + '.')
+        : 'לא נמצאו מנויים לחשבון הפעיל.';
+    } else {
+      msg = 'טוען ערוצים...';
+    }
+    list.innerHTML = `<div class="sb-empty">${x(msg)}</div>`;
     return;
   }
   label.textContent = `ערוצים שלי (${channels.length})`;
@@ -729,6 +755,7 @@ function renderContent() {
         <div class="eico"><svg viewBox="0 0 24 24"><path d="M10 8v8l6-4-6-4zm2-6C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg></div>
         <h3>אין סרטונים להצגה</h3>
         <p>${EMPTY_MESSAGES[section] || 'לא נמצאו סרטונים התואמים לסינון הנוכחי.'}</p>
+        ${accountNoteHtml()}
       </div>`;
     return;
   }
@@ -740,6 +767,14 @@ function renderContent() {
 
   if (headerHtml) ct.insertAdjacentHTML('beforeend', headerHtml);
   ct.appendChild(grid);
+}
+
+// כשאין ערוצים/סרטונים בכלל, מציג בבירור איזה חשבון גוגל פעיל —
+// כך שקל לזהות מיד אם הבעיה היא "חשבון לא נכון" ולא תקלה טכנית.
+function accountNoteHtml() {
+  if (loading || channels.length) return '';
+  if (!currentUser || !currentUser.email) return '';
+  return `<div class="acct-note">מחובר כרגע כ: ${x(currentUser.email)}${!currentUser.hasChannel ? ' — לחשבון הזה אין ערוץ YouTube' : ''}</div>`;
 }
 
 /* ============ HOME PAGE: sectioned YouTube-style feed ============ */
@@ -755,6 +790,7 @@ function renderHomeSections(ct) {
         <div class="eico"><svg viewBox="0 0 24 24"><path d="M10 8v8l6-4-6-4zm2-6C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg></div>
         <h3>${loading ? 'טוען את הערוצים והסרטונים שלך...' : 'אין סרטונים להצגה'}</h3>
         <p>${loading ? 'זו הפעם הראשונה שגוגל שולפת את המנויים שלך — זה יכול לקחת כמה שניות.' : EMPTY_MESSAGES.following}</p>
+        ${accountNoteHtml()}
       </div>`;
     return;
   }
@@ -789,6 +825,7 @@ function renderHomeSections(ct) {
         <div class="eico"><svg viewBox="0 0 24 24"><path d="M10 8v8l6-4-6-4zm2-6C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg></div>
         <h3>אין סרטונים להצגה</h3>
         <p>${EMPTY_MESSAGES.following}</p>
+        ${accountNoteHtml()}
       </div>`;
     return;
   }
