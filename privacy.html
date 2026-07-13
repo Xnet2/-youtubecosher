@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyTube — מדיניות פרטיות</title>
+<style>
+  body{font-family:system-ui,-apple-system,'Segoe UI',Arial,sans-serif;max-width:680px;margin:40px auto;padding:0 20px;line-height:1.7;color:#222;background:#fff;}
+  h1{font-size:26px;margin-bottom:4px;}
+  .sub{color:#666;margin-bottom:28px;font-size:14px;}
+  h2{font-size:18px;margin-top:32px;}
+  a{color:#065fd4;}
+  footer{margin-top:48px;font-size:13px;color:#888;border-top:1px solid #eee;padding-top:16px;}
+</style>
+</head>
+<body>
+  <h1>מדיניות פרטיות — MyTube</h1>
+  <div class="sub">עודכן לאחרונה: יולי 2026</div>
+
+  <p>מסמך זה מסביר אילו נתונים אפליקציית MyTube ניגשת אליהם, איך הם נשמרים,
+     ולכמה זמן, כשמשתמש מתחבר עם חשבון Google שלו.</p>
+
+  <h2>אילו נתונים נאספים</h2>
+  <ul>
+    <li><strong>רשימת ערוצי היוטיוב שאתה עוקב אחריהם</strong> (שם, תמונה ממוזערת, מזהה ערוץ).</li>
+    <li><strong>רשימת הסרטונים שפורסמו בערוצים האלה</strong> (כותרת, תמונה ממוזערת, תאריך פרסום, אורך).</li>
+    <li><strong>שם ותמונת הפרופיל של חשבון ה-Google שלך</strong>, לצורך הצגה בממשק בלבד.</li>
+  </ul>
+  <p>כל הנתונים האלה נקראים ישירות מ-YouTube Data API v3, בהרשאת קריאה-בלבד,
+     ומוצגים לך ולך בלבד.</p>
+
+  <h2>איך הנתונים נשמרים</h2>
+  <ul>
+    <li><strong>טוקן ההתחברות (access token):</strong> נשמר זמנית בזיכרון הדפדפן שלך
+      (<code>sessionStorage</code>) ונמחק אוטומטית כשסוגרים את הטאב/הדפדפן. תוקפו מוגבל
+      (כשעה), ולא ניתן לבצע דרכו שינויים בחשבון שלך.</li>
+    <li><strong>קאש של ערוצים/סרטונים, היסטוריית צפייה, "אהבתי", "לצפייה מאוחרת":</strong>
+      נשמרים אך ורק בדפדפן שלך (<code>localStorage</code>), לצורך טעינה מהירה ונוחות שימוש.
+      נתונים אלה אינם נשלחים לשום שרת.</li>
+    <li><strong>שרת הביניים (proxy):</strong> האפליקציה משתמשת בשרת שמריץ בעל האפליקציה
+      (על תשתית חיצונית) כדי להעביר את הבקשה שלך אל YouTube API ולהחזיר את התשובה.
+      השרת הזה אינו שומר מסד נתונים ואינו מתעד את תוכן הבקשות באופן קבוע; ייתכן
+      שקיים יומן גישה טכני זמני (access log) כחלק מהתפעול הרגיל של השרת, בדומה לכל
+      שירות אינטרנט.</li>
+  </ul>
+
+  <h2>שיתוף עם צדדים שלישיים</h2>
+  <p>הנתונים שלך אינם נמכרים, משותפים, או מועברים לאף גורם שלישי. הם משמשים
+     אך ורק כדי להציג לך את הממשק של האפליקציה בזמן שאתה מחובר.</p>
+
+  <h2>מחיקת גישה</h2>
+  <p>ניתן לבטל את הגישה של האפליקציה לחשבון ה-Google שלך בכל עת דרך
+     <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">הרשאות חשבון Google שלי</a>,
+     או פשוט על ידי לחיצה על "התנתק" בתוך האפליקציה.</p>
+
+  <h2>יצירת קשר</h2>
+  <p>לשאלות בנוגע למדיניות זו, ניתן לפנות דרך הכתובת שמופיעה בעמוד ה-
+     <a href="about.html">אודות</a> של האפליקציה.</p>
+
+  <footer>
+    MyTube הוא פרויקט אישי, לא מסחרי, ואינו קשור ל-Google או YouTube.
+  </footer>
+</body>
+</html>

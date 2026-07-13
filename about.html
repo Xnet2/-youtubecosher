@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyTube — אודות</title>
+<style>
+  body{font-family:system-ui,-apple-system,'Segoe UI',Arial,sans-serif;max-width:680px;margin:40px auto;padding:0 20px;line-height:1.7;color:#222;background:#fff;}
+  h1{font-size:26px;margin-bottom:4px;}
+  .sub{color:#666;margin-bottom:28px;font-size:14px;}
+  h2{font-size:18px;margin-top:32px;}
+  a{color:#065fd4;}
+  .box{background:#f6f6f6;border-radius:10px;padding:16px 20px;margin:20px 0;}
+  footer{margin-top:48px;font-size:13px;color:#888;border-top:1px solid #eee;padding-top:16px;}
+</style>
+</head>
+<body>
+  <h1>MyTube</h1>
+  <div class="sub">אפליקציית וידאו אישית מבוססת חשבון Google</div>
+
+  <p>
+    <strong>MyTube</strong> היא אפליקציית קריאה בלבד (read-only) המציגה למשתמש המחובר את
+    ערוצי היוטיוב שהוא עוקב אחריהם ואת הסרטונים החדשים שלהם, בעיצוב דמוי-יוטיוב:
+    עמוד בית עם שורות תוכן, סינון לפי ערוץ, זיהוי שורטס, וסימון סרטונים חדשים.
+  </p>
+
+  <div class="box">
+    <strong>איך זה עובד:</strong> המשתמש מתחבר עם חשבון Google שלו. האפליקציה קוראת
+    (בלבד — לא כותבת ולא משנה דבר) את רשימת הערוצים שהמשתמש עוקב אחריהם ואת
+    הסרטונים החדשים בהם, ישירות מ-YouTube Data API v3, ומציגה זאת בממשק אישי
+    למשתמש עצמו בלבד.
+  </div>
+
+  <h2>אילו הרשאות מבוקשות ולמה</h2>
+  <ul>
+    <li><strong>YouTube — קריאה בלבד</strong> (<code>youtube.readonly</code>): כדי לקרוא את רשימת
+      הערוצים שהמשתמש עוקב אחריהם ואת הסרטונים שהם פרסמו, לצורך הצגתם בעמוד הבית.</li>
+    <li><strong>פרופיל בסיסי</strong> (<code>userinfo.profile</code>): כדי להציג את שם המשתמש
+      ותמונת הפרופיל שלו בממשק, לנוחות זיהוי בלבד.</li>
+  </ul>
+  <p>האפליקציה אינה מבצעת פעולות כתיבה כלשהן בחשבון היוטיוב או Google של המשתמש —
+     לא ניתן להירשם/לבטל הרשמה לערוצים, למחוק, לפרסם, או לשנות דבר דרך האפליקציה.</p>
+
+  <h2>מדיניות פרטיות</h2>
+  <p>לפרטים המלאים על אילו נתונים נאספים, איך הם נשמרים, ולכמה זמן — ראו את
+     <a href="privacy.html">מדיניות הפרטיות</a> של האפליקציה.</p>
+
+  <footer>
+    MyTube הוא פרויקט אישי, לא מסחרי, ואינו קשור ל-Google או YouTube.
+  </footer>
+</body>
+</html>
