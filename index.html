@@ -36,6 +36,21 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 .logo-txt span{color:var(--red);}
 .tb-r{display:flex;align-items:center;gap:8px;margin-inline-start:auto;flex-shrink:0;}
 
+/* SEARCH BAR */
+.search-wrap{display:flex;align-items:center;gap:10px;flex:1;max-width:600px;margin:0 24px;min-width:0;}
+.search-box{display:flex;align-items:center;flex:1;height:38px;border:1px solid var(--bg4);border-radius:20px;overflow:hidden;background:var(--bg);min-width:0;}
+.search-input{flex:1;min-width:0;height:100%;background:transparent;color:var(--txt);border:none;padding:0 16px;font-size:14px;font-family:'Rubik',sans-serif;outline:none;}
+.search-input::placeholder{color:var(--txt3);}
+.search-go{width:52px;height:100%;flex-shrink:0;background:var(--bg3);border:none;border-inline-start:1px solid var(--bg4);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txt2);transition:background var(--ease);}
+.search-go:hover{background:var(--bg4);}
+.search-go svg{width:18px;height:18px;fill:currentColor;}
+.mic-btn{width:38px;height:38px;border-radius:50%;background:var(--bg3);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txt2);flex-shrink:0;transition:background var(--ease),color var(--ease);}
+.mic-btn:hover{background:var(--bg4);}
+.mic-btn svg{width:17px;height:17px;fill:currentColor;}
+.mic-btn.listening{background:var(--red);color:#fff;animation:micpulse 1.2s infinite;}
+@keyframes micpulse{0%,100%{box-shadow:0 0 0 0 rgba(255,0,0,.4)}50%{box-shadow:0 0 0 6px rgba(255,0,0,0)}}
+@media(max-width:900px){.search-wrap{display:none;}}
+
 /* SIGN IN / USER CHIP */
 .yt-login-btn{background:var(--red);color:#fff;border:none;border-radius:20px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Rubik',sans-serif;display:flex;align-items:center;gap:7px;transition:background var(--ease);flex-shrink:0;}
 .yt-login-btn:hover{background:var(--red2);}
@@ -246,6 +261,17 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
     <div class="logo-badge"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
     <div class="logo-txt">My<span>Tube</span></div>
   </a>
+  <div class="search-wrap">
+    <div class="search-box">
+      <input type="text" id="search-input" class="search-input" placeholder="חיפוש" autocomplete="off" onkeydown="if(event.key==='Enter')runSearch()">
+      <button class="search-go" onclick="runSearch()" title="חיפוש">
+        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      </button>
+    </div>
+    <button class="mic-btn" id="mic-btn" onclick="toggleVoiceSearch()" title="חיפוש קולי">
+      <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5-3c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+    </button>
+  </div>
   <div class="tb-r">
     <button class="tbtn" id="theme-toggle" title="ערכת נושא">
       <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 01-4.4 2.26 5.403 5.403 0 01-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></svg>
@@ -373,7 +399,7 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 <script>
 /* ============ CONFIG ============ */
 const GOOGLE_CLIENT_ID = '426523025549-7c50rkn7cun4vmm2r802u0ij6egjehtg.apps.googleusercontent.com';
-const YT_SCOPE = 'https://www.googleapis.com/auth/youtube.readonly';
+const YT_SCOPE = 'https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/userinfo.profile';
 // הדבק כאן את כתובת ה-Web App שקיבלת מפריסת Code.gs (ראה הוראות שם).
 // זהו שרת-ביניים שמעביר את הטוקן האישי שלך ל-YouTube API משרתי גוגל,
 // כדי לעקוף חסימת רשת מקומית (למשל NetFree) על googleapis.com.
@@ -397,8 +423,9 @@ let allVideos = [];          // merged videos from all subscribed channels
 let likedVideos = [];        // local-only "liked" list (heart button)
 let watchHistory = [];       // local-only "watched" list
 let watchLater = [];         // local-only "watch later" list
-let section = 'all';         // all | shorts | following | liked | recommended | watched | watchlater | personal | channel
+let section = 'all';         // all | shorts | following | liked | recommended | watched | watchlater | personal | channel | search
 let activeChannelFilter = null;
+let searchQuery = '';
 let inlineMode = false;
 let activeInlineId = null;
 let loading = false;
@@ -411,7 +438,8 @@ const EMPTY_MESSAGES = {
   recommended: 'עדיין אין מספיק היסטוריית צפייה כדי להמליץ על משהו. ככל שתצפה ביותר סרטונים דרך האתר, ההמלצות כאן ישתפרו.',
   watched: 'עדיין לא צפית בסרטונים דרך האתר. כל סרטון שתפתח יופיע כאן.',
   watchlater: 'הרשימה ריקה. אפשר להוסיף סרטון דרך כפתור הסימנייה שמופיע על כל כרטיס.',
-  channel: 'לא נמצאו סרטונים מהערוץ הזה.'
+  channel: 'לא נמצאו סרטונים מהערוץ הזה.',
+  search: 'לא נמצאו סרטונים התואמים לחיפוש. נסה מילים אחרות.'
 };
 
 /* ============ URL ROUTING ============ */
@@ -520,6 +548,7 @@ window.addEventListener('load', () => {
   renderContent();
   updateNotifBadge();
   bindUI();
+  initVoiceSearch();
   initGoogleAuth();
   restoreSessionAndMaybeLoad();
 });
@@ -821,12 +850,88 @@ function openChannelPage(channelId) {
   updateUrl();
 }
 
+/* ============ SEARCH ============ */
+function matchesSearch(v, q) {
+  const needle = (q || '').trim().toLowerCase();
+  if (!needle) return false;
+  return (v.title || '').toLowerCase().includes(needle) || (v.channelTitle || '').toLowerCase().includes(needle);
+}
+
+function runSearch() {
+  const input = document.getElementById('search-input');
+  const q = (input.value || '').trim();
+  if (!q) return;
+  searchQuery = q;
+  section = 'search';
+  activeChannelFilter = null;
+  syncSidebarActiveClass();
+  activeInlineId = null;
+  renderChannels();
+  renderContent();
+}
+
+function clearSearch() {
+  searchQuery = '';
+  const input = document.getElementById('search-input');
+  if (input) input.value = '';
+  setSection('all', document.getElementById('n-all'));
+}
+
+let recognition = null;
+let listening = false;
+
+function initVoiceSearch() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const micBtn = document.getElementById('mic-btn');
+  if (!SR) {
+    if (micBtn) micBtn.style.display = 'none'; // הדפדפן לא תומך בחיפוש קולי
+    return;
+  }
+  recognition = new SR();
+  recognition.lang = 'he-IL';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+  recognition.onresult = function (e) {
+    const transcript = e.results[0][0].transcript;
+    const input = document.getElementById('search-input');
+    if (input) input.value = transcript;
+    runSearch();
+  };
+  recognition.onend = function () {
+    listening = false;
+    if (micBtn) micBtn.classList.remove('listening');
+  };
+  recognition.onerror = function () {
+    listening = false;
+    if (micBtn) micBtn.classList.remove('listening');
+  };
+}
+
+function toggleVoiceSearch() {
+  if (!recognition) return;
+  const micBtn = document.getElementById('mic-btn');
+  if (listening) {
+    recognition.stop();
+    listening = false;
+    if (micBtn) micBtn.classList.remove('listening');
+    return;
+  }
+  try {
+    recognition.start();
+    listening = true;
+    if (micBtn) micBtn.classList.add('listening');
+  } catch (e) {
+    // הזיהוי כבר רץ, או נכשל להתחיל
+  }
+}
+
 function applyChannelFilter(v) {
   return !activeChannelFilter || v.channelId === activeChannelFilter;
 }
 
 function getSectionVideos() {
   if (section === 'channel') return allVideos.filter(v => v.channelId === activeChannelFilter);
+  if (section === 'search') return allVideos.filter(v => matchesSearch(v, searchQuery));
   if (section === 'shorts') return allVideos.filter(v => v.isShort).filter(applyChannelFilter);
   if (section === 'following') return allVideos.filter(applyChannelFilter);
   if (section === 'liked') return likedVideos;
@@ -935,6 +1040,14 @@ function renderContent() {
           </div>
         </div>`;
     }
+  } else if (section === 'search') {
+    headerHtml = `
+      <div class="channel-header">
+        <div>
+          <div class="ch-name">תוצאות חיפוש: "${x(searchQuery)}"</div>
+          <div class="ch-sub">${vids.length} תוצאות · <span style="cursor:pointer;text-decoration:underline" onclick="clearSearch()">נקה חיפוש</span></div>
+        </div>
+      </div>`;
   }
 
   if (!vids.length) {
@@ -980,7 +1093,7 @@ function renderHomeSections(ct) {
 
   const sections = [];
 
-  const featured = byDate.slice(0, HOME_FEATURED_COUNT);
+  const featured = byDate.filter(v => !v.isShort).slice(0, HOME_FEATURED_COUNT);
   featured.forEach(v => usedIds.add(v.id));
   if (featured.length) sections.push({ id: 'shelf-featured', title: 'מומלץ', vids: featured, cls: 'vgrid' });
 
