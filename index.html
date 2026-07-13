@@ -377,7 +377,7 @@ const YT_SCOPE = 'https://www.googleapis.com/auth/youtube.readonly';
 // הדבק כאן את כתובת ה-Web App שקיבלת מפריסת Code.gs (ראה הוראות שם).
 // זהו שרת-ביניים שמעביר את הטוקן האישי שלך ל-YouTube API משרתי גוגל,
 // כדי לעקוף חסימת רשת מקומית (למשל NetFree) על googleapis.com.
-const APPS_SCRIPT_URL = 'https://sound.pythonanywhere.com/mytube';
+const APPS_SCRIPT_URL = 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
 
 const SEEN_KEY  = 'mytube_seen';        // {channelId: isoTimestamp}
 const CHANNELS_CACHE_KEY = 'mytube_channels_cache';
@@ -665,10 +665,11 @@ async function loadEverything(forceToast) {
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     if (data.error) {
-      if (/auth|token|credential|401|invalid/i.test(data.error)) {
+      if (typeof data.error === 'string' && data.error.indexOf('AUTH_EXPIRED::') === 0) {
         accessToken = null;
         clearStoredToken();
-        throw new Error('auth_expired');
+        const realMsg = data.error.slice('AUTH_EXPIRED::'.length);
+        throw new Error('AUTH_EXPIRED::' + realMsg);
       }
       throw new Error(data.error);
     }
@@ -689,12 +690,17 @@ async function loadEverything(forceToast) {
     if (forceToast) toast('הנתונים עודכנו');
   } catch (e) {
     console.error(e);
-    if (e && e.message === 'auth_expired') {
-      lastError = 'not_authenticated';
+    const msg = (e && e.message) || 'שגיאה בטעינת הנתונים';
+    if (msg.indexOf('AUTH_EXPIRED::') === 0) {
+      const realMsg = msg.slice('AUTH_EXPIRED::'.length) || 'פג תוקף ההתחברות';
       currentUser = null;
-      toast('פג תוקף ההתחברות, יש להתחבר מחדש');
+      // מציגים את ההודעה האמיתית מגוגל (לא רק "פג תוקף"), כדי שאפשר
+      // יהיה לאבחן את הסיבה האמיתית ל-401 במקום להניח תמיד שזה טוקן
+      // שפג.
+      lastError = 'שגיאת אימות מול Google: ' + realMsg;
+      toast('שגיאת אימות: ' + realMsg);
     } else {
-      lastError = (e && e.message) || 'שגיאה בטעינת הנתונים';
+      lastError = msg;
       toast('שגיאה בטעינת הנתונים');
     }
     renderContent();
