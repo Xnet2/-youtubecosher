@@ -283,6 +283,35 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
   .seg button{padding:7px 14px;}
 }
 
+/* CHANNELS PAGE */
+.chp{max-width:1100px;margin:0 auto;}
+.chp-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px;}
+.chp-head h1{font-size:24px;font-weight:800;letter-spacing:-.3px;line-height:1.2;}
+.chp-sub{font-size:13px;color:var(--txt3);margin-top:6px;}
+.chp-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.chp-search{display:flex;align-items:center;gap:8px;height:40px;padding:0 14px;border:1px solid var(--bg4);border-radius:20px;background:var(--bg);min-width:230px;transition:border-color var(--ease);}
+.chp-search:focus-within{border-color:var(--blue);}
+.chp-search svg{width:18px;height:18px;fill:var(--txt3);flex-shrink:0;}
+.chp-search input{flex:1;min-width:0;border:none;outline:none;background:transparent;color:var(--txt);font-family:'Rubik',sans-serif;font-size:14px;}
+.chp-search input::placeholder{color:var(--txt3);}
+.chp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;}
+.chp-card{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;cursor:pointer;transition:background var(--ease),border-color var(--ease);}
+.chp-card:hover{background:var(--bg3);border-color:var(--bg4);}
+.chp-av{position:relative;width:52px;height:52px;border-radius:50%;flex-shrink:0;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;}
+.chp-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.chp-new{position:absolute;top:0;right:0;width:12px;height:12px;border-radius:50%;background:var(--red);border:2px solid var(--bg2);}
+.chp-card:hover .chp-new{border-color:var(--bg3);}
+.chp-info{min-width:0;flex:1;}
+.chp-name{font-size:14.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.chp-meta{font-size:12px;color:var(--txt3);margin-top:4px;}
+.chp-empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--txt3);font-size:14px;}
+@media(max-width:760px){
+  .chp-head h1{font-size:21px;}
+  .chp-tools{width:100%;}
+  .chp-search{flex:1;min-width:0;}
+  .chp-grid{grid-template-columns:minmax(0,1fr);}
+}
+
 /* NETFREE: הסתרת סרטונים חסומים */
 .vcard.nf-hide{display:none;}
 .nf-note{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:9px 14px;margin-bottom:18px;font-size:12.5px;color:var(--txt2);}
@@ -399,8 +428,12 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
     <span class="ni"><svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.84 1.55V6.79a4.85 4.85 0 01-1.07-.1z"></path></svg></span>
     <span class="nl">Shorts</span>
   </div>
+  <div class="nitem" id="n-channels" onclick="setSection('channels',this)">
+    <span class="ni"><svg viewBox="0 0 24 24"><path d="M20 8H4V6h16v2zm-2-6H6v2h12V2zm4 10v8c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2v-8c0-1.1.9-2 2-2h16c1.1 0 2 .9 2 2zm-6 4l-6-3.27v6.53L16 16z"></path></svg></span>
+    <span class="nl">ערוצים</span>
+  </div>
   <div class="sb-div"></div>
-  <div class="sb-label" id="sb-label">ערוצים שלי</div>
+  <div class="sb-label" id="sb-label">ערוצים אחרונים</div>
   <div id="sb-chs"></div>
   <div class="sb-div"></div>
   <div class="nitem" id="n-personal" onclick="setSection('personal',this)" style="display:none">
@@ -459,6 +492,7 @@ const WATCH_HISTORY_KEY = 'mytube_watch_history';
 const WATCH_LATER_KEY = 'mytube_watch_later';
 const LIKED_KEY = 'mytube_liked';
 const INLINE_MODE_KEY = 'mytube_inline_mode';
+const SB_CH_KEY = 'mytube_sidebar_channels';
 const TOKEN_KEY = 'mytube_gtoken'; // sessionStorage: {access_token, expires_at}
 
 let currentUser = null;      // {name, picture, channelId}
@@ -471,6 +505,9 @@ let section = 'all';         // all | shorts | following | liked | recommended |
 let activeChannelFilter = null;
 let searchQuery = '';
 let inlineMode = false;
+let sidebarChannelCount = 8;   // כמה ערוצים אחרונים מוצגים בתפריט הצד
+let channelsSort = 'recent';   // recent | name (דף הערוצים)
+let channelsQuery = '';
 let activeInlineId = null;
 let loading = false;
 let lastError = null;
@@ -496,6 +533,7 @@ const SECTION_PATH = {
   watchlater: 'לצפייה-מאוחרת',
   shorts: 'שורטס',
   personal: 'אזור-אישי',
+  channels: 'ערוצים',
   settings: 'הגדרות'
 };
 const PATH_SECTION = Object.keys(SECTION_PATH).reduce(function (acc, k) {
@@ -584,6 +622,7 @@ window.addEventListener('load', () => {
   loadCachedVideos();
   loadCachedMe();
   loadLocalLists();
+  { const n = Number(localStorage.getItem(SB_CH_KEY)); sidebarChannelCount = [5, 8, 12].includes(n) ? n : 8; }
   inlineMode = localStorage.getItem(INLINE_MODE_KEY) === '1';
   updateInlineToggleUI();
   netfreeMode = localStorage.getItem(NETFREE_MODE_KEY) === '1';
@@ -763,7 +802,7 @@ function nfVisible(list) { return hideBlockedMode && netfreeMode ? list.filter(v
 
 // כל הסרטונים שהסעיף הנוכחי עשוי להציג (לפני הסתרה)
 function nfPool() {
-  if (section === 'settings' || (section === 'all' && !activeChannelFilter)) return allVideos;
+  if (section === 'settings' || section === 'channels' || (section === 'all' && !activeChannelFilter)) return allVideos;
   return getSectionVideosRaw();
 }
 function nfHiddenCount() {
@@ -972,7 +1011,7 @@ async function runNetfreeCheck(fresh) {
 const _renderContentBase = renderContent;
 renderContent = function () {
   const r = _renderContentBase.apply(this, arguments);
-  if (section !== 'settings') {
+  if (section !== 'settings' && section !== 'channels') {
     const note = nfNoteHtml();
     if (note) document.getElementById('content').insertAdjacentHTML('afterbegin', note);
   }
@@ -1216,16 +1255,39 @@ function toggleUserMenu(force) {
 }
 
 /* ============ RENDER: SIDEBAR CHANNELS ============ */
+// לכל ערוץ: מתי עלה ממנו הסרטון האחרון וכמה סרטונים יש בפיד (בהתאם להסתרת סרטונים חסומים)
+function channelStats() {
+  const last = {}, count = {};
+  nfVisible(allVideos).forEach(v => {
+    const t = Date.parse(v.publishedAt) || 0;
+    count[v.channelId] = (count[v.channelId] || 0) + 1;
+    if (!(v.channelId in last) || t > last[v.channelId]) last[v.channelId] = t;
+  });
+  return { last, count };
+}
+
+function recentChannels(n) {
+  const { last } = channelStats();
+  return channels
+    .filter(c => c.id in last)
+    .sort((a, b) => last[b.id] - last[a.id])
+    .slice(0, n);
+}
+
 function renderChannels() {
   const list = document.getElementById('sb-chs');
   const label = document.getElementById('sb-label');
+  label.textContent = 'ערוצים אחרונים';
   if (!channels.length) {
-    label.textContent = 'ערוצים שלי';
     list.innerHTML = `<div class="sb-empty">${lastError ? 'לא ניתן לטעון ערוצים כרגע.' : 'טוען ערוצים...'}</div>`;
     return;
   }
-  label.textContent = `ערוצים שלי (${channels.length})`;
-  list.innerHTML = channels.map(c => {
+  const recent = recentChannels(sidebarChannelCount);
+  if (!recent.length) {
+    list.innerHTML = `<div class="sb-empty">אין עדיין סרטונים חדשים מהערוצים שלך.</div>`;
+    return;
+  }
+  list.innerHTML = recent.map(c => {
     const hasNew = channelHasNew(c.id);
     return `
     <div class="chitem ${activeChannelFilter === c.id ? 'active' : ''}" onclick="filterByChannel('${x(c.id)}')" title="${x(c.title)}">
@@ -1439,6 +1501,8 @@ function renderContent() {
       </div>`;
     return;
   }
+
+  if (section === 'channels') { renderChannelsPage(ct); return; }
 
   if (lastError && !allVideos.length && ['all','following','shorts','channel'].includes(section)) {
     ct.innerHTML = `
@@ -1893,6 +1957,80 @@ function hardReload() {
   location.reload();
 }
 
+/* ============ CHANNELS PAGE ============ */
+const CHP_SEARCH_ICON = 'M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z';
+
+function renderChannelsPage(ct) {
+  if (!channels.length) {
+    ct.innerHTML = `
+      <div class="empty">
+        <div class="eico"><svg viewBox="0 0 24 24"><path d="M20 8H4V6h16v2zm-2-6H6v2h12V2zm4 10v8c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2v-8c0-1.1.9-2 2-2h16c1.1 0 2 .9 2 2zm-6 4l-6-3.27v6.53L16 16z"/></svg></div>
+        <h3>אין ערוצים להצגה</h3>
+        <p>${loading ? 'טוען את הערוצים שלך...' : 'הערוצים שאתה עוקב אחריהם יופיעו כאן אחרי שהאתר יטען את המנויים שלך.'}</p>
+      </div>`;
+    return;
+  }
+  ct.innerHTML = `
+    <div class="chp">
+      <div class="chp-head">
+        <div>
+          <h1>ערוצים</h1>
+          <div class="chp-sub" id="chp-count"></div>
+        </div>
+        <div class="chp-tools">
+          <div class="chp-search">
+            <svg viewBox="0 0 24 24"><path d="${CHP_SEARCH_ICON}"/></svg>
+            <input id="chp-q" type="text" placeholder="חיפוש ערוץ" autocomplete="off" value="${x(channelsQuery)}" oninput="setChannelsQuery(this.value)">
+          </div>
+          <div class="seg" id="chp-sort">
+            <button data-sort="recent" onclick="setChannelsSort('recent')">פעילות אחרונה</button>
+            <button data-sort="name" onclick="setChannelsSort('name')">שם</button>
+          </div>
+        </div>
+      </div>
+      <div class="chp-grid" id="chp-grid"></div>
+    </div>`;
+  renderChannelsGrid();
+}
+
+function renderChannelsGrid() {
+  const grid = document.getElementById('chp-grid');
+  if (!grid) return;
+  const { last, count } = channelStats();
+  const q = channelsQuery.trim().toLowerCase();
+  const list = channels.filter(c => !q || (c.title || '').toLowerCase().includes(q));
+  const byName = (a, b) => (a.title || '').localeCompare(b.title || '', 'he');
+  if (channelsSort === 'name') list.sort(byName);
+  else list.sort((a, b) => ((last[b.id] || 0) - (last[a.id] || 0)) || byName(a, b));
+
+  document.querySelectorAll('#chp-sort button').forEach(b => b.classList.toggle('on', b.dataset.sort === channelsSort));
+  const cnt = document.getElementById('chp-count');
+  if (cnt) cnt.textContent = q ? list.length + ' מתוך ' + channels.length + ' ערוצים' : channels.length + ' ערוצים';
+
+  if (!list.length) {
+    grid.innerHTML = '<div class="chp-empty">לא נמצאו ערוצים התואמים לחיפוש.</div>';
+    return;
+  }
+  grid.innerHTML = list.map(c => {
+    const n = count[c.id] || 0;
+    const meta = n ? n + ' סרטונים · ' + timeAgo(last[c.id]) : 'אין סרטונים להצגה';
+    return `
+    <div class="chp-card" onclick="openChannelPage('${x(c.id)}')" title="${x(c.title)}">
+      <div class="chp-av">
+        ${c.thumb ? `<img src="${x(c.thumb)}" loading="lazy">` : x((c.title || '?').slice(0, 2))}
+        ${channelHasNew(c.id) ? '<span class="chp-new"></span>' : ''}
+      </div>
+      <div class="chp-info">
+        <div class="chp-name">${x(c.title)}</div>
+        <div class="chp-meta">${meta}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setChannelsQuery(v) { channelsQuery = v || ''; renderChannelsGrid(); }
+function setChannelsSort(s) { channelsSort = s === 'name' ? 'name' : 'recent'; renderChannelsGrid(); }
+
 /* ============ SETTINGS PAGE ============ */
 let settingsTab = 'display';
 
@@ -1932,7 +2070,9 @@ function renderSettingsPage(ct) {
       spRow('ערכת נושא', 'בחר בין מראה כהה למראה בהיר. אפשר להחליף גם דרך הכפתור בסרגל העליון.',
         `<div class="seg" id="sp-theme"><button data-theme="dark" onclick="setTheme('dark')">כהה</button><button data-theme="light" onclick="setTheme('light')">בהיר</button></div>`) +
       spRow('תפריט צד מכווץ', 'מציג רק אייקונים בתפריט הצד ומפנה יותר מקום לתוכן. חל על מסכים רחבים.',
-        spSwitch('sw-sidebar', 'תפריט צד מכווץ', 'toggleSidebarCol()'))
+        spSwitch('sw-sidebar', 'תפריט צד מכווץ', 'toggleSidebarCol()')) +
+      spRow('ערוצים בתפריט הצד', 'כמה ערוצים אחרונים, כאלה שעלה מהם סרטון, יוצגו בתפריט הצד. את כל הערוצים אפשר לראות בדף "ערוצים".',
+        `<div class="seg" id="sp-sbn"><button data-n="5" onclick="setSidebarChannelCount(5)">5</button><button data-n="8" onclick="setSidebarChannelCount(8)">8</button><button data-n="12" onclick="setSidebarChannelCount(12)">12</button></div>`)
     ) +
     spCard('צפייה',
       spRow('נגן מוטמע בדף', 'הסרטון מתנגן ישירות בתוך הכרטיס, ובדף הבית הכרטיסים מוגדלים. כשהאפשרות כבויה, הסרטון נפתח בחלון נפרד.',
@@ -1973,7 +2113,7 @@ function renderSettingsPage(ct) {
       clearRow('later', 'רשימת "לצפייה מאוחרת"', 'סרטונים שהוספת בסימנייה. נשמרת בדפדפן הזה בלבד.')
     ) +
     spCard('איפוס',
-      spRow('איפוס הגדרות', 'מחזיר את ערכת הנושא, תפריט הצד, הנגן המוטמע ומצב נטפרי לברירת המחדל. הנתונים המקומיים לא נמחקים.',
+      spRow('איפוס הגדרות', 'מחזיר את ערכת הנושא, תפריט הצד, מספר הערוצים בו, הנגן המוטמע ומצב נטפרי לברירת המחדל. הנתונים המקומיים לא נמחקים.',
         '<button class="sp-btn" data-label="אפס" onclick="spReset(this)">אפס</button>')
     );
 
@@ -2029,6 +2169,7 @@ function updateSettingsLive() {
   const dark = document.body.classList.contains('dark');
   document.querySelectorAll('#sp-theme button').forEach(b => b.classList.toggle('on', (b.dataset.theme === 'dark') === dark));
   spSw('sw-sidebar', document.getElementById('sidebar').classList.contains('col'), false);
+  document.querySelectorAll('#sp-sbn button').forEach(b => b.classList.toggle('on', Number(b.dataset.n) === sidebarChannelCount));
   spSw('sw-inline', inlineMode, false);
   spSw('sw-netfree', netfreeMode, !extMode);
   spSw('sw-nfhide', hideBlockedMode && netfreeMode, !extMode);
@@ -2073,6 +2214,12 @@ function setSidebarCol(on) {
   localStorage.setItem(SIDEBAR_KEY, on ? '1' : '0');
   updateSettingsLive();
 }
+function setSidebarChannelCount(n) {
+  sidebarChannelCount = [5, 8, 12].includes(n) ? n : 8;
+  localStorage.setItem(SB_CH_KEY, String(sidebarChannelCount));
+  renderChannels();
+  updateSettingsLive();
+}
 function toggleSidebarCol() {
   setSidebarCol(!document.getElementById('sidebar').classList.contains('col'));
 }
@@ -2105,6 +2252,7 @@ function spReset(btn) { spArm(btn, resetSettings); }
 function resetSettings() {
   setTheme('dark');
   setSidebarCol(false);
+  setSidebarChannelCount(8);
   if (inlineMode) toggleInlineMode();
   hideBlockedMode = false;
   localStorage.setItem(NF_HIDE_KEY, '0');
