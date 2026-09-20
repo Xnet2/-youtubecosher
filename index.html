@@ -674,6 +674,22 @@ async function loadFromExtension(forceToast) {
   }
 }
 
+/* ============ THUMBNAILS ============ */
+// מ-RSS מגיעה תמונה קטנה (320px), וזה מה שגרם לטשטוש. מבקשים תמונה גדולה
+// יותר ישירות משרתי התמונות של יוטיוב, עם נסיגה אוטומטית כשאין כזו לסרטון
+// (maxres לא קיימת בסרטונים ישנים או באיכות נמוכה).
+// לחיסכון בתעבורה אפשר להוריד את 'maxresdefault' מתחילת הרשימה.
+const THUMB_CHAIN = ['maxresdefault', 'sddefault', 'hqdefault', 'mqdefault'];
+const THUMB_BASE = 'https://i.ytimg.com/vi/';
+function thumbSrc(id, q) { return THUMB_BASE + encodeURIComponent(id) + '/' + THUMB_CHAIN[q] + '.jpg'; }
+function thumbNext(img) {
+  const q = (+img.dataset.q || 0) + 1;
+  if (q < THUMB_CHAIN.length) { img.dataset.q = q; img.src = thumbSrc(img.dataset.vid, q); }
+  else img.style.opacity = 0;
+}
+// כשחסרה תמונה, יוטיוב מחזיר תמונת מקום קטנה (120px) ולא שגיאה
+function thumbLoaded(img) { if (img.naturalWidth > 0 && img.naturalWidth <= 120) thumbNext(img); }
+
 /* ============ NETFREE MODE ============ */
 // מסמן נקודה ירוקה על כל סרטון שפתוח בנטפרי. הבדיקה מתבצעת בתוסף
 // (MyTube Bridge), רק לסרטונים שמוצגים כרגע, ותוצאות נשמרות ב-cache.
@@ -1375,7 +1391,7 @@ const HEART_ICON_SVG = '<svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5
 
 function thumbInnerHtml(v) {
   const isNew = isVideoNew(v);
-  return `<img src="${x(v.thumb || '')}" loading="lazy" onerror="this.style.opacity=0">
+  return `<img src="${x(v.id ? thumbSrc(v.id, 0) : (v.thumb || ''))}" data-vid="${x(v.id || '')}" data-q="0" loading="lazy" onload="thumbLoaded(this)" onerror="thumbNext(this)">
       ${v.isShort ? `<span class="short-flag" title="שורטס">${SHORT_ICON_SVG}</span>` : (v.seconds ? `<span class="vdur">${fmtDuration(v.seconds)}</span>` : '')}
       ${netfreeMode && nfStatus[v.id] === 'open' ? NF_DOT_HTML : ''}
       ${isNew ? '<span class="new-flag">חדש</span>' : ''}
