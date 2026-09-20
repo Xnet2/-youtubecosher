@@ -177,6 +177,8 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 .vdur{position:absolute;bottom:6px;left:6px;background:rgba(0,0,0,.8);color:#fff;font-size:11px;font-weight:600;padding:2px 6px;border-radius:4px;}
 .short-flag{position:absolute;top:8px;right:8px;width:24px;height:24px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;}
 .short-flag svg{width:13px;height:13px;fill:#fff;}
+.nf-dot{position:absolute;top:8px;right:8px;width:12px;height:12px;border-radius:50%;background:#22c55e;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25),0 1px 4px rgba(0,0,0,.4);z-index:2;}
+.short-flag ~ .nf-dot{right:38px;}
 .new-flag{position:absolute;top:8px;left:8px;background:var(--blue);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:12px;}
 .wl-btn{position:absolute;bottom:6px;right:6px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.6);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,transform .15s;z-index:2;}
 .wl-btn svg{width:14px;height:14px;fill:#fff;}
@@ -379,6 +381,10 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
       <button class="st-btn" id="inline-mode-toggle" onclick="toggleInlineMode()">כבוי</button>
     </div>
     <div class="st-row">
+      <span>מצב נטפרי (סימון ירוק לסרטון פתוח)</span>
+      <button class="st-btn" id="netfree-toggle" onclick="toggleNetfreeMode()">כבוי</button>
+    </div>
+    <div class="st-row">
       <span>רענון נתונים</span>
       <button class="st-btn refresh-btn" id="refresh-btn" onclick="manualRefresh()">
         <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08a5.99 5.99 0 01-5.65 4c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
@@ -544,6 +550,8 @@ window.addEventListener('load', () => {
   loadLocalLists();
   inlineMode = localStorage.getItem(INLINE_MODE_KEY) === '1';
   updateInlineToggleUI();
+  netfreeMode = localStorage.getItem(NETFREE_MODE_KEY) === '1';
+  updateNetfreeToggleUI();
   renderAuthArea();
   renderChannels();
   syncSidebarActiveClass();
@@ -557,6 +565,8 @@ window.addEventListener('load', () => {
       extMode = true;
       loadFromExtension(false);
     } else {
+      netfreeMode = false;
+      updateNetfreeToggleUI();
       initGoogleAuth();
       restoreSessionAndMaybeLoad();
     }
@@ -600,12 +610,12 @@ window.addEventListener('message', (e) => {
   if (d.ok) p.resolve(d.data); else p.reject(new Error(d.error || 'EXT_ERROR'));
 });
 
-function extCall(type, timeoutMs) {
+function extCall(type, timeoutMs, payload) {
   return new Promise((resolve, reject) => {
     const id = ++extSeq;
     const timer = setTimeout(() => { extPending.delete(id); reject(new Error('EXT_TIMEOUT')); }, timeoutMs || 180000);
     extPending.set(id, { resolve, reject, timer });
-    window.postMessage({ source: 'mytube-page', id, type }, window.location.origin);
+    window.postMessage(Object.assign({ source: 'mytube-page', id, type }, payload || {}), window.location.origin);
   });
 }
 
@@ -635,6 +645,7 @@ function applyExtData(d) {
 
 async function loadFromExtension(forceToast) {
   if (loading) return;
+  if (forceToast) { for (const id in nfStatus) if (nfStatus[id] !== 'open') delete nfStatus[id]; }
   loading = true;
   lastError = null;
   setRefreshSpin(true);
@@ -662,6 +673,95 @@ async function loadFromExtension(forceToast) {
     setRefreshSpin(false);
   }
 }
+
+/* ============ NETFREE MODE ============ */
+// מסמן נקודה ירוקה על כל סרטון שפתוח בנטפרי. הבדיקה מתבצעת בתוסף
+// (MyTube Bridge), רק לסרטונים שמוצגים כרגע, ותוצאות נשמרות ב-cache.
+const NETFREE_MODE_KEY = 'mytube_netfree_mode';
+const NF_BATCH = 12;
+const NF_DOT_HTML = '<span class="nf-dot" title="פתוח בנטפרי"></span>';
+let netfreeMode = false;
+const nfStatus = {};          // videoId -> 'open' | 'blocked'
+let nfTimer = null, nfRunning = false, nfRerun = false;
+
+function updateNetfreeToggleUI() {
+  const btn = document.getElementById('netfree-toggle');
+  if (!btn) return;
+  btn.textContent = netfreeMode ? 'מופעל' : 'כבוי';
+  btn.classList.toggle('on', netfreeMode);
+}
+
+function removeNetfreeDots() {
+  document.querySelectorAll('.nf-dot').forEach(el => el.remove());
+}
+
+function markNetfreeDots() {
+  document.querySelectorAll('[id^="thumb-"]').forEach(w => {
+    const open = netfreeMode && nfStatus[w.id.slice(6)] === 'open';
+    const dot = w.querySelector('.nf-dot');
+    if (open && !dot) w.insertAdjacentHTML('beforeend', NF_DOT_HTML);
+    else if (!open && dot) dot.remove();
+  });
+}
+
+function toggleNetfreeMode() {
+  if (!netfreeMode) {
+    if (!extMode) { toast('מצב נטפרי דורש את התוסף MyTube Bridge'); return; }
+    netfreeMode = true;
+    localStorage.setItem(NETFREE_MODE_KEY, '1');
+    updateNetfreeToggleUI();
+    toast('בודק אילו סרטונים פתוחים בנטפרי...');
+    scheduleNetfreeCheck(true);
+  } else {
+    netfreeMode = false;
+    localStorage.setItem(NETFREE_MODE_KEY, '0');
+    updateNetfreeToggleUI();
+    removeNetfreeDots();
+  }
+}
+
+function scheduleNetfreeCheck(fresh) {
+  if (!netfreeMode || !extMode) return;
+  clearTimeout(nfTimer);
+  nfTimer = setTimeout(() => runNetfreeCheck(!!fresh), 400);
+}
+
+async function runNetfreeCheck(fresh) {
+  if (nfRunning) { nfRerun = true; return; }
+  nfRunning = true;
+  try {
+    markNetfreeDots();
+    const ids = [...new Set(
+      [...document.querySelectorAll('[id^="thumb-"]')].map(w => w.id.slice(6)).filter(id => nfStatus[id] === undefined)
+    )];
+    for (let i = 0; i < ids.length && netfreeMode; i += NF_BATCH) {
+      const r = await extCall('NF_CHECK', 90000, { ids: ids.slice(i, i + NF_BATCH), fresh: !!fresh && i === 0 });
+      if (!r || r.netfree === false) {
+        netfreeMode = false;
+        localStorage.setItem(NETFREE_MODE_KEY, '0');
+        updateNetfreeToggleUI();
+        removeNetfreeDots();
+        toast('לא זוהה סינון נטפרי בדפדפן הזה');
+        break;
+      }
+      for (const id in r.results) if (r.results[id] !== 'error') nfStatus[id] = r.results[id];
+      markNetfreeDots();
+    }
+  } catch (e) {
+    toast('בדיקת נטפרי נכשלה — ודא שהתוסף מעודכן');
+  } finally {
+    nfRunning = false;
+    if (nfRerun) { nfRerun = false; scheduleNetfreeCheck(); }
+  }
+}
+
+// כל רינדור מחדש של התוכן מפעיל בדיקה לסרטונים החדשים שמוצגים
+const _renderContentBase = renderContent;
+renderContent = function () {
+  const r = _renderContentBase.apply(this, arguments);
+  scheduleNetfreeCheck();
+  return r;
+};
 
 /* ============ GOOGLE SIGN-IN (client-side OAuth, no backend) ============ */
 // כל משתמש מתחבר עם חשבון הגוגל שלו ישירות מהדפדפן (ללא שרת
@@ -1277,6 +1377,7 @@ function thumbInnerHtml(v) {
   const isNew = isVideoNew(v);
   return `<img src="${x(v.thumb || '')}" loading="lazy" onerror="this.style.opacity=0">
       ${v.isShort ? `<span class="short-flag" title="שורטס">${SHORT_ICON_SVG}</span>` : (v.seconds ? `<span class="vdur">${fmtDuration(v.seconds)}</span>` : '')}
+      ${netfreeMode && nfStatus[v.id] === 'open' ? NF_DOT_HTML : ''}
       ${isNew ? '<span class="new-flag">חדש</span>' : ''}
       <button class="like-btn ${isLiked(v.id) ? 'on' : ''}" data-vid="${x(v.id)}" onclick="event.stopPropagation();toggleLiked('${x(v.id)}')" title="אהבתי">
         ${HEART_ICON_SVG}
