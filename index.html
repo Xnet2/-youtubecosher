@@ -7,7 +7,7 @@
 <link rel="icon" type="image/png" href="https://res.cloudinary.com/xgh73omp/image/upload/v1789899855/g1iwo09mhtzmmntgey9e.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;800&family=Rubik:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 body.light {
   --bg:#ffffff; --bg2:#f6f7f9; --bg3:#eceff4; --bg4:#dbe0e8;
@@ -29,10 +29,10 @@ body.dark {
   --topbar:rgba(15,15,15,.86);
   --tint:rgba(255,0,0,.16);
 }
-:root{--red:#ff0000;--red2:#cc0000;--blue:#3ea6ff;--sw:240px;--sc:72px;--th:56px;--ease:0.2s cubic-bezier(0.4,0,0.2,1);--font:'Rubik',system-ui,sans-serif;--font-display:'Frank Ruhl Libre','Rubik',Georgia,serif;}
+:root{--red:#ff0000;--red2:#cc0000;--blue:#3ea6ff;--sw:240px;--sc:72px;--th:56px;--ease:0.2s cubic-bezier(0.4,0,0.2,1);--font:'Rubik',system-ui,-apple-system,'Segoe UI',sans-serif;--font-display:'Rubik',system-ui,-apple-system,'Segoe UI',sans-serif;}
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overflow-x:hidden;min-height:100vh;transition:background .2s,color .2s;}
+body{background:var(--bg);color:var(--txt);font-family:var(--font);overflow-x:hidden;min-height:100vh;transition:background .2s,color .2s;}
 
 /* TOPBAR */
 #topbar{position:fixed;top:0;left:0;right:0;height:var(--th);background:var(--topbar);display:flex;align-items:center;padding:0 16px;gap:10px;z-index:200;border-bottom:1px solid var(--border);backdrop-filter:saturate(180%) blur(14px);-webkit-backdrop-filter:saturate(180%) blur(14px);}
@@ -49,7 +49,7 @@ body.dark .logo-img{filter:invert(1) hue-rotate(180deg) saturate(6);}
 .search-wrap{display:flex;align-items:center;gap:10px;flex:1;max-width:600px;margin:0 24px;min-width:0;}
 .search-box{display:flex;align-items:center;flex:1;height:40px;border:1px solid var(--border);border-radius:999px;overflow:hidden;background:var(--bg2);min-width:0;transition:border-color var(--ease),background var(--ease),box-shadow var(--ease);}
 .search-box:focus-within{background:var(--bg);border-color:var(--bg4);box-shadow:0 0 0 4px var(--tint);}
-.search-input{flex:1;min-width:0;height:100%;background:transparent;color:var(--txt);border:none;padding:0 16px;font-size:14px;font-family:'Rubik',sans-serif;outline:none;}
+.search-input{flex:1;min-width:0;height:100%;background:transparent;color:var(--txt);border:none;padding:0 16px;font-size:14px;font-family:var(--font);outline:none;}
 .search-input::placeholder{color:var(--txt3);}
 .search-go{width:52px;height:100%;flex-shrink:0;background:var(--bg3);border:none;border-inline-start:1px solid var(--bg4);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txt2);transition:background var(--ease);}
 .search-go:hover{background:var(--bg4);}
@@ -62,7 +62,7 @@ body.dark .logo-img{filter:invert(1) hue-rotate(180deg) saturate(6);}
 @media(max-width:900px){.search-wrap{display:none;}}
 
 /* SIGN IN / USER CHIP */
-.yt-login-btn{background:var(--red);color:#fff;border:none;border-radius:20px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Rubik',sans-serif;display:flex;align-items:center;gap:7px;transition:background var(--ease);flex-shrink:0;}
+.yt-login-btn{background:var(--red);color:#fff;border:none;border-radius:20px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);display:flex;align-items:center;gap:7px;transition:background var(--ease);flex-shrink:0;}
 .yt-login-btn:hover{background:var(--red2);}
 .yt-login-btn svg{width:16px;height:16px;}
 .yt-user-chip{display:flex;align-items:center;gap:7px;background:var(--bg3);border:1px solid var(--bg4);border-radius:20px;padding:3px 12px 3px 3px;cursor:pointer;transition:background var(--ease);}
@@ -84,7 +84,7 @@ body.dark .logo-img{filter:invert(1) hue-rotate(180deg) saturate(6);}
 #notif-panel{position:fixed;top:calc(var(--th) + 8px);left:60px;width:340px;max-height:70vh;overflow-y:auto;background:var(--bg2);border:1px solid var(--bg4);border-radius:12px;box-shadow:0 8px 32px var(--shadow);z-index:300;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;transform:translateY(-8px);}
 #notif-panel.open{opacity:1;pointer-events:all;transform:translateY(0);}
 .np-hdr{padding:12px 16px;font-size:14px;font-weight:700;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2);display:flex;align-items:center;justify-content:space-between;gap:10px;}
-.np-hdr-btn{background:var(--bg3);border:1px solid var(--bg4);color:var(--txt2);border-radius:14px;padding:5px 10px;font-size:11px;font-weight:500;cursor:pointer;font-family:'Rubik',sans-serif;white-space:nowrap;transition:background var(--ease);}
+.np-hdr-btn{background:var(--bg3);border:1px solid var(--bg4);color:var(--txt2);border-radius:14px;padding:5px 10px;font-size:11px;font-weight:500;cursor:pointer;font-family:var(--font);white-space:nowrap;transition:background var(--ease);}
 .np-hdr-btn:hover{background:var(--bg4);color:var(--txt);}
 .np-item{display:flex;gap:10px;padding:10px 14px;cursor:pointer;transition:background var(--ease);border-bottom:1px solid var(--border);}
 .np-item:hover{background:var(--bg3);}
@@ -131,7 +131,7 @@ body.dark .logo-img{filter:invert(1) hue-rotate(180deg) saturate(6);}
 
 /* FILTER CHIPS / TOOLBAR */
 .filter-chips{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;align-items:center;}
-.fchip{background:var(--bg3);border:1px solid var(--bg4);color:var(--txt2);border-radius:20px;padding:7px 16px;font-size:13px;font-weight:500;cursor:pointer;font-family:'Rubik',sans-serif;transition:all var(--ease);white-space:nowrap;display:flex;align-items:center;gap:6px;}
+.fchip{background:var(--bg3);border:1px solid var(--bg4);color:var(--txt2);border-radius:20px;padding:7px 16px;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--font);transition:all var(--ease);white-space:nowrap;display:flex;align-items:center;gap:6px;}
 .fchip:hover{border-color:var(--red);color:var(--red);}
 .fchip.on{background:var(--red);border-color:var(--red);color:#fff;}
 .fchip svg{width:14px;height:14px;fill:currentColor;}
@@ -141,24 +141,24 @@ body.dark .logo-img{filter:invert(1) hue-rotate(180deg) saturate(6);}
 .refresh-btn svg{width:15px;height:15px;fill:currentColor;}
 .refresh-btn.spin svg{animation:spin 1s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
-.section-title{font-family:var(--font-display);font-size:21px;font-weight:700;margin-bottom:14px;}
+.section-title{font-family:var(--font-display);font-size:20px;font-weight:700;letter-spacing:-.015em;margin-bottom:14px;}
 
 /* ============ HOME PAGE ============ */
 .home-top{display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap;margin:0 0 26px;}
-.home-greet{font-family:var(--font-display);font-size:32px;font-weight:700;line-height:1.15;color:var(--txt);}
+.home-greet{font-family:var(--font-display);font-size:30px;font-weight:700;letter-spacing:-.025em;line-height:1.2;color:var(--txt);}
 .home-sub{margin-top:7px;font-size:13.5px;color:var(--txt2);}
 .home-sub strong{font-weight:600;color:var(--txt);}
 .home-top .refresh-btn{margin-inline-start:auto;margin-bottom:3px;}
 
 /* ---- spotlight ---- */
 .spot{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);background:var(--spot);border:1px solid var(--border);border-radius:22px;overflow:hidden;margin-bottom:30px;}
-.spot-media{position:relative;aspect-ratio:16/9;background:var(--bg3);cursor:pointer;overflow:hidden;}
+.spot-media{position:relative;aspect-ratio:16/9;background:var(--bg3);cursor:pointer;overflow:hidden;border-radius:0 22px 22px 0;}
 .spot-media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s cubic-bezier(.2,.7,.3,1);}
 .spot:hover .spot-media img{transform:scale(1.04);}
 .spot-body{padding:28px 30px;display:flex;flex-direction:column;justify-content:center;gap:14px;min-width:0;}
 .spot-tag{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--red);}
 .spot-tag i{width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 0 4px var(--tint);}
-.spot-title{font-family:var(--font-display);font-size:27px;font-weight:700;line-height:1.3;color:var(--txt);cursor:pointer;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.spot-title{font-family:var(--font-display);font-size:25px;font-weight:700;letter-spacing:-.02em;line-height:1.35;color:var(--txt);cursor:pointer;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
 .spot-ch{display:flex;align-items:center;gap:11px;min-width:0;}
 .spot-ch .vav{width:38px;height:38px;}
 .spot-ch-n{font-size:14px;font-weight:600;color:var(--txt);cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -190,7 +190,7 @@ body.dark .logo-img{filter:invert(1) hue-rotate(180deg) saturate(6);}
 .home-section{margin-bottom:40px;}
 .home-section:last-child{margin-bottom:0;}
 .home-head{display:flex;align-items:baseline;gap:11px;margin-bottom:15px;}
-.home-section-title{font-family:var(--font-display);font-size:22px;font-weight:700;line-height:1.2;color:var(--txt);}
+.home-section-title{font-family:var(--font-display);font-size:20px;font-weight:700;letter-spacing:-.02em;line-height:1.25;color:var(--txt);}
 .home-count{font-size:12.5px;color:var(--txt3);}
 .home-head-nav{margin-inline-start:auto;display:flex;gap:7px;align-self:center;}
 .shelf-nav{width:34px;height:34px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--txt2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background var(--ease),color var(--ease),border-color var(--ease);}
@@ -278,7 +278,7 @@ body.dark .logo-img{filter:invert(1) hue-rotate(180deg) saturate(6);}
 .sp-head p{font-size:13px;color:var(--txt3);margin-top:6px;line-height:1.6;}
 .sp-layout{display:grid;grid-template-columns:210px minmax(0,1fr);gap:28px;align-items:start;}
 .sp-nav{position:sticky;top:calc(var(--th) + 18px);display:flex;flex-direction:column;gap:4px;}
-.sp-tab{display:flex;align-items:center;gap:12px;height:44px;padding:0 14px;border-radius:12px;border:none;background:none;color:var(--txt2);font-family:'Rubik',sans-serif;font-size:14px;font-weight:500;cursor:pointer;text-align:start;transition:background var(--ease),color var(--ease);}
+.sp-tab{display:flex;align-items:center;gap:12px;height:44px;padding:0 14px;border-radius:12px;border:none;background:none;color:var(--txt2);font-family:var(--font);font-size:14px;font-weight:500;cursor:pointer;text-align:start;transition:background var(--ease),color var(--ease);}
 .sp-tab:hover{background:var(--bg3);color:var(--txt);}
 .sp-tab.on{background:var(--bg3);color:var(--txt);font-weight:600;}
 .sp-tab.on svg{color:var(--red);}
@@ -301,9 +301,9 @@ body.dark .logo-img{filter:invert(1) hue-rotate(180deg) saturate(6);}
 .sw[aria-checked="true"]::after{inset-inline-start:23px;}
 .sw:disabled{opacity:.4;cursor:not-allowed;}
 .seg{display:inline-flex;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:3px;gap:2px;flex-shrink:0;}
-.seg button{border:none;background:none;color:var(--txt2);font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:7px 20px;border-radius:9px;cursor:pointer;transition:background var(--ease),color var(--ease);}
+.seg button{border:none;background:none;color:var(--txt2);font-family:var(--font);font-size:13px;font-weight:500;padding:7px 20px;border-radius:9px;cursor:pointer;transition:background var(--ease),color var(--ease);}
 .seg button.on{background:var(--bg);color:var(--txt);font-weight:600;box-shadow:0 1px 4px var(--shadow);}
-.sp-btn{background:var(--bg3);border:1px solid var(--bg4);color:var(--txt);border-radius:18px;padding:8px 16px;font-size:13px;font-weight:500;font-family:'Rubik',sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:7px;white-space:nowrap;flex-shrink:0;transition:background var(--ease),border-color var(--ease),color var(--ease);}
+.sp-btn{background:var(--bg3);border:1px solid var(--bg4);color:var(--txt);border-radius:18px;padding:8px 16px;font-size:13px;font-weight:500;font-family:var(--font);cursor:pointer;display:inline-flex;align-items:center;gap:7px;white-space:nowrap;flex-shrink:0;transition:background var(--ease),border-color var(--ease),color var(--ease);}
 .sp-btn:hover{background:var(--bg4);}
 .sp-btn svg{width:15px;height:15px;fill:currentColor;}
 .sp-btn.danger{color:#ff6b6b;}
@@ -344,7 +344,7 @@ body.dark .logo-img{filter:invert(1) hue-rotate(180deg) saturate(6);}
 .chp-search{display:flex;align-items:center;gap:8px;height:40px;padding:0 14px;border:1px solid var(--bg4);border-radius:20px;background:var(--bg);min-width:230px;transition:border-color var(--ease);}
 .chp-search:focus-within{border-color:var(--blue);}
 .chp-search svg{width:18px;height:18px;fill:var(--txt3);flex-shrink:0;}
-.chp-search input{flex:1;min-width:0;border:none;outline:none;background:transparent;color:var(--txt);font-family:'Rubik',sans-serif;font-size:14px;}
+.chp-search input{flex:1;min-width:0;border:none;outline:none;background:transparent;color:var(--txt);font-family:var(--font);font-size:14px;}
 .chp-search input::placeholder{color:var(--txt3);}
 .chp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;}
 .chp-card{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;cursor:pointer;transition:background var(--ease),border-color var(--ease);}
@@ -379,11 +379,28 @@ body.dark .logo-img{filter:invert(1) hue-rotate(180deg) saturate(6);}
 .skel-card .vthumb-wrap{background:none;}
 .skel-line{height:12px;border-radius:4px;margin-bottom:6px;}
 
+/* MINI PLAYER (חלונית צפה) */
+#pip{position:absolute;display:none;z-index:150;}
+#pip.on{display:block;}
+.pip-frame{position:absolute;inset:0;overflow:hidden;border-radius:14px;background:#000;}
+.pip-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:none;}
+.pip-bar{display:none;}
+#pip.mini{position:fixed;top:auto;left:18px;bottom:18px;width:360px;height:auto;aspect-ratio:16/9;z-index:400;border-radius:16px;box-shadow:0 18px 44px rgba(0,0,0,.38);}
+#pip.mini .pip-frame{border-radius:16px;}
+#pip.mini.short{width:196px;aspect-ratio:9/16;}
+#pip.mini .pip-bar{display:flex;position:absolute;top:0;left:0;right:0;z-index:3;align-items:center;gap:8px;padding:7px 9px;border-radius:16px 16px 0 0;background:linear-gradient(to bottom,rgba(0,0,0,.82),rgba(0,0,0,0));color:#fff;}
+.pip-t{font-size:12px;font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pip-x{width:26px;height:26px;flex-shrink:0;border:none;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background var(--ease);}
+.pip-x:hover{background:rgba(0,0,0,.85);}
+.pip-x svg{width:14px;height:14px;fill:currentColor;}
+
 /* TOAST */
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg4);color:var(--txt);padding:10px 20px;border-radius:24px;font-size:13px;opacity:0;pointer-events:none;transition:all .25s;z-index:600;box-shadow:0 4px 20px var(--shadow);}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
 @media(max-width:760px){
+  #pip.mini{left:12px;bottom:12px;width:calc(100% - 24px);max-width:320px;}
+  #pip.mini.short{width:156px;}
   :root{--sw:0px;}
   #sidebar{transform:translateX(100%);width:260px !important;box-shadow:-8px 0 24px var(--shadow);}
   #sidebar.mobopen{transform:translateX(0);}
@@ -394,20 +411,22 @@ body.dark .logo-img{filter:invert(1) hue-rotate(180deg) saturate(6);}
 /* HOME — responsive */
 @media(max-width:1100px){
   .spot{grid-template-columns:1fr;}
+  .spot-media{border-radius:22px 22px 0 0;}
   .spot-body{padding:22px;gap:12px;}
-  .spot-title{font-size:23px;-webkit-line-clamp:2;}
+  .spot-title{font-size:22px;-webkit-line-clamp:2;}
 }
 @media(max-width:760px){
   .home-top{margin-bottom:20px;gap:10px;}
-  .home-greet{font-size:25px;}
+  .home-greet{font-size:24px;}
   .home-sub{font-size:12.5px;}
   .home-top .refresh-btn{padding:8px 14px;font-size:12.5px;}
   .spot{border-radius:18px;margin-bottom:24px;}
-  .spot-title{font-size:20px;}
+  .spot-media{border-radius:18px 18px 0 0;}
+  .spot-title{font-size:19px;}
   .spot-actions .sbtn{padding:10px 16px;font-size:13px;}
   .chip-row{margin-bottom:24px;}
   .home-section{margin-bottom:30px;}
-  .home-section-title{font-size:19px;}
+  .home-section-title{font-size:18px;}
   .home-head-nav{display:none;}
   .vgrid{grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:20px 12px;}
   .vgrid.shelf-scroll .vcard{flex:0 0 212px;}
@@ -543,13 +562,24 @@ body.dark .logo-img{filter:invert(1) hue-rotate(180deg) saturate(6);}
   </div>
 </div>
 
+<div id="pip">
+  <div class="pip-bar">
+    <span class="pip-t" id="pip-title"></span>
+    <button class="pip-x" onclick="closePip()" title="סגור" aria-label="סגור">
+      <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+    </button>
+  </div>
+  <div class="pip-frame" id="pip-frame"></div>
+</div>
+
 <div id="toast"></div>
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
 /* ============ CONFIG ============ */
 const GOOGLE_CLIENT_ID = '426523025549-7c50rkn7cun4vmm2r802u0ij6egjehtg.apps.googleusercontent.com';
-const YT_SCOPE = 'https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/userinfo.profile';
+// ההתחברות עם Google משמשת אך ורק להצגת השם ותמונת הפרופיל. אין בקשה להרשאות יוטיוב.
+const GOOGLE_SCOPE = 'openid https://www.googleapis.com/auth/userinfo.profile';
 // הדבק כאן את כתובת ה-Cloudflare Worker (worker.js), למשל:
 // https://mytube-relay.YOUR-NAME.workers.dev
 // ה-Worker מעביר את הטוקן האישי של המשתמש ל-YouTube API משרתי גוגל,
@@ -568,6 +598,7 @@ const WATCH_HISTORY_KEY = 'mytube_watch_history';
 const WATCH_LATER_KEY = 'mytube_watch_later';
 const LIKED_KEY = 'mytube_liked';
 const INLINE_MODE_KEY = 'mytube_inline_mode';
+const MINI_KEY = 'mytube_mini';            // חלונית צפה בזמן מעבר בין דפים
 const SB_CH_KEY = 'mytube_sidebar_channels';
 const TOKEN_KEY = 'mytube_gtoken'; // sessionStorage: {access_token, expires_at}
 
@@ -700,6 +731,7 @@ window.addEventListener('load', () => {
   loadLocalLists();
   { const n = Number(localStorage.getItem(SB_CH_KEY)); sidebarChannelCount = [5, 8, 12].includes(n) ? n : 8; }
   inlineMode = localStorage.getItem(INLINE_MODE_KEY) === '1';
+  miniEnabled = localStorage.getItem(MINI_KEY) !== '0';
   updateInlineToggleUI();
   netfreeMode = localStorage.getItem(NETFREE_MODE_KEY) === '1';
   hideBlockedMode = netfreeMode && localStorage.getItem(NF_HIDE_KEY) === '1';
@@ -721,11 +753,12 @@ window.addEventListener('load', () => {
     } else {
       netfreeMode = false;
       updateNetfreeToggleUI();
-      if (hideBlockedMode) renderContent();
-      initGoogleAuth();
-      restoreSessionAndMaybeLoad();
+      if (!allVideos.length) lastError = 'no_source';
+      renderContent();
     }
   });
+  initGoogleAuth();
+  restoreGoogleSession();
 });
 
 window.addEventListener('popstate', () => {
@@ -1092,6 +1125,7 @@ renderContent = function () {
     if (note) document.getElementById('content').insertAdjacentHTML('afterbegin', note);
   }
   scheduleNetfreeCheck();
+  if (pipId) requestAnimationFrame(() => syncPip());
   return r;
 };
 
@@ -1114,7 +1148,7 @@ function initGoogleAuth() {
     }
     tokenClient = google.accounts.oauth2.initTokenClient({
       client_id: GOOGLE_CLIENT_ID,
-      scope: YT_SCOPE,
+      scope: GOOGLE_SCOPE,
       callback: onTokenResponse
     });
     gsiReady = true;
@@ -1122,16 +1156,37 @@ function initGoogleAuth() {
   tryInit();
 }
 
-function restoreSessionAndMaybeLoad() {
+function restoreGoogleSession() {
   const stored = getStoredToken();
   if (stored && stored.access_token && stored.expires_at > Date.now() + 60000) {
     accessToken = stored.access_token;
     tokenExpiresAt = stored.expires_at;
+    fetchGoogleProfile(false);
+  }
+  renderAuthArea();
+}
+
+// מושך מגוגל רק שם ותמונת פרופיל, ושומר אותם בדפדפן
+async function fetchGoogleProfile(announce) {
+  if (!accessToken) return;
+  try {
+    const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { 'Authorization': 'Bearer ' + accessToken }
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const d = await res.json();
+    currentUser = { name: d.name || d.given_name || '', picture: d.picture || '', sub: d.sub || '' };
+    localStorage.setItem(ME_CACHE_KEY, JSON.stringify(currentUser));
     renderAuthArea();
-    loadEverything(false);
-  } else if (!currentUser) {
-    lastError = 'not_authenticated';
     renderContent();
+    updateSettingsLive();
+    if (announce) toast('שלום, ' + String(currentUser.name || '').split(' ')[0]);
+  } catch (e) {
+    console.error(e);
+    accessToken = null;
+    clearStoredToken();
+    renderAuthArea();
+    if (announce) toast('לא הצלחנו לקבל את פרטי הפרופיל מגוגל');
   }
 }
 
@@ -1156,8 +1211,7 @@ function onTokenResponse(resp) {
   accessToken = resp.access_token;
   tokenExpiresAt = Date.now() + (Number(resp.expires_in || 3500) * 1000);
   setStoredToken({ access_token: accessToken, expires_at: tokenExpiresAt });
-  lastError = null;
-  loadEverything(true);
+  fetchGoogleProfile(true);
 }
 
 function signIn() {
@@ -1175,16 +1229,10 @@ function signOut() {
   tokenExpiresAt = 0;
   clearStoredToken();
   currentUser = null;
-  channels = [];
-  allVideos = [];
-  lastError = 'not_authenticated';
-  localStorage.removeItem(CHANNELS_CACHE_KEY);
-  localStorage.removeItem(VIDEOS_CACHE_KEY);
   localStorage.removeItem(ME_CACHE_KEY);
   renderAuthArea();
-  renderChannels();
   renderContent();
-  updateNotifBadge();
+  updateSettingsLive();
   toggleUserMenu(false);
   toast('התנתקת');
   if (tok && window.google && google.accounts && google.accounts.oauth2) {
@@ -1208,14 +1256,11 @@ async function workerCall(params) {
 async function loadEverything(forceToast) {
   if (extMode) return loadFromExtension(forceToast);
   if (loading) return;
-  if (!accessToken) {
-    lastError = 'not_authenticated';
+  // הסרטונים מגיעים מתוסף MyTube Bridge בלבד; ההתחברות עם Google היא רק לפרופיל
+  if (!extMode) {
+    if (!allVideos.length) lastError = 'no_source';
     renderContent();
-    return;
-  }
-  if (!WORKER_URL || WORKER_URL.indexOf('PASTE_YOUR') === 0) {
-    lastError = 'not_configured';
-    renderContent();
+    if (forceToast) recheckExtension();
     return;
   }
   loading = true;
@@ -1300,6 +1345,24 @@ function manualRefresh() {
   loadEverything(true);
 }
 
+// חיפוש מחדש של התוסף (מקור הנתונים)
+function recheckExtension() {
+  toast('מחפש את התוסף...');
+  detectExtension().then(found => {
+    if (found) {
+      extMode = true;
+      lastError = null;
+      updateNetfreeToggleUI();
+      loadFromExtension(true);
+    } else {
+      if (!allVideos.length) lastError = 'no_source';
+      renderContent();
+      updateSettingsLive();
+      toast('התוסף MyTube Bridge לא נמצא');
+    }
+  });
+}
+
 /* ============ RENDER: AUTH AREA ============ */
 function renderAuthArea() {
   const el = document.getElementById('auth-area');
@@ -1311,7 +1374,7 @@ function renderAuthArea() {
         ${currentUser.picture ? `<img class="yt-user-av" src="${x(currentUser.picture)}">` : `<div class="yt-user-av" style="display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">${x((currentUser.name||'?').slice(0,2))}</div>`}
         <span class="yt-user-name">${x(currentUser.name||'')}</span>
       </div>`;
-    if (signoutItem) signoutItem.style.display = extMode ? 'none' : '';
+    if (signoutItem) signoutItem.style.display = '';
     if (refreshItem) refreshItem.style.display = '';
   } else {
     el.innerHTML = `
@@ -1553,27 +1616,14 @@ function renderContent() {
 
   if (section === 'settings') { renderSettingsPage(ct); return; }
 
-  if (lastError === 'not_configured') {
+  if ((lastError === 'no_source' || lastError === 'not_authenticated' || lastError === 'not_configured') && !allVideos.length) {
     ct.innerHTML = `
       <div class="empty">
-        <div class="eico"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg></div>
-        <h3>עדיין לא הוגדר חיבור</h3>
-        <p>יש להדביק את כתובת ה-Worker בשורת <code>WORKER_URL</code> בקוד.</p>
-      </div>`;
-    return;
-  }
-
-  if (lastError === 'not_authenticated' && !allVideos.length) {
-    ct.innerHTML = `
-      <div class="empty">
-        <div class="eico"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>
-        <h3>יש להתחבר עם Google</h3>
-        <p>כדי לראות כאן את הסרטונים החדשים מהערוצים שאתה עוקב אחריהם ביוטיוב, יש להתחבר עם חשבון Google שלך. הנתונים שיוצגו יהיו של המנויים שלך בלבד, ולא של אף משתמש אחר.</p>
-        <p style="margin-top:8px;font-size:12px;opacity:.7">או התקן את התוסף MyTube Bridge — אז אין צורך בהתחברות בכלל.</p>
-        <button class="yt-login-btn" onclick="signIn()">
-          <svg viewBox="0 0 24 24"><path fill="#fff" d="M21.35 11.1h-9.17v2.73h6.51c-.33 3.81-3.5 5.44-6.5 5.44C8.36 19.27 5 16.25 5 12c0-4.1 3.2-7.27 7.2-7.27 3.09 0 4.9 1.97 4.9 1.97L19 4.72S16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12c0 5.05 4.13 10 10.22 10 5.35 0 9.25-3.67 9.25-9.09 0-1.15-.15-1.81-.15-1.81z"/></svg>
-          התחבר עם Google
-        </button>
+        <div class="eico"><svg viewBox="0 0 24 24"><path d="M20 8H4V6h16v2zm-2-6H6v2h12V2zm4 10v8c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2v-8c0-1.1.9-2 2-2h16c1.1 0 2 .9 2 2zm-6 4l-6-3.27v6.53L16 16z"/></svg></div>
+        <h3>עדיין אין סרטונים</h3>
+        <p>הסרטונים מגיעים מהתוסף MyTube Bridge, שמושך את המנויים שלך ישירות מיוטיוב בדפדפן. אם התוסף מותקן — ודא שהוא פעיל ולחץ "בדוק שוב".</p>
+        <p style="margin-top:8px;font-size:12px;opacity:.7">ההתחברות עם Google בסרגל העליון משמשת רק להצגת השם ותמונת הפרופיל שלך.</p>
+        <button class="yt-login-btn" onclick="recheckExtension()">בדוק שוב</button>
       </div>`;
     return;
   }
@@ -2065,6 +2115,7 @@ function toggleNotifPanel(force) {
 
 /* ============ PLAYER MODAL ============ */
 function openPlayer(id) {
+  closePip();
   const v = findVideoById(id);
   recordWatch(v);
   const isShort = v && v.isShort;
@@ -2081,38 +2132,100 @@ function closePlayer() {
   document.getElementById('pm-iframe-host').innerHTML = '';
 }
 
-/* ============ INLINE (IN-PAGE) PLAYBACK ============ */
+/* ============ INLINE PLAYBACK + MINI PLAYER ============ */
+// הנגן חי באלמנט אחד (#pip) שלא עובר מקום ב-DOM — רק ה-CSS שלו משתנה.
+// כך הסרטון ממשיך לנגן בלי טעינה מחדש כשעוברים בין דפים.
+let miniEnabled = true;
+let pipId = null;
+let pipMode = 'off';   // off | docked | mini
+let pipRaf = 0;
+
 function toggleInlineMode() {
   inlineMode = !inlineMode;
   localStorage.setItem(INLINE_MODE_KEY, inlineMode ? '1' : '0');
   updateInlineToggleUI();
   activeInlineId = null;
+  closePip();
   if (section !== 'settings') renderContent();
 }
 
 function updateInlineToggleUI() { updateSettingsLive(); }
 
-function toggleInlinePlay(id) {
-  if (activeInlineId === id) {
-    closeInlinePlay(id);
-    activeInlineId = null;
-    return;
-  }
-  if (activeInlineId) closeInlinePlay(activeInlineId);
-  activeInlineId = id;
-  const v = findVideoById(id);
-  recordWatch(v);
-  const wrap = document.getElementById('thumb-' + id);
-  if (!wrap) return;
-  wrap.innerHTML = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(id)}?autoplay=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;"></iframe>`;
+function toggleMiniMode() {
+  miniEnabled = !miniEnabled;
+  localStorage.setItem(MINI_KEY, miniEnabled ? '1' : '0');
+  if (!miniEnabled && pipMode === 'mini') closePip();
+  updateSettingsLive();
 }
 
-function closeInlinePlay(id) {
+function pipEl() { return document.getElementById('pip'); }
+
+function toggleInlinePlay(id) {
+  if (pipId === id) { closePip(); return; }
   const v = findVideoById(id);
-  const wrap = document.getElementById('thumb-' + id);
-  if (!wrap || !v) return;
-  wrap.innerHTML = thumbInnerHtml(v);
+  recordWatch(v);
+  activeInlineId = id;
+  pipId = id;
+  document.getElementById('pip-frame').innerHTML =
+    `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(id)}?autoplay=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+  document.getElementById('pip-title').textContent = (v && v.title) || '';
+  const el = pipEl();
+  el.className = 'on' + (v && v.isShort ? ' short' : '');
+  syncPip();
 }
+
+function closePip() {
+  const el = pipEl();
+  const host = document.getElementById('pip-frame');
+  if (host) host.style.borderRadius = '';
+  pipId = null;
+  pipMode = 'off';
+  activeInlineId = null;
+  if (!el) return;
+  el.className = '';
+  el.removeAttribute('style');
+  document.getElementById('pip-frame').innerHTML = '';
+}
+
+// מחליט אם הנגן יושב על הכרטיס שממנו הופעל, או צף בפינה
+function syncPip() {
+  if (!pipId) return;
+  const el = pipEl();
+  const anchor = document.getElementById('thumb-' + pipId);
+  if (anchor && anchor.isConnected && anchor.offsetParent !== null) {
+    pipMode = 'docked';
+    el.classList.remove('mini');
+    positionPip(anchor);
+  } else if (miniEnabled) {
+    pipMode = 'mini';
+    el.removeAttribute('style');
+    document.getElementById('pip-frame').style.borderRadius = '';
+    el.classList.add('mini');
+  } else {
+    closePip();
+  }
+}
+
+function positionPip(anchor) {
+  const a = anchor || document.getElementById('thumb-' + pipId);
+  if (!a) return;
+  const r = a.getBoundingClientRect();
+  if (!r.width) return;
+  const el = pipEl();
+  const rad = getComputedStyle(a).borderRadius;
+  document.getElementById('pip-frame').style.borderRadius = rad && rad !== '0px' ? rad : '14px';
+  el.style.top = (r.top + window.scrollY) + 'px';
+  el.style.left = (r.left + window.scrollX) + 'px';
+  el.style.width = r.width + 'px';
+  el.style.height = r.height + 'px';
+}
+
+function schedulePipSync() {
+  if (pipRaf || !pipId) return;
+  pipRaf = requestAnimationFrame(() => { pipRaf = 0; syncPip(); });
+}
+window.addEventListener('resize', schedulePipSync);
+document.addEventListener('scroll', schedulePipSync, true);
 
 /* ============ SETTINGS ============ */
 function openSettings(tab) {
@@ -2261,7 +2374,9 @@ function renderSettingsPage(ct) {
     ) +
     spCard('צפייה',
       spRow('נגן מוטמע בדף', 'הסרטון מתנגן ישירות בתוך הכרטיס, ובדף הבית הכרטיסים מוגדלים. כשהאפשרות כבויה, הסרטון נפתח בחלון נפרד.',
-        spSwitch('sw-inline', 'נגן מוטמע בדף', 'toggleInlineMode()'))
+        spSwitch('sw-inline', 'נגן מוטמע בדף', 'toggleInlineMode()')) +
+      spRow('חלונית צפה בזמן מעבר בין דפים', 'כשעוברים לדף אחר בזמן שסרטון מתנגן בכרטיס, הוא ממשיך לנגן בחלונית קטנה בפינת המסך, בלי טעינה מחדש. כשחוזרים לדף שממנו הופעל, הוא חוזר למקומו. דורש את הנגן המוטמע.',
+        spSwitch('sw-mini', 'חלונית צפה בזמן מעבר בין דפים', 'toggleMiniMode()'), 'sub')
     );
 
   const netfree =
@@ -2287,9 +2402,13 @@ function renderSettingsPage(ct) {
       spRow('מקור הנתונים', '<span id="sp-conn-desc"></span>', spPillHtml('sp-conn')) +
       spRow('עדכון אחרון', `האתר מתעדכן ברקע מדי כמה דקות. אפשר גם לרענן ידנית.<br><span class="sp-count" id="sp-updated"></span>`,
         `<button class="sp-btn${refreshSpinning ? ' spin' : ''}" id="refresh-btn" onclick="manualRefresh()"><svg viewBox="0 0 24 24"><path d="${SP_ICON_REFRESH}"/></svg>רענן עכשיו</button>`) +
-      (!extMode && currentUser
-        ? spRow('חשבון Google', 'ניתוק החשבון בדפדפן הזה וביטול ההרשאה שניתנה לאתר.', '<button class="sp-btn" onclick="signOut()">התנתק</button>')
-        : '')
+      spRow('חשבון Google',
+        currentUser
+          ? 'ההתחברות משמשת רק להצגת השם ותמונת הפרופיל שלך. אין לאתר גישה לנתוני היוטיוב שלך.'
+          : 'התחברות אופציונלית, רק כדי להציג את השם ותמונת הפרופיל שלך בדף הבית. אין בקשת הרשאות ליוטיוב.',
+        currentUser
+          ? '<button class="sp-btn" onclick="signOut()">התנתק</button>'
+          : '<button class="sp-btn" onclick="signIn()">התחבר עם Google</button>')
     ) +
     spCard('נתונים מקומיים',
       clearRow('seen', 'סימוני "חדש" בערוצים', 'איפוס יגרום לכל הסרטונים להיחשב חדשים שוב.') +
@@ -2356,6 +2475,7 @@ function updateSettingsLive() {
   spSw('sw-sidebar', document.getElementById('sidebar').classList.contains('col'), false);
   document.querySelectorAll('#sp-sbn button').forEach(b => b.classList.toggle('on', Number(b.dataset.n) === sidebarChannelCount));
   spSw('sw-inline', inlineMode, false);
+  spSw('sw-mini', miniEnabled, !inlineMode);
   spSw('sw-netfree', netfreeMode, !extMode);
   spSw('sw-nfhide', hideBlockedMode && netfreeMode, !extMode);
 
@@ -2370,8 +2490,7 @@ function updateSettingsLive() {
   spText('sp-nf-open', netfreeMode ? c.o : '-');
   spText('sp-nf-blocked', netfreeMode ? c.b : '-');
 
-  const signed = extMode || !!currentUser;
-  spPill('sp-conn', signed, extMode ? 'מחובר דרך התוסף' : (currentUser ? 'מחובר עם Google' : 'לא מחובר'));
+  spPill('sp-conn', extMode, extMode ? 'מחובר דרך התוסף' : 'התוסף לא זוהה');
   spText('sp-conn-desc', channels.length + ' ערוצים · ' + allVideos.length + ' סרטונים');
   spText('sp-updated', dataUpdatedAt ? 'עודכן ' + timeAgo(dataUpdatedAt) : 'עדיין לא עודכן');
 
@@ -2436,6 +2555,8 @@ function spReset(btn) { spArm(btn, resetSettings); }
 
 function resetSettings() {
   setTheme('light');
+  miniEnabled = true;
+  localStorage.setItem(MINI_KEY, '1');
   setSidebarCol(false);
   setSidebarChannelCount(8);
   if (inlineMode) toggleInlineMode();
