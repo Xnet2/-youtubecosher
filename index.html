@@ -219,20 +219,78 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
 .pm-title{color:#fff;font-size:15px;font-weight:600;margin-top:14px;line-height:1.4;}
 .pm-ch{color:rgba(255,255,255,.65);font-size:12.5px;margin-top:6px;}
 
-/* SETTINGS MODAL */
-#settings-modal{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:550;display:none;align-items:center;justify-content:center;padding:20px;}
-#settings-modal.open{display:flex;}
-.st-box{width:100%;max-width:380px;background:var(--bg2);border-radius:16px;padding:20px;box-shadow:0 8px 40px var(--shadow);}
-.st-box h3{font-size:16px;margin-bottom:14px;}
-.st-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);}
-.st-row:last-of-type{border-bottom:none;}
-.st-row span{font-size:13px;}
-.st-btn{background:var(--bg3);border:1px solid var(--bg4);color:var(--txt2);border-radius:16px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:'Rubik',sans-serif;flex-shrink:0;display:inline-flex;align-items:center;gap:6px;}
-.st-btn svg{width:14px;height:14px;fill:currentColor;}
-.st-btn:hover{background:var(--bg4);}
-.st-btn.danger{color:#ff5c5c;}
-.st-btn.on{background:var(--red);border-color:var(--red);color:#fff;}
-.st-close{margin-top:16px;width:100%;background:var(--red);color:#fff;border:none;border-radius:20px;padding:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Rubik',sans-serif;}
+/* SETTINGS PAGE */
+.sp{max-width:980px;margin:0 auto;}
+.sp-head{margin-bottom:22px;}
+.sp-head h1{font-size:24px;font-weight:800;letter-spacing:-.3px;line-height:1.2;}
+.sp-head p{font-size:13px;color:var(--txt3);margin-top:6px;line-height:1.6;}
+.sp-layout{display:grid;grid-template-columns:210px minmax(0,1fr);gap:28px;align-items:start;}
+.sp-nav{position:sticky;top:calc(var(--th) + 18px);display:flex;flex-direction:column;gap:4px;}
+.sp-tab{display:flex;align-items:center;gap:12px;height:44px;padding:0 14px;border-radius:12px;border:none;background:none;color:var(--txt2);font-family:'Rubik',sans-serif;font-size:14px;font-weight:500;cursor:pointer;text-align:start;transition:background var(--ease),color var(--ease);}
+.sp-tab:hover{background:var(--bg3);color:var(--txt);}
+.sp-tab.on{background:var(--bg3);color:var(--txt);font-weight:600;}
+.sp-tab.on svg{color:var(--red);}
+.sp-tab svg{width:20px;height:20px;fill:currentColor;flex-shrink:0;}
+.sp-panels{min-width:0;}
+.sp-panel{display:none;flex-direction:column;gap:18px;}
+.sp-panel.on{display:flex;}
+.sp-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.sp-card-h{padding:16px 20px 6px;font-size:12px;font-weight:600;color:var(--txt3);letter-spacing:.6px;}
+.sp-row{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:16px 20px;border-top:1px solid var(--border);}
+.sp-row:first-child,.sp-card-h + .sp-row{border-top:none;}
+.sp-row.sub{padding-inline-start:44px;}
+.sp-txt{min-width:0;flex:1;}
+.sp-lbl{font-size:14.5px;font-weight:500;}
+.sp-desc{font-size:12.5px;color:var(--txt3);line-height:1.65;margin-top:3px;}
+.sp-count{font-size:12px;color:var(--txt2);font-weight:500;}
+.sw{position:relative;width:46px;height:26px;border-radius:13px;border:none;background:var(--txt3);cursor:pointer;flex-shrink:0;padding:0;transition:background var(--ease);}
+.sw::after{content:'';position:absolute;top:3px;inset-inline-start:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.35);transition:inset-inline-start var(--ease);}
+.sw[aria-checked="true"]{background:var(--red);}
+.sw[aria-checked="true"]::after{inset-inline-start:23px;}
+.sw:disabled{opacity:.4;cursor:not-allowed;}
+.seg{display:inline-flex;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:3px;gap:2px;flex-shrink:0;}
+.seg button{border:none;background:none;color:var(--txt2);font-family:'Rubik',sans-serif;font-size:13px;font-weight:500;padding:7px 20px;border-radius:9px;cursor:pointer;transition:background var(--ease),color var(--ease);}
+.seg button.on{background:var(--bg);color:var(--txt);font-weight:600;box-shadow:0 1px 4px var(--shadow);}
+.sp-btn{background:var(--bg3);border:1px solid var(--bg4);color:var(--txt);border-radius:18px;padding:8px 16px;font-size:13px;font-weight:500;font-family:'Rubik',sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:7px;white-space:nowrap;flex-shrink:0;transition:background var(--ease),border-color var(--ease),color var(--ease);}
+.sp-btn:hover{background:var(--bg4);}
+.sp-btn svg{width:15px;height:15px;fill:currentColor;}
+.sp-btn.danger{color:#ff6b6b;}
+.sp-btn.armed{background:#e5484d;border-color:#e5484d;color:#fff;}
+.sp-btn:disabled{opacity:.4;cursor:default;pointer-events:none;}
+.sp-btn.spin svg{animation:spin 1s linear infinite;}
+.sp-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:16px;font-size:12.5px;font-weight:600;background:var(--bg3);color:var(--txt2);white-space:nowrap;flex-shrink:0;}
+.sp-pill i{width:8px;height:8px;border-radius:50%;background:var(--txt3);}
+.sp-pill.ok i{background:#22c55e;}
+.sp-pill.bad i{background:#f59e0b;}
+.sp-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--border);}
+.sp-card-h + .sp-stats{border-top:none;}
+.sp-stat{padding:16px 20px;border-inline-start:1px solid var(--border);}
+.sp-stat:first-child{border-inline-start:none;}
+.sp-stat b{display:block;font-size:24px;font-weight:700;line-height:1.1;}
+.sp-stat span{display:block;font-size:12px;color:var(--txt3);margin-top:5px;}
+.sp-stat.open b{color:#22c55e;}
+.sw:focus-visible,.sp-tab:focus-visible,.sp-btn:focus-visible,.seg button:focus-visible{outline:2px solid var(--blue);outline-offset:2px;}
+@media(max-width:760px){
+  .sp-layout{grid-template-columns:minmax(0,1fr);gap:16px;}
+  .sp-nav{top:var(--th);z-index:20;flex-direction:row;overflow-x:auto;background:var(--bg);margin-inline:-16px;padding:10px 16px;border-bottom:1px solid var(--border);scrollbar-width:none;}
+  .sp-nav::-webkit-scrollbar{display:none;}
+  .sp-tab{flex-shrink:0;height:38px;border-radius:19px;padding:0 16px;}
+  .sp-head h1{font-size:21px;}
+  .sp-card-h{padding:14px 16px 4px;}
+  .sp-row{padding:14px 16px;gap:12px;}
+  .sp-row.sub{padding-inline-start:28px;}
+  .sp-stat{padding:14px 16px;}
+  .seg button{padding:7px 14px;}
+}
+
+/* NETFREE: הסתרת סרטונים חסומים */
+.vcard.nf-hide{display:none;}
+.nf-note{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:9px 14px;margin-bottom:18px;font-size:12.5px;color:var(--txt2);}
+.nf-note-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;flex-shrink:0;}
+.nf-note.busy .nf-note-dot{animation:nfpulse 1.1s ease-in-out infinite;}
+@keyframes nfpulse{0%,100%{opacity:1}50%{opacity:.25}}
+.nf-note a{margin-inline-start:auto;color:var(--blue);cursor:pointer;white-space:nowrap;}
+.nf-note a:hover{text-decoration:underline;}
 
 /* SKELETON */
 .skel{background:linear-gradient(90deg,var(--skel1) 25%,var(--skel2) 37%,var(--skel1) 63%);background-size:400% 100%;animation:shimmer 1.4s infinite;border-radius:12px;}
@@ -291,7 +349,7 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
         <div id="notif-list"></div>
       </div>
     </div>
-    <button class="tbtn" id="settings-btn" title="הגדרות" onclick="toggleSettings()">
+    <button class="tbtn" id="settings-btn" title="הגדרות" onclick="openSettings()">
       <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"></path></svg>
     </button>
     <div id="auth-area"></div>
@@ -349,6 +407,10 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
     <span class="ni"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"></path></svg></span>
     <span class="nl">אזור אישי</span>
   </div>
+  <div class="nitem" id="n-settings" onclick="setSection('settings',this)">
+    <span class="ni"><svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"></path></svg></span>
+    <span class="nl">הגדרות</span>
+  </div>
   <div class="nitem" onclick="hardReload()">
     <span class="ni"><svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"></path></svg></span>
     <span class="nl">רענן</span>
@@ -369,33 +431,6 @@ body{background:var(--bg);color:var(--txt);font-family:'Rubik',sans-serif;overfl
     </div>
     <div class="pm-title" id="pm-title"></div>
     <div class="pm-ch" id="pm-ch"></div>
-  </div>
-</div>
-
-<div id="settings-modal">
-  <div class="st-box">
-    <h3>הגדרות</h3>
-    <div class="st-row"><span>ערכת נושא</span><button class="st-btn" onclick="document.getElementById('theme-toggle').click()">החלף</button></div>
-    <div class="st-row">
-      <span>נגן מוטמע בדף</span>
-      <button class="st-btn" id="inline-mode-toggle" onclick="toggleInlineMode()">כבוי</button>
-    </div>
-    <div class="st-row">
-      <span>מצב נטפרי (סימון ירוק לסרטון פתוח)</span>
-      <button class="st-btn" id="netfree-toggle" onclick="toggleNetfreeMode()">כבוי</button>
-    </div>
-    <div class="st-row">
-      <span>רענון נתונים</span>
-      <button class="st-btn refresh-btn" id="refresh-btn" onclick="manualRefresh()">
-        <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08a5.99 5.99 0 01-5.65 4c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
-        רענן
-      </button>
-    </div>
-    <div class="st-row"><span>סימוני "נצפה" בערוצים</span><button class="st-btn" onclick="clearSeenMarks()">נקה</button></div>
-    <div class="st-row"><span>היסטוריית צפייה מקומית</span><button class="st-btn danger" onclick="clearWatchHistory()">נקה</button></div>
-    <div class="st-row"><span>רשימת "אהבתי" מקומית</span><button class="st-btn danger" onclick="clearLiked()">נקה</button></div>
-    <div class="st-row"><span>רשימת "לצפייה מאוחרת"</span><button class="st-btn danger" onclick="clearWatchLater()">נקה</button></div>
-    <button class="st-close" onclick="toggleSettings(false)">סגור</button>
   </div>
 </div>
 
@@ -460,7 +495,8 @@ const SECTION_PATH = {
   watched: 'צפיתי',
   watchlater: 'לצפייה-מאוחרת',
   shorts: 'שורטס',
-  personal: 'אזור-אישי'
+  personal: 'אזור-אישי',
+  settings: 'הגדרות'
 };
 const PATH_SECTION = Object.keys(SECTION_PATH).reduce(function (acc, k) {
   acc[SECTION_PATH[k]] = k;
@@ -551,6 +587,8 @@ window.addEventListener('load', () => {
   inlineMode = localStorage.getItem(INLINE_MODE_KEY) === '1';
   updateInlineToggleUI();
   netfreeMode = localStorage.getItem(NETFREE_MODE_KEY) === '1';
+  hideBlockedMode = netfreeMode && localStorage.getItem(NF_HIDE_KEY) === '1';
+  loadNfCache();
   updateNetfreeToggleUI();
   renderAuthArea();
   renderChannels();
@@ -563,10 +601,12 @@ window.addEventListener('load', () => {
   detectExtension().then((found) => {
     if (found) {
       extMode = true;
+      updateNetfreeToggleUI();
       loadFromExtension(false);
     } else {
       netfreeMode = false;
       updateNetfreeToggleUI();
+      if (hideBlockedMode) renderContent();
       initGoogleAuth();
       restoreSessionAndMaybeLoad();
     }
@@ -596,6 +636,8 @@ function loadLocalLists() {
 const EXT_STALE_MS = 15 * 60 * 1000;
 let extMode = false;
 let extPresent = false;
+let extVersion = '';
+let dataUpdatedAt = 0;
 let extSeq = 0;
 const extPending = new Map();
 
@@ -621,7 +663,14 @@ function extCall(type, timeoutMs, payload) {
 
 async function detectExtension() {
   for (let i = 0; i < 3 && !extPresent; i++) {
-    try { await extCall('PING', 700); extPresent = true; } catch (e) {}
+    try {
+      const r = await extCall('PING', 700);
+      extPresent = true;
+      if (r && r.version) extVersion = r.version;
+    } catch (e) {}
+  }
+  if (extPresent && !extVersion) {
+    try { const r = await extCall('PING', 1500); if (r && r.version) extVersion = r.version; } catch (e) {}
   }
   return extPresent;
 }
@@ -629,6 +678,7 @@ async function detectExtension() {
 function applyExtData(d) {
   channels = d.channels || [];
   allVideos = d.videos || [];
+  dataUpdatedAt = d.updatedAt || Date.now();
   currentUser = { name: 'YouTube', picture: '', channelId: null };
   lastError = null;
   try {
@@ -693,18 +743,87 @@ function thumbLoaded(img) { if (img.naturalWidth > 0 && img.naturalWidth <= 120)
 /* ============ NETFREE MODE ============ */
 // מסמן נקודה ירוקה על כל סרטון שפתוח בנטפרי. הבדיקה מתבצעת בתוסף
 // (MyTube Bridge), רק לסרטונים שמוצגים כרגע, ותוצאות נשמרות ב-cache.
+// אפשרות נוספת בהגדרות: הסתרת סרטונים שאינם פתוחים (hideBlockedMode).
 const NETFREE_MODE_KEY = 'mytube_netfree_mode';
+const NF_HIDE_KEY = 'mytube_netfree_hide';
+const NF_CACHE_KEY = 'mytube_netfree_cache';
 const NF_BATCH = 12;
+const NF_PREFETCH = 150;               // כשההסתרה פעילה בודקים מראש עד כמה סרטונים, כדי שהדף יתמלא בסרטונים פתוחים
+const NF_OPEN_TTL = 6 * 3600 * 1000;   // אותם זמנים כמו ב-cache של התוסף
+const NF_BLOCKED_TTL = 15 * 60 * 1000;
 const NF_DOT_HTML = '<span class="nf-dot" title="פתוח בנטפרי"></span>';
 let netfreeMode = false;
+let hideBlockedMode = false;   // הסתרת סרטונים חסומים (פעיל רק כשמצב נטפרי פעיל)
 const nfStatus = {};          // videoId -> 'open' | 'blocked'
-let nfTimer = null, nfRunning = false, nfRerun = false;
+const nfTime = {};            // videoId -> מתי נבדק
+let nfTimer = null, nfRunning = false, nfRerun = false, nfSaveTimer = null;
 
-function updateNetfreeToggleUI() {
-  const btn = document.getElementById('netfree-toggle');
-  if (!btn) return;
-  btn.textContent = netfreeMode ? 'מופעל' : 'כבוי';
-  btn.classList.toggle('on', netfreeMode);
+function nfHidden(v) { return hideBlockedMode && netfreeMode && !!v && nfStatus[v.id] === 'blocked'; }
+function nfVisible(list) { return hideBlockedMode && netfreeMode ? list.filter(v => !nfHidden(v)) : list; }
+
+// כל הסרטונים שהסעיף הנוכחי עשוי להציג (לפני הסתרה)
+function nfPool() {
+  if (section === 'settings' || (section === 'all' && !activeChannelFilter)) return allVideos;
+  return getSectionVideosRaw();
+}
+function nfHiddenCount() {
+  if (!(hideBlockedMode && netfreeMode)) return 0;
+  return nfPool().filter(nfHidden).length;
+}
+function nfAllHiddenMsg() {
+  return nfHiddenCount() > 0 ? 'כל הסרטונים כאן אינם פתוחים בנטפרי ולכן הוסתרו. אפשר לשנות זאת בהגדרות, תחת נטפרי.' : '';
+}
+function nfCounts() {
+  let o = 0, b = 0;
+  for (const id in nfStatus) { if (nfStatus[id] === 'open') o++; else if (nfStatus[id] === 'blocked') b++; }
+  return { o, b, t: o + b };
+}
+// בדפים שמציגים כמות מוגבלת (דף הבית, מומלצים) צריך לצייר מחדש כדי שיתמלאו בסרטונים פתוחים
+function nfCappedView() { return (section === 'all' && !activeChannelFilter) || section === 'recommended'; }
+
+function loadNfCache() {
+  let raw = {};
+  try { raw = JSON.parse(localStorage.getItem(NF_CACHE_KEY) || '{}'); } catch (e) {}
+  const now = Date.now();
+  for (const id in raw) {
+    const e = raw[id];
+    if (!Array.isArray(e)) continue;
+    const ttl = e[0] === 'open' ? NF_OPEN_TTL : NF_BLOCKED_TTL;
+    if (now - e[1] < ttl) { nfStatus[id] = e[0]; nfTime[id] = e[1]; }
+  }
+}
+function saveNfCache() {
+  clearTimeout(nfSaveTimer);
+  nfSaveTimer = setTimeout(() => {
+    const out = {};
+    const now = Date.now();
+    let n = 0;
+    for (const id in nfStatus) {
+      const t = nfTime[id];
+      if (!t || n >= 1500) continue;
+      const ttl = nfStatus[id] === 'open' ? NF_OPEN_TTL : NF_BLOCKED_TTL;
+      if (now - t < ttl) { out[id] = [nfStatus[id], t]; n++; }
+    }
+    try { localStorage.setItem(NF_CACHE_KEY, JSON.stringify(out)); } catch (e) {}
+  }, 500);
+}
+
+// ---- שורת הסבר בראש הפיד ----
+function nfNoteText() {
+  const n = nfHiddenCount();
+  const base = n > 0 ? 'הוסתרו ' + n + ' סרטונים שאינם פתוחים בנטפרי' : 'מוצגים רק סרטונים פתוחים בנטפרי';
+  return nfRunning ? base + ' (בודק...)' : base;
+}
+function nfNoteHtml() {
+  if (!(hideBlockedMode && netfreeMode) || !allVideos.length) return '';
+  return '<div class="nf-note' + (nfRunning ? ' busy' : '') + '" id="nf-note"><span class="nf-note-dot"></span><span id="nf-note-t">' + nfNoteText() + '</span><a onclick="openSettings(\'netfree\')">שינוי בהגדרות</a></div>';
+}
+function updateNfNote() {
+  const el = document.getElementById('nf-note');
+  if (!el) return;
+  el.classList.toggle('busy', nfRunning);
+  const t = document.getElementById('nf-note-t');
+  if (t) t.textContent = nfNoteText();
 }
 
 function removeNetfreeDots() {
@@ -720,20 +839,63 @@ function markNetfreeDots() {
   });
 }
 
-function toggleNetfreeMode() {
-  if (!netfreeMode) {
-    if (!extMode) { toast('מצב נטפרי דורש את התוסף MyTube Bridge'); return; }
+// הסתרה מיידית (ללא ציור מחדש) של כרטיסים שנמצאו חסומים
+function applyNfHideDom() {
+  const on = hideBlockedMode && netfreeMode;
+  document.querySelectorAll('.vcard[data-vid]').forEach(c => {
+    c.classList.toggle('nf-hide', on && nfStatus[c.getAttribute('data-vid')] === 'blocked');
+  });
+}
+
+function refreshAfterNfChange() {
+  updateNotifBadge();
+  renderChannels();
+  renderNotifPanel();
+  if (section !== 'settings') renderContent();
+}
+
+function setNetfreeMode(on) {
+  if (on === netfreeMode) return true;
+  if (on) {
+    if (!extMode) { toast('מצב נטפרי דורש את התוסף MyTube Bridge'); return false; }
     netfreeMode = true;
     localStorage.setItem(NETFREE_MODE_KEY, '1');
-    updateNetfreeToggleUI();
     toast('בודק אילו סרטונים פתוחים בנטפרי...');
     scheduleNetfreeCheck(true);
   } else {
+    const wasHiding = hideBlockedMode;
     netfreeMode = false;
+    hideBlockedMode = false;
     localStorage.setItem(NETFREE_MODE_KEY, '0');
-    updateNetfreeToggleUI();
+    localStorage.setItem(NF_HIDE_KEY, '0');
     removeNetfreeDots();
+    if (wasHiding) refreshAfterNfChange();
   }
+  updateNetfreeToggleUI();
+  return true;
+}
+
+function toggleNetfreeMode() { setNetfreeMode(!netfreeMode); }
+
+function setHideBlocked(on) {
+  if (on && !netfreeMode && !setNetfreeMode(true)) return;
+  hideBlockedMode = !!on && netfreeMode;
+  localStorage.setItem(NF_HIDE_KEY, hideBlockedMode ? '1' : '0');
+  updateNetfreeToggleUI();
+  refreshAfterNfChange();
+  if (hideBlockedMode) scheduleNetfreeCheck();
+}
+
+function recheckNetfree() {
+  if (!netfreeMode || !extMode) { toast('מצב נטפרי כבוי'); return; }
+  for (const id in nfStatus) delete nfStatus[id];
+  for (const id in nfTime) delete nfTime[id];
+  try { localStorage.removeItem(NF_CACHE_KEY); } catch (e) {}
+  removeNetfreeDots();
+  refreshAfterNfChange();
+  updateNetfreeToggleUI();
+  scheduleNetfreeCheck(true);
+  toast('בודק מחדש אילו סרטונים פתוחים...');
 }
 
 function scheduleNetfreeCheck(fresh) {
@@ -742,31 +904,66 @@ function scheduleNetfreeCheck(fresh) {
   nfTimer = setTimeout(() => runNetfreeCheck(!!fresh), 400);
 }
 
+// קודם הסרטונים שמוצגים כרגע, ואם ההסתרה פעילה גם המשך הרשימה
+function nfCandidateIds() {
+  const set = new Set();
+  document.querySelectorAll('[id^="thumb-"]').forEach(w => set.add(w.id.slice(6)));
+  if (hideBlockedMode) nfPool().slice(0, NF_PREFETCH).forEach(v => { if (v && v.id) set.add(v.id); });
+  return [...set].filter(id => nfStatus[id] === undefined);
+}
+
 async function runNetfreeCheck(fresh) {
   if (nfRunning) { nfRerun = true; return; }
   nfRunning = true;
+  updateNfNote();
+  let newlyBlocked = false;
+  let turnedOff = false;
   try {
     markNetfreeDots();
-    const ids = [...new Set(
-      [...document.querySelectorAll('[id^="thumb-"]')].map(w => w.id.slice(6)).filter(id => nfStatus[id] === undefined)
-    )];
+    const ids = nfCandidateIds();
     for (let i = 0; i < ids.length && netfreeMode; i += NF_BATCH) {
       const r = await extCall('NF_CHECK', 90000, { ids: ids.slice(i, i + NF_BATCH), fresh: !!fresh && i === 0 });
       if (!r || r.netfree === false) {
         netfreeMode = false;
+        hideBlockedMode = false;
+        turnedOff = true;
         localStorage.setItem(NETFREE_MODE_KEY, '0');
+        localStorage.setItem(NF_HIDE_KEY, '0');
         updateNetfreeToggleUI();
         removeNetfreeDots();
         toast('לא זוהה סינון נטפרי בדפדפן הזה');
         break;
       }
-      for (const id in r.results) if (r.results[id] !== 'error') nfStatus[id] = r.results[id];
+      const now = Date.now();
+      for (const id in r.results) {
+        const s = r.results[id];
+        if (s === 'error') continue;
+        if (s === 'blocked' && nfStatus[id] !== 'blocked') newlyBlocked = true;
+        nfStatus[id] = s;
+        nfTime[id] = now;
+      }
       markNetfreeDots();
+      applyNfHideDom();
+      updateNfNote();
+      updateSettingsLive();
     }
   } catch (e) {
-    toast('בדיקת נטפרי נכשלה — ודא שהתוסף מעודכן');
+    toast('בדיקת נטפרי נכשלה, ודא שהתוסף מעודכן');
   } finally {
     nfRunning = false;
+    saveNfCache();
+    updateNfNote();
+    updateSettingsLive();
+    if (turnedOff) {
+      // ההסתרה בוטלה, אז מציירים מחדש כדי שהסרטונים החסומים יחזרו
+      refreshAfterNfChange();
+    } else if (hideBlockedMode && netfreeMode && newlyBlocked) {
+      updateNotifBadge();
+      renderChannels();
+      renderNotifPanel();
+      // בדף הבית ובמומלצים ממלאים את החללים בסרטונים פתוחים. לא מציירים מחדש בזמן ניגון בתוך הדף.
+      if (nfCappedView() && activeInlineId == null) renderContent();
+    }
     if (nfRerun) { nfRerun = false; scheduleNetfreeCheck(); }
   }
 }
@@ -775,6 +972,10 @@ async function runNetfreeCheck(fresh) {
 const _renderContentBase = renderContent;
 renderContent = function () {
   const r = _renderContentBase.apply(this, arguments);
+  if (section !== 'settings') {
+    const note = nfNoteHtml();
+    if (note) document.getElementById('content').insertAdjacentHTML('afterbegin', note);
+  }
   scheduleNetfreeCheck();
   return r;
 };
@@ -939,6 +1140,7 @@ async function loadEverything(forceToast) {
       }
     }
     allVideos = fresh.sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : -1));
+    dataUpdatedAt = Date.now();
 
     localStorage.setItem(CHANNELS_CACHE_KEY, JSON.stringify(channels));
     localStorage.setItem(VIDEOS_CACHE_KEY, JSON.stringify(allVideos.slice(0, 300)));
@@ -1048,10 +1250,11 @@ function filterByChannel(channelId) {
 
 function channelHasNew(channelId) {
   const seenAt = seenMap[channelId];
+  const pool = nfVisible(allVideos);
   if (!seenAt) {
-    return allVideos.some(v => v.channelId === channelId);
+    return pool.some(v => v.channelId === channelId);
   }
-  return allVideos.some(v => v.channelId === channelId && new Date(v.publishedAt) > new Date(seenAt));
+  return pool.some(v => v.channelId === channelId && new Date(v.publishedAt) > new Date(seenAt));
 }
 
 /* ============ SECTIONS ============ */
@@ -1159,7 +1362,9 @@ function applyChannelFilter(v) {
   return !activeChannelFilter || v.channelId === activeChannelFilter;
 }
 
-function getSectionVideos() {
+function getSectionVideos() { return nfVisible(getSectionVideosRaw()); }
+
+function getSectionVideosRaw() {
   if (section === 'channel') return allVideos.filter(v => v.channelId === activeChannelFilter);
   if (section === 'search') return allVideos.filter(v => matchesSearch(v, searchQuery));
   if (section === 'shorts') return allVideos.filter(v => v.isShort).filter(applyChannelFilter);
@@ -1207,6 +1412,8 @@ function renderContent() {
   const ct = document.getElementById('content');
   ct.innerHTML = '';
   activeInlineId = null;
+
+  if (section === 'settings') { renderSettingsPage(ct); return; }
 
   if (lastError === 'not_configured') {
     ct.innerHTML = `
@@ -1286,7 +1493,7 @@ function renderContent() {
       <div class="empty">
         <div class="eico"><svg viewBox="0 0 24 24"><path d="M10 8v8l6-4-6-4zm2-6C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg></div>
         <h3>אין סרטונים להצגה</h3>
-        <p>${EMPTY_MESSAGES[section] || 'לא נמצאו סרטונים התואמים לסינון הנוכחי.'}</p>
+        <p>${nfAllHiddenMsg() || EMPTY_MESSAGES[section] || 'לא נמצאו סרטונים התואמים לסינון הנוכחי.'}</p>
       </div>`;
     return;
   }
@@ -1320,7 +1527,7 @@ function renderHomeSections(ct) {
   const large = inlineMode;
   const usedIds = new Set();
   const watchedIds = new Set(watchHistory.map(h => h.id));
-  const byDate = allVideos;
+  const byDate = nfVisible(allVideos);
 
   const sections = [];
 
@@ -1346,7 +1553,7 @@ function renderHomeSections(ct) {
       <div class="empty">
         <div class="eico"><svg viewBox="0 0 24 24"><path d="M10 8v8l6-4-6-4zm2-6C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/></svg></div>
         <h3>אין סרטונים להצגה</h3>
-        <p>${EMPTY_MESSAGES.following}</p>
+        <p>${nfAllHiddenMsg() || EMPTY_MESSAGES.following}</p>
       </div>`;
     return;
   }
@@ -1555,7 +1762,7 @@ function updateNotifBadge() {
 }
 
 function getNewVideos() {
-  return allVideos.filter(isVideoNew).slice(0, 30);
+  return nfVisible(allVideos).filter(isVideoNew).slice(0, 30);
 }
 
 function renderNotifPanel() {
@@ -1631,15 +1838,10 @@ function toggleInlineMode() {
   localStorage.setItem(INLINE_MODE_KEY, inlineMode ? '1' : '0');
   updateInlineToggleUI();
   activeInlineId = null;
-  renderContent();
+  if (section !== 'settings') renderContent();
 }
 
-function updateInlineToggleUI() {
-  const btn = document.getElementById('inline-mode-toggle');
-  if (!btn) return;
-  btn.textContent = inlineMode ? 'מופעל' : 'כבוי';
-  btn.classList.toggle('on', inlineMode);
-}
+function updateInlineToggleUI() { updateSettingsLive(); }
 
 function toggleInlinePlay(id) {
   if (activeInlineId === id) {
@@ -1664,10 +1866,18 @@ function closeInlinePlay(id) {
 }
 
 /* ============ SETTINGS ============ */
+function openSettings(tab) {
+  if (tab) settingsTab = tab;
+  setSection('settings', document.getElementById('n-settings'));
+  window.scrollTo(0, 0);
+}
+
 function toggleSettings(force) {
-  const m = document.getElementById('settings-modal');
-  const open = typeof force === 'boolean' ? force : !m.classList.contains('open');
-  m.classList.toggle('open', open);
+  if (force === false) {
+    if (section === 'settings') setSection('all', document.getElementById('n-all'));
+  } else {
+    openSettings();
+  }
 }
 
 function clearSeenMarks() {
@@ -1683,6 +1893,226 @@ function hardReload() {
   location.reload();
 }
 
+/* ============ SETTINGS PAGE ============ */
+let settingsTab = 'display';
+
+const SP_ICON_REFRESH = 'M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08a5.99 5.99 0 01-5.65 4c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z';
+const SP_TABS = [
+  { id: 'display', label: 'תצוגה', icon: 'M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z' },
+  { id: 'netfree', label: 'נטפרי', icon: 'M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z' },
+  { id: 'data', label: 'נתונים', icon: 'M2 20h20v-4H2v4zm2-3h2v2H4v-2zM2 4v4h20V4H2zm4 3H4V5h2v2zm-4 7h20v-4H2v4zm2-3h2v2H4v-2z' }
+];
+
+function spSwitch(id, label, handler) {
+  return `<button class="sw" id="${id}" role="switch" aria-label="${label}" aria-checked="false" onclick="${handler}"></button>`;
+}
+function spRow(label, desc, control, cls) {
+  return `<div class="sp-row${cls ? ' ' + cls : ''}"><div class="sp-txt"><div class="sp-lbl">${label}</div>${desc ? `<div class="sp-desc">${desc}</div>` : ''}</div>${control}</div>`;
+}
+function spCard(title, body) {
+  return `<div class="sp-card">${title ? `<div class="sp-card-h">${title}</div>` : ''}${body}</div>`;
+}
+function spPillHtml(id) {
+  return `<span class="sp-pill" id="${id}"><i></i><span></span></span>`;
+}
+
+function renderSettingsPage(ct) {
+  const tabs = SP_TABS.map(t =>
+    `<button class="sp-tab" role="tab" data-tab="${t.id}" onclick="setSettingsTab('${t.id}')"><svg viewBox="0 0 24 24"><path d="${t.icon}"/></svg><span>${t.label}</span></button>`
+  ).join('');
+
+  const clearRow = (kind, label, desc) => spRow(
+    label,
+    `${desc}<br><span class="sp-count" id="sp-c-${kind}"></span>`,
+    `<button class="sp-btn danger" id="sp-b-${kind}" data-label="נקה" onclick="spClear(this,'${kind}')">נקה</button>`
+  );
+
+  const display =
+    spCard('מראה',
+      spRow('ערכת נושא', 'בחר בין מראה כהה למראה בהיר. אפשר להחליף גם דרך הכפתור בסרגל העליון.',
+        `<div class="seg" id="sp-theme"><button data-theme="dark" onclick="setTheme('dark')">כהה</button><button data-theme="light" onclick="setTheme('light')">בהיר</button></div>`) +
+      spRow('תפריט צד מכווץ', 'מציג רק אייקונים בתפריט הצד ומפנה יותר מקום לתוכן. חל על מסכים רחבים.',
+        spSwitch('sw-sidebar', 'תפריט צד מכווץ', 'toggleSidebarCol()'))
+    ) +
+    spCard('צפייה',
+      spRow('נגן מוטמע בדף', 'הסרטון מתנגן ישירות בתוך הכרטיס, ובדף הבית הכרטיסים מוגדלים. כשהאפשרות כבויה, הסרטון נפתח בחלון נפרד.',
+        spSwitch('sw-inline', 'נגן מוטמע בדף', 'toggleInlineMode()'))
+    );
+
+  const netfree =
+    spCard('', spRow('התוסף MyTube Bridge', '<span id="sp-ext-desc"></span>', spPillHtml('sp-ext-pill'))) +
+    spCard('סינון נטפרי',
+      spRow('מצב נטפרי', 'בודק דרך התוסף אילו סרטונים נפתחים בנטפרי, ומסמן כל סרטון פתוח בנקודה ירוקה בפינת התמונה.',
+        spSwitch('sw-netfree', 'מצב נטפרי', 'setNetfreeMode(!netfreeMode)')) +
+      spRow('הסתר סרטונים שאינם פתוחים', 'סרטונים חסומים לא יוצגו בפיד, ברשימות ובהתראות. בדף הבית הם יוחלפו בסרטונים פתוחים. הפעלת האפשרות מפעילה גם את מצב נטפרי.',
+        spSwitch('sw-nfhide', 'הסתר סרטונים שאינם פתוחים', 'setHideBlocked(!(hideBlockedMode && netfreeMode))'), 'sub') +
+      spRow('בדיקה מחדש', 'מנקה את תוצאות הבדיקה ובודק את הסרטונים שוב. שימושי אחרי שסרטון נפתח בנטפרי.',
+        '<button class="sp-btn" id="sp-recheck" onclick="recheckNetfree()">בדוק מחדש</button>')
+    ) +
+    spCard('תוצאות הבדיקה',
+      '<div class="sp-stats">' +
+        '<div class="sp-stat"><b id="sp-nf-total">-</b><span>נבדקו</span></div>' +
+        '<div class="sp-stat open"><b id="sp-nf-open">-</b><span>פתוחים</span></div>' +
+        '<div class="sp-stat"><b id="sp-nf-blocked">-</b><span>חסומים</span></div>' +
+      '</div>'
+    );
+
+  const data =
+    spCard('חיבור ועדכון',
+      spRow('מקור הנתונים', '<span id="sp-conn-desc"></span>', spPillHtml('sp-conn')) +
+      spRow('עדכון אחרון', `האתר מתעדכן ברקע מדי כמה דקות. אפשר גם לרענן ידנית.<br><span class="sp-count" id="sp-updated"></span>`,
+        `<button class="sp-btn${refreshSpinning ? ' spin' : ''}" id="refresh-btn" onclick="manualRefresh()"><svg viewBox="0 0 24 24"><path d="${SP_ICON_REFRESH}"/></svg>רענן עכשיו</button>`) +
+      (!extMode && currentUser
+        ? spRow('חשבון Google', 'ניתוק החשבון בדפדפן הזה וביטול ההרשאה שניתנה לאתר.', '<button class="sp-btn" onclick="signOut()">התנתק</button>')
+        : '')
+    ) +
+    spCard('נתונים מקומיים',
+      clearRow('seen', 'סימוני "חדש" בערוצים', 'איפוס יגרום לכל הסרטונים להיחשב חדשים שוב.') +
+      clearRow('history', 'היסטוריית צפייה', 'הסרטונים שפתחת דרך האתר. משפיעה על ההמלצות.') +
+      clearRow('liked', 'רשימת "אהבתי"', 'סרטונים שסימנת בלב. נשמרת בדפדפן הזה בלבד.') +
+      clearRow('later', 'רשימת "לצפייה מאוחרת"', 'סרטונים שהוספת בסימנייה. נשמרת בדפדפן הזה בלבד.')
+    ) +
+    spCard('איפוס',
+      spRow('איפוס הגדרות', 'מחזיר את ערכת הנושא, תפריט הצד, הנגן המוטמע ומצב נטפרי לברירת המחדל. הנתונים המקומיים לא נמחקים.',
+        '<button class="sp-btn" data-label="אפס" onclick="spReset(this)">אפס</button>')
+    );
+
+  ct.innerHTML = `
+    <div class="sp" id="sp-root">
+      <div class="sp-head">
+        <h1>הגדרות</h1>
+        <p>התאמה אישית של האתר, סינון נטפרי וניהול הנתונים השמורים בדפדפן.</p>
+      </div>
+      <div class="sp-layout">
+        <div class="sp-nav" role="tablist">${tabs}</div>
+        <div class="sp-panels">
+          <div class="sp-panel" data-panel="display">${display}</div>
+          <div class="sp-panel" data-panel="netfree">${netfree}</div>
+          <div class="sp-panel" data-panel="data">${data}</div>
+        </div>
+      </div>
+    </div>`;
+  setSettingsTab(settingsTab);
+  updateSettingsLive();
+}
+
+function setSettingsTab(id) {
+  settingsTab = id;
+  document.querySelectorAll('.sp-tab').forEach(t => {
+    const on = t.dataset.tab === id;
+    t.classList.toggle('on', on);
+    t.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
+  document.querySelectorAll('.sp-panel').forEach(p => p.classList.toggle('on', p.dataset.panel === id));
+}
+
+/* ---- עדכון מצב הרכיבים בלי לצייר את הדף מחדש ---- */
+function spText(id, t) { const e = document.getElementById(id); if (e) e.textContent = t; }
+function spSw(id, on, disabled) {
+  const e = document.getElementById(id);
+  if (!e) return;
+  e.setAttribute('aria-checked', on ? 'true' : 'false');
+  e.disabled = !!disabled;
+}
+function spPill(id, ok, text) {
+  const e = document.getElementById(id);
+  if (!e) return;
+  e.className = 'sp-pill ' + (ok ? 'ok' : 'bad');
+  if (e.lastElementChild) e.lastElementChild.textContent = text;
+}
+function spCounts() {
+  return { seen: Object.keys(seenMap).length, history: watchHistory.length, liked: likedVideos.length, later: watchLater.length };
+}
+
+function updateSettingsLive() {
+  if (!document.getElementById('sp-root')) return;
+  const dark = document.body.classList.contains('dark');
+  document.querySelectorAll('#sp-theme button').forEach(b => b.classList.toggle('on', (b.dataset.theme === 'dark') === dark));
+  spSw('sw-sidebar', document.getElementById('sidebar').classList.contains('col'), false);
+  spSw('sw-inline', inlineMode, false);
+  spSw('sw-netfree', netfreeMode, !extMode);
+  spSw('sw-nfhide', hideBlockedMode && netfreeMode, !extMode);
+
+  spPill('sp-ext-pill', extMode, extMode ? 'מותקן' : 'לא זוהה');
+  spText('sp-ext-desc', extMode
+    ? 'הבדיקה מתבצעת דרך התוסף, ישירות בדפדפן שלך' + (extVersion ? ' (גרסה ' + extVersion + ')' : '') + '.'
+    : 'מצב נטפרי דורש את התוסף. יש להתקין אותו ולרענן את הדף.');
+  const rb = document.getElementById('sp-recheck');
+  if (rb) rb.disabled = !(netfreeMode && extMode);
+  const c = nfCounts();
+  spText('sp-nf-total', netfreeMode ? c.t : '-');
+  spText('sp-nf-open', netfreeMode ? c.o : '-');
+  spText('sp-nf-blocked', netfreeMode ? c.b : '-');
+
+  const signed = extMode || !!currentUser;
+  spPill('sp-conn', signed, extMode ? 'מחובר דרך התוסף' : (currentUser ? 'מחובר עם Google' : 'לא מחובר'));
+  spText('sp-conn-desc', channels.length + ' ערוצים · ' + allVideos.length + ' סרטונים');
+  spText('sp-updated', dataUpdatedAt ? 'עודכן ' + timeAgo(dataUpdatedAt) : 'עדיין לא עודכן');
+
+  const n = spCounts();
+  const units = { seen: 'ערוצים מסומנים', history: 'סרטונים', liked: 'סרטונים', later: 'סרטונים' };
+  for (const k in units) {
+    spText('sp-c-' + k, n[k] + ' ' + units[k]);
+    const b = document.getElementById('sp-b-' + k);
+    if (b) b.disabled = !n[k];
+  }
+}
+
+function updateNetfreeToggleUI() { updateSettingsLive(); }
+
+/* ---- פעולות ---- */
+function setTheme(t) {
+  document.body.className = t === 'light' ? 'light' : 'dark';
+  localStorage.setItem(THEME_KEY, document.body.className);
+  updateSettingsLive();
+}
+
+function setSidebarCol(on) {
+  document.getElementById('sidebar').classList.toggle('col', !!on);
+  document.getElementById('main').classList.toggle('col', !!on);
+  localStorage.setItem(SIDEBAR_KEY, on ? '1' : '0');
+  updateSettingsLive();
+}
+function toggleSidebarCol() {
+  setSidebarCol(!document.getElementById('sidebar').classList.contains('col'));
+}
+
+// לחיצה ראשונה מבקשת אישור, לחיצה שנייה (תוך כמה שניות) מבצעת
+function spDisarm(btn) {
+  clearTimeout(btn._t);
+  btn.dataset.armed = '';
+  btn.classList.remove('armed');
+  btn.textContent = btn.dataset.label;
+}
+function spArm(btn, fn) {
+  if (btn.dataset.armed !== '1') {
+    btn.dataset.armed = '1';
+    btn.classList.add('armed');
+    btn.textContent = 'לחץ שוב לאישור';
+    clearTimeout(btn._t);
+    btn._t = setTimeout(() => spDisarm(btn), 3500);
+    return;
+  }
+  spDisarm(btn);
+  fn();
+}
+function spClear(btn, kind) {
+  const fns = { seen: clearSeenMarks, history: clearWatchHistory, liked: clearLiked, later: clearWatchLater };
+  spArm(btn, () => { fns[kind](); updateSettingsLive(); });
+}
+function spReset(btn) { spArm(btn, resetSettings); }
+
+function resetSettings() {
+  setTheme('dark');
+  setSidebarCol(false);
+  if (inlineMode) toggleInlineMode();
+  hideBlockedMode = false;
+  localStorage.setItem(NF_HIDE_KEY, '0');
+  setNetfreeMode(false);
+  updateSettingsLive();
+  toast('ההגדרות אופסו');
+}
+
 /* ============ UI BINDINGS ============ */
 function bindUI() {
   document.getElementById('sidebar-toggle').onclick = () => {
@@ -1694,12 +2124,14 @@ function bindUI() {
     const col = sb.classList.toggle('col');
     document.getElementById('main').classList.toggle('col', col);
     localStorage.setItem(SIDEBAR_KEY, col ? '1' : '0');
+    updateSettingsLive();
   };
 
   document.getElementById('theme-toggle').onclick = () => {
     const isDark = document.body.classList.contains('dark');
     document.body.className = isDark ? 'light' : 'dark';
     localStorage.setItem(THEME_KEY, document.body.className);
+    updateSettingsLive();
   };
 
   document.getElementById('bell-btn').onclick = (e) => {
@@ -1720,17 +2152,16 @@ function bindUI() {
     if (e.target.id === 'player-modal') closePlayer();
   });
 
-  document.getElementById('settings-modal').addEventListener('click', (e) => {
-    if (e.target.id === 'settings-modal') toggleSettings(false);
-  });
-
   setInterval(() => {
     loadEverything(false);
   }, 5 * 60 * 1000);
 }
 
+let refreshSpinning = false;
 function setRefreshSpin(on) {
-  document.getElementById('refresh-btn').classList.toggle('spin', !!on);
+  refreshSpinning = !!on;
+  const b = document.getElementById('refresh-btn');
+  if (b) b.classList.toggle('spin', refreshSpinning);
 }
 
 /* ============ HELPERS ============ */
