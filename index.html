@@ -579,7 +579,7 @@ body.dark .logo-img{filter:invert(1) hue-rotate(180deg) saturate(6);}
 /* ============ CONFIG ============ */
 const GOOGLE_CLIENT_ID = '426523025549-7c50rkn7cun4vmm2r802u0ij6egjehtg.apps.googleusercontent.com';
 // ההתחברות עם Google משמשת אך ורק להצגת השם ותמונת הפרופיל. אין בקשה להרשאות יוטיוב.
-const GOOGLE_SCOPE = 'openid https://www.googleapis.com/auth/userinfo.profile';
+const GOOGLE_SCOPE = 'https://www.googleapis.com/auth/userinfo.profile';
 // הדבק כאן את כתובת ה-Cloudflare Worker (worker.js), למשל:
 // https://mytube-relay.YOUR-NAME.workers.dev
 // ה-Worker מעביר את הטוקן האישי של המשתמש ל-YouTube API משרתי גוגל,
@@ -827,12 +827,11 @@ function applyExtData(d) {
   channels = d.channels || [];
   allVideos = d.videos || [];
   dataUpdatedAt = d.updatedAt || Date.now();
-  currentUser = { name: 'YouTube', picture: '', channelId: null };
+  // currentUser נשאר כפי שהוא — הוא משקף רק את הפרופיל מגוגל (אם המשתמש התחבר), לא את מקור הסרטונים
   lastError = null;
   try {
     localStorage.setItem(CHANNELS_CACHE_KEY, JSON.stringify(channels));
     localStorage.setItem(VIDEOS_CACHE_KEY, JSON.stringify(allVideos.slice(0, 300)));
-    localStorage.setItem(ME_CACHE_KEY, JSON.stringify(currentUser));
   } catch (e) {}
   renderAuthArea();
   renderChannels();
@@ -1175,7 +1174,7 @@ async function fetchGoogleProfile(announce) {
     });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const d = await res.json();
-    currentUser = { name: d.name || d.given_name || '', picture: d.picture || '', sub: d.sub || '' };
+    currentUser = { name: d.name || d.given_name || '', picture: d.picture || '' };
     localStorage.setItem(ME_CACHE_KEY, JSON.stringify(currentUser));
     renderAuthArea();
     renderContent();
