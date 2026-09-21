@@ -301,6 +301,10 @@ body.dark .logo-img{filter:invert(1) hue-rotate(180deg) saturate(6);}
 .pro-benefits li svg{width:17px;height:17px;fill:#1db954;flex-shrink:0;margin-top:1px;}
 .pro-buy-btn{width:100%;background:var(--red);color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;font-family:var(--font);cursor:pointer;transition:background var(--ease);}
 .pro-buy-btn:hover{background:var(--red2);}
+.pro-buy-btn:disabled{opacity:.5;cursor:not-allowed;}
+.pro-disclaimer{font-size:11.5px;color:var(--txt3);line-height:1.6;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:14px;}
+.pro-disclaimer-check{display:flex;align-items:flex-start;gap:8px;margin-top:10px;font-size:12px;color:var(--txt2);cursor:pointer;font-weight:600;}
+.pro-disclaimer-check input{margin-top:2px;flex-shrink:0;width:15px;height:15px;cursor:pointer;}
 .pro-note{font-size:11px;color:var(--txt3);margin-top:10px;line-height:1.6;text-align:center;}
 #nedarim-frame{width:100%;border:none;height:0;display:block;}
 .pro-frame-wrap{display:none;}
@@ -646,9 +650,17 @@ body.dark .logo-img{filter:invert(1) hue-rotate(180deg) saturate(6);}
           <li><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg> ערוצים נוספים בתפריט הצד</li>
           <li><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg> בקרת מהירות ניגון וקיצורי מקלדת בנגן</li>
           <li><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg> צבעי הדגשה נוספים לעיצוב האתר</li>
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg> כל שירותי סינון נטפרי (בדיקה, סימון והסתרת סרטונים חסומים)</li>
           <li><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg> גיבוי וייצוא/ייבוא של כל הנתונים שלך</li>
         </ul>
-        <button class="pro-buy-btn" onclick="startProPayment()">רכישת מנוי PRO ב-₪<span id="pro-price-btn">9</span></button>
+        <div class="pro-disclaimer">
+          מנוי PRO הוא <b>תמיכה כספית באתר בלבד</b> ואינו מהווה עסקת רכישת מוצר או שירות מובטח. האתר, תכונות ה-PRO וזמינותן ניתנים כפי שהם (AS-IS), ללא כל התחייבות, אחריות או ערבות להמשך קיומם, לתקינותם או להתאמתם למטרה מסוימת - כולל תכונות סינון נטפרי, שתלויות בתוסף MyTube Bridge ובגורמים שאינם בשליטת האתר.
+          <label class="pro-disclaimer-check">
+            <input type="checkbox" id="pro-ack" onchange="document.getElementById('pro-buy-btn').disabled = !this.checked">
+            קראתי ואני מסכים/ה לאמור לעיל
+          </label>
+        </div>
+        <button class="pro-buy-btn" id="pro-buy-btn" disabled onclick="startProPayment()">רכישת מנוי PRO ב-₪<span id="pro-price-btn">9</span></button>
         <div class="pro-note">התשלום מאובטח ומתבצע מול נדרים פלוס. המנוי משויך לחשבון ה-Google שאיתו התחברת.</div>
       </div>
       <div class="pro-frame-wrap">
@@ -696,6 +708,7 @@ const FREE_VIDEO_CACHE_MAX = 300;             // מכסת מטמון סרטונ�
 const PRO_LIST_MAX = 1000;                    // מכסת "אהבתי" / "לצפייה מאוחרת" למנויי PRO
 const FREE_LIST_MAX = 300;                    // מכסה רגילה
 const PRO_ACCENTS = ['#ff0000','#3ea6ff','#8b5cf6','#10b981','#f97316','#ec4899'];
+const EXTENSION_STORE_URL = 'https://chromewebstore.google.com/detail/mytube-bridge/nfhaafmmpjkfefkfigdihiidklnboana';
 // הדבק כאן את כתובת ה-Cloudflare Worker (worker.js), למשל:
 // https://mytube-relay.YOUR-NAME.workers.dev
 // ה-Worker מעביר את הטוקן האישי של המשתמש ל-YouTube API משרתי גוגל,
@@ -855,6 +868,13 @@ window.addEventListener('load', () => {
   updateInlineToggleUI();
   netfreeMode = localStorage.getItem(NETFREE_MODE_KEY) === '1';
   hideBlockedMode = netfreeMode && localStorage.getItem(NF_HIDE_KEY) === '1';
+  if (netfreeMode && !isPro()) {
+    // סינון נטפרי הפך לתכונת PRO - משתמש שאינו מנוי לא ממשיך איתו פעיל
+    netfreeMode = false;
+    hideBlockedMode = false;
+    localStorage.setItem(NETFREE_MODE_KEY, '0');
+    localStorage.setItem(NF_HIDE_KEY, '0');
+  }
   loadNfCache();
   updateNetfreeToggleUI();
   renderAuthArea();
@@ -1125,6 +1145,7 @@ function refreshAfterNfChange() {
 function setNetfreeMode(on) {
   if (on === netfreeMode) return true;
   if (on) {
+    if (!isPro()) { toast('סינון נטפרי זמין למנויי PRO'); return false; }
     if (!extMode) { toast('מצב נטפרי דורש את התוסף MyTube Bridge'); return false; }
     netfreeMode = true;
     localStorage.setItem(NETFREE_MODE_KEY, '1');
@@ -1155,6 +1176,7 @@ function setHideBlocked(on) {
 }
 
 function recheckNetfree() {
+  if (!isPro()) { toast('סינון נטפרי זמין למנויי PRO'); return; }
   if (!netfreeMode || !extMode) { toast('מצב נטפרי כבוי'); return; }
   for (const id in nfStatus) delete nfStatus[id];
   for (const id in nfTime) delete nfTime[id];
@@ -1465,6 +1487,10 @@ function openProModal() {
     toast('תשתית ה-PRO עדיין לא חוברה במלואה (APPS_SCRIPT_URL). ראו את קובץ ההפעלה המצורף.');
   }
   updateProPriceUI();
+  const ack = document.getElementById('pro-ack');
+  const buyBtn = document.getElementById('pro-buy-btn');
+  if (ack) ack.checked = false;
+  if (buyBtn) buyBtn.disabled = true;
   document.getElementById('pro-modal').classList.add('open');
   ensureNedarimFrame();
 }
@@ -1497,6 +1523,8 @@ function postNedarim(data) {
 
 function startProPayment() {
   if (!currentUser || !currentUser.email) { toast('יש להתחבר עם Google תחילה'); return; }
+  const ack = document.getElementById('pro-ack');
+  if (ack && !ack.checked) { toast('יש לאשר את התנאים לפני הרכישה'); return; }
   proPaying = true;
   setProModalState('paying');
   const nameParts = String(currentUser.name || '').trim().split(/\s+/);
@@ -2017,7 +2045,10 @@ function renderContent() {
         <h3>עדיין אין סרטונים</h3>
         <p>הסרטונים מגיעים מהתוסף MyTube Bridge, שמושך את המנויים שלך ישירות מיוטיוב בדפדפן. אם התוסף מותקן — ודא שהוא פעיל ולחץ "בדוק שוב".</p>
         <p style="margin-top:8px;font-size:12px;opacity:.7">ההתחברות עם Google בסרגל העליון משמשת רק להצגת השם ותמונת הפרופיל שלך.</p>
-        <button class="yt-login-btn" onclick="recheckExtension()">בדוק שוב</button>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px">
+          <button class="yt-login-btn" onclick="recheckExtension()">בדוק שוב</button>
+          <a class="yt-login-btn" style="background:#1a73e8;text-decoration:none" href="${EXTENSION_STORE_URL}" target="_blank" rel="noopener">התקנת התוסף מחנות Chrome</a>
+        </div>
       </div>`;
     return;
   }
@@ -2829,8 +2860,8 @@ function spSwitch(id, label, handler) {
 function spRow(label, desc, control, cls) {
   return `<div class="sp-row${cls ? ' ' + cls : ''}"><div class="sp-txt"><div class="sp-lbl">${label}</div>${desc ? `<div class="sp-desc">${desc}</div>` : ''}</div>${control}</div>`;
 }
-function spCard(title, body) {
-  return `<div class="sp-card">${title ? `<div class="sp-card-h">${title}</div>` : ''}${body}</div>`;
+function spCard(title, body, cls) {
+  return `<div class="sp-card${cls ? ' ' + cls : ''}">${title ? `<div class="sp-card-h">${title}</div>` : ''}${body}</div>`;
 }
 function spPillHtml(id) {
   return `<span class="sp-pill" id="${id}"><i></i><span></span></span>`;
@@ -2875,8 +2906,10 @@ function renderSettingsPage(ct) {
           <li><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg> ערוצים נוספים בתפריט הצד</li>
           <li><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg> בקרת מהירות ניגון וקיצורי מקלדת בנגן</li>
           <li><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg> צבעי הדגשה נוספים לעיצוב האתר</li>
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg> כל שירותי סינון נטפרי (בדיקה, סימון והסתרת סרטונים חסומים)</li>
           <li><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg> גיבוי וייצוא/ייבוא של כל הנתונים שלך</li>
         </ul>
+        <div class="pro-disclaimer" style="margin-bottom:16px">מנוי PRO הוא תמיכה כספית באתר בלבד ואינו מהווה התחייבות, אחריות או ערבות כלשהי מצד האתר לזמינות התכונות או להמשך קיומן.</div>
         <button class="pro-buy-btn" onclick="openProModal()">שדרוג ל-PRO ב-₪${PRO_PRICE}</button>
       </div>
     `);
@@ -2898,14 +2931,21 @@ function renderSettingsPage(ct) {
     );
 
   const netfree =
-    spCard('', spRow('התוסף MyTube Bridge', '<span id="sp-ext-desc"></span>', spPillHtml('sp-ext-pill'))) +
-    spCard('סינון נטפרי',
+    spCard('', spRow('התוסף MyTube Bridge', '<span id="sp-ext-desc"></span>', '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">' + spPillHtml('sp-ext-pill') + '<a class="sp-btn" id="sp-ext-install" style="text-decoration:none;display:none" href="' + EXTENSION_STORE_URL + '" target="_blank" rel="noopener">התקנה מחנות Chrome</a></div>')) +
+    (isPro() ? '' : spCard('', `
+      <div style="padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap">
+        <div><span class="pro-tag">👑 PRO</span> <span style="font-size:13px;color:var(--txt2);margin-inline-start:8px">כל שירותי סינון נטפרי זמינים למנויי PRO בלבד.</span></div>
+        <button class="pro-buy-btn" style="width:auto;padding:10px 18px" onclick="openProModal()">שדרוג ל-PRO</button>
+      </div>
+    `)) +
+    spCard('סינון נטפרי' + (isPro() ? '' : ' (PRO)'),
       spRow('מצב נטפרי', 'בודק דרך התוסף אילו סרטונים נפתחים בנטפרי, ומסמן כל סרטון פתוח בנקודה ירוקה בפינת התמונה.',
         spSwitch('sw-netfree', 'מצב נטפרי', 'setNetfreeMode(!netfreeMode)')) +
       spRow('הסתר סרטונים שאינם פתוחים', 'סרטונים חסומים לא יוצגו בפיד, ברשימות ובהתראות. בדף הבית הם יוחלפו בסרטונים פתוחים. הפעלת האפשרות מפעילה גם את מצב נטפרי.',
         spSwitch('sw-nfhide', 'הסתר סרטונים שאינם פתוחים', 'setHideBlocked(!(hideBlockedMode && netfreeMode))'), 'sub') +
       spRow('בדיקה מחדש', 'מנקה את תוצאות הבדיקה ובודק את הסרטונים שוב. שימושי אחרי שסרטון נפתח בנטפרי.',
         '<button class="sp-btn" id="sp-recheck" onclick="recheckNetfree()">בדוק מחדש</button>')
+      , isPro() ? '' : 'pro-locked'
     ) +
     spCard('תוצאות הבדיקה',
       '<div class="sp-stats">' +
@@ -2997,15 +3037,16 @@ function updateSettingsLive() {
   document.querySelectorAll('.accent-sw').forEach(b => b.classList.toggle('on', isPro() && b.dataset.c === currentAccent));
   spSw('sw-inline', inlineMode, false);
   spSw('sw-mini', miniEnabled, !inlineMode);
-  spSw('sw-netfree', netfreeMode, !extMode);
-  spSw('sw-nfhide', hideBlockedMode && netfreeMode, !extMode);
+  spSw('sw-netfree', netfreeMode, !extMode || !isPro());
+  spSw('sw-nfhide', hideBlockedMode && netfreeMode, !extMode || !isPro());
 
   spPill('sp-ext-pill', extMode, extMode ? 'מותקן' : 'לא זוהה');
   spText('sp-ext-desc', extMode
     ? 'הבדיקה מתבצעת דרך התוסף, ישירות בדפדפן שלך' + (extVersion ? ' (גרסה ' + extVersion + ')' : '') + '.'
     : 'מצב נטפרי דורש את התוסף. יש להתקין אותו ולרענן את הדף.');
+  { const inst = document.getElementById('sp-ext-install'); if (inst) inst.style.display = extMode ? 'none' : ''; }
   const rb = document.getElementById('sp-recheck');
-  if (rb) rb.disabled = !(netfreeMode && extMode);
+  if (rb) rb.disabled = !(netfreeMode && extMode && isPro());
   const c = nfCounts();
   spText('sp-nf-total', netfreeMode ? c.t : '-');
   spText('sp-nf-open', netfreeMode ? c.o : '-');
