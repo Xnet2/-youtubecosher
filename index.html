@@ -271,6 +271,60 @@ body.dark .logo-img{filter:invert(1) hue-rotate(180deg) saturate(6);}
 .pm-title{color:#fff;font-size:15px;font-weight:600;margin-top:14px;line-height:1.4;}
 .pm-ch{color:rgba(255,255,255,.65);font-size:12.5px;margin-top:6px;}
 
+/* PLAYER SPEED BAR (PRO) */
+.pm-tools{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.pm-speed-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:8px;padding:5px 10px;font-size:12px;font-family:var(--font);cursor:pointer;transition:background .15s;}
+.pm-speed-btn:hover{background:rgba(255,255,255,.2);}
+.pm-speed-btn.on{background:var(--red);border-color:var(--red);}
+.pm-tools-hint{color:rgba(255,255,255,.5);font-size:11px;}
+
+/* PRO CROWN BADGE */
+.pro-crown{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;}
+.pro-crown svg{width:100%;height:100%;fill:#f5b800;}
+.yt-user-chip .pro-crown{margin-inline-start:-2px;}
+.pro-tag{display:inline-flex;align-items:center;gap:4px;background:linear-gradient(95deg,#f5b800,#ff8a00);color:#1a1200;font-size:10.5px;font-weight:800;letter-spacing:.3px;border-radius:6px;padding:2px 7px;}
+
+/* PRO MODAL */
+#pro-modal{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:600;display:none;align-items:center;justify-content:center;padding:20px;}
+#pro-modal.open{display:flex;}
+.pro-box{width:100%;max-width:460px;background:var(--surface);border-radius:20px;box-shadow:0 20px 60px var(--shadow);overflow:hidden;max-height:90vh;display:flex;flex-direction:column;}
+.pro-head{padding:22px 24px 4px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.pro-head h2{font-size:19px;font-weight:800;display:flex;align-items:center;gap:8px;}
+.pro-head h2 svg{width:22px;height:22px;fill:#f5b800;}
+.pro-close{background:none;border:none;cursor:pointer;color:var(--txt2);padding:4px;flex-shrink:0;}
+.pro-close svg{width:22px;height:22px;fill:currentColor;}
+.pro-body{padding:6px 24px 22px;overflow-y:auto;}
+.pro-price{font-size:32px;font-weight:800;margin:6px 0 2px;}
+.pro-price span{font-size:14px;font-weight:500;color:var(--txt3);}
+.pro-benefits{list-style:none;margin:16px 0;display:flex;flex-direction:column;gap:10px;}
+.pro-benefits li{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--txt2);line-height:1.5;}
+.pro-benefits li svg{width:17px;height:17px;fill:#1db954;flex-shrink:0;margin-top:1px;}
+.pro-buy-btn{width:100%;background:var(--red);color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;font-family:var(--font);cursor:pointer;transition:background var(--ease);}
+.pro-buy-btn:hover{background:var(--red2);}
+.pro-note{font-size:11px;color:var(--txt3);margin-top:10px;line-height:1.6;text-align:center;}
+#nedarim-frame{width:100%;border:none;height:0;display:block;}
+.pro-frame-wrap{display:none;}
+.pro-success{display:none;text-align:center;padding:20px 0;}
+.pro-success svg{width:56px;height:56px;fill:#1db954;margin-bottom:10px;}
+.pro-success h3{font-size:17px;font-weight:700;margin-bottom:6px;}
+.pro-success p{font-size:13px;color:var(--txt3);}
+#pro-modal[data-state="form"] .pro-form-wrap{display:block;}
+#pro-modal[data-state="form"] .pro-frame-wrap,
+#pro-modal[data-state="form"] .pro-success{display:none;}
+#pro-modal[data-state="paying"] .pro-form-wrap{display:none;}
+#pro-modal[data-state="paying"] .pro-frame-wrap{display:block;}
+#pro-modal[data-state="paying"] .pro-success{display:none;}
+#pro-modal[data-state="success"] .pro-form-wrap,
+#pro-modal[data-state="success"] .pro-frame-wrap{display:none;}
+#pro-modal[data-state="success"] .pro-success{display:block;}
+
+/* ACCENT COLOR SWATCHES (PRO, settings) */
+.accent-row{display:flex;gap:10px;flex-wrap:wrap;}
+.accent-sw{width:30px;height:30px;border-radius:50%;border:2px solid transparent;cursor:pointer;position:relative;flex-shrink:0;}
+.accent-sw.on{border-color:var(--txt);}
+.accent-sw.on::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700;text-shadow:0 1px 2px rgba(0,0,0,.4);}
+.pro-locked{opacity:.45;filter:grayscale(.4);pointer-events:none;}
+
 /* SETTINGS PAGE */
 .sp{max-width:980px;margin:0 auto;}
 .sp-head{margin-bottom:22px;}
@@ -482,6 +536,10 @@ body.dark .logo-img{filter:invert(1) hue-rotate(180deg) saturate(6);}
         <svg viewBox="0 0 24 24"><path d="M10 15l5.19-3L10 9v6zm11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-4.19 0-6.8-.16-7.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L2 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 5c4.19 0 6.8.16 7.83.44.9.25 1.48.83 1.73 1.73z"/></svg>
         פתח ב-YouTube
       </div>
+      <div class="um-item" id="um-pro" onclick="openProModal()">
+        <svg viewBox="0 0 24 24"><path d="M5 16L3 6l5.5 4L12 4l3.5 6L21 6l-2 10H5zm14 3H5v2h14v-2z"/></svg>
+        <span id="um-pro-label">שדרג ל-PRO</span>
+      </div>
       <div class="um-item" id="um-refresh" onclick="manualRefresh()">
         <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08a5.99 5.99 0 01-5.65 4c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
         רענן נתונים
@@ -559,6 +617,7 @@ body.dark .logo-img{filter:invert(1) hue-rotate(180deg) saturate(6);}
     </div>
     <div class="pm-title" id="pm-title"></div>
     <div class="pm-ch" id="pm-ch"></div>
+    <div class="pm-tools" id="pm-tools" style="display:none"></div>
   </div>
 </div>
 
@@ -572,14 +631,71 @@ body.dark .logo-img{filter:invert(1) hue-rotate(180deg) saturate(6);}
   <div class="pip-frame" id="pip-frame"></div>
 </div>
 
+<div id="pro-modal" data-state="form">
+  <div class="pro-box">
+    <div class="pro-head">
+      <h2><svg viewBox="0 0 24 24"><path d="M5 16L3 6l5.5 4L12 4l3.5 6L21 6l-2 10H5zm14 3H5v2h14v-2z"/></svg> מנוי PRO</h2>
+      <button class="pro-close" onclick="closeProModal()"><svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+    </div>
+    <div class="pro-body">
+      <div class="pro-form-wrap">
+        <div class="pro-price" id="pro-price-txt">₪9 <span>תשלום חד-פעמי, PRO לצמיתות</span></div>
+        <ul class="pro-benefits">
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg> רענון נתונים תכוף פי כמה ברקע</li>
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg> מכסות אחסון מוגדלות (מטמון, "אהבתי", לצפייה מאוחרת)</li>
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg> ערוצים נוספים בתפריט הצד</li>
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg> בקרת מהירות ניגון וקיצורי מקלדת בנגן</li>
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg> צבעי הדגשה נוספים לעיצוב האתר</li>
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg> גיבוי וייצוא/ייבוא של כל הנתונים שלך</li>
+        </ul>
+        <button class="pro-buy-btn" onclick="startProPayment()">רכישת מנוי PRO ב-₪<span id="pro-price-btn">9</span></button>
+        <div class="pro-note">התשלום מאובטח ומתבצע מול נדרים פלוס. המנוי משויך לחשבון ה-Google שאיתו התחברת.</div>
+      </div>
+      <div class="pro-frame-wrap">
+        <iframe id="nedarim-frame" allow="payment" scrolling="no"></iframe>
+      </div>
+      <div class="pro-success">
+        <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>
+        <h3>התשלום התקבל!</h3>
+        <p>מפעילים את מנוי ה-PRO על החשבון שלך... זה יכול לקחת עד דקה.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://www.youtube.com/iframe_api" async defer></script>
 <script>
 /* ============ CONFIG ============ */
 const GOOGLE_CLIENT_ID = '426523025549-7c50rkn7cun4vmm2r802u0ij6egjehtg.apps.googleusercontent.com';
-// ההתחברות עם Google משמשת אך ורק להצגת השם ותמונת הפרופיל. אין בקשה להרשאות יוטיוב.
-const GOOGLE_SCOPE = 'https://www.googleapis.com/auth/userinfo.profile';
+// ההתחברות עם Google משמשת להצגת השם ותמונת הפרופיל, ולזיהוי חשבון המנוי PRO (לפי כתובת המייל).
+// אין בקשה להרשאות יוטיוב.
+const GOOGLE_SCOPE = 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
+
+/* ============ PRO — נדרים פלוס + Google Apps Script ============ */
+// תשתית מנוי PRO: תשלום חד-פעמי מול נדרים פלוס (אייפרם שיטה 3, הזרקה ישירה),
+// ואימות/שמירת הסטטוס דרך Google Apps Script + Google Sheets (ה"שרת" היחיד בתשתית הזו,
+// ללא צורך באחסון או תשתית חיצונית נוספת).
+const NEDARIM_MOSAD = '7011337';           // מספר המוסד בנדרים פלוס
+const NEDARIM_API_VALID = '2LR6bWRiJ+';    // סיסמת האימות לדף התשלום (ApiValid) - אינה סוד, ראו תיעוד נדרים פלוס
+const NEDARIM_IFRAME_URL = 'https://www.matara.pro/nedarimplus/iframe/v3/'; // חובה עם www
+const PRO_PRICE = 9;                        // מחיר מנוי PRO בשקלים, תשלום חד-פעמי
+const PRO_PURCHASE_TEXT = 'רכישת מנוי אתר דוד'; // הטקסט שיופיע אצל המשלם (הערות) ובדוח נדרים פלוס
+const PRO_GROUPE = 'מנוי PRO';              // קטגוריה בדוח נדרים פלוס
+// כתובת ה-Web App של Google Apps Script (ראו קובץ ההפעלה המצורף Code.gs).
+// יש להדביק כאן את הכתובת שמתקבלת אחרי הפריסה (Deploy > New deployment > Web app).
+const APPS_SCRIPT_URL = 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL';
+const PRO_STATUS_KEY = 'mytube_pro_status';   // {email, pro, checkedAt}
+const PRO_ACCENT_KEY = 'mytube_pro_accent';   // צבע הדגשה נבחר (PRO בלבד)
+const PRO_REFRESH_MS = 60 * 1000;             // קצב רענון רקע למנויי PRO
+const FREE_REFRESH_MS = 5 * 60 * 1000;        // קצב רענון רקע למשתמש רגיל
+const PRO_VIDEO_CACHE_MAX = 1000;             // מכסת מטמון סרטונים למנויי PRO
+const FREE_VIDEO_CACHE_MAX = 300;             // מכסת מטמון סרטונים רגילה
+const PRO_LIST_MAX = 1000;                    // מכסת "אהבתי" / "לצפייה מאוחרת" למנויי PRO
+const FREE_LIST_MAX = 300;                    // מכסה רגילה
+const PRO_ACCENTS = ['#ff0000','#3ea6ff','#8b5cf6','#10b981','#f97316','#ec4899'];
 // הדבק כאן את כתובת ה-Cloudflare Worker (worker.js), למשל:
 // https://mytube-relay.YOUR-NAME.workers.dev
 // ה-Worker מעביר את הטוקן האישי של המשתמש ל-YouTube API משרתי גוגל,
@@ -618,6 +734,8 @@ let channelsQuery = '';
 let activeInlineId = null;
 let loading = false;
 let lastError = null;
+let proStatus = { email: '', pro: false, checkedAt: 0 }; // מצב מנוי PRO
+let proChecking = false;
 
 const EMPTY_MESSAGES = {
   shorts: 'לא נמצאו שורטס מהערוצים שאתה עוקב אחריהם.',
@@ -729,7 +847,9 @@ window.addEventListener('load', () => {
   loadCachedVideos();
   loadCachedMe();
   loadLocalLists();
-  { const n = Number(localStorage.getItem(SB_CH_KEY)); sidebarChannelCount = [5, 8, 12].includes(n) ? n : 8; }
+  loadProStatusCache();
+  applyAccentColor();
+  { const n = Number(localStorage.getItem(SB_CH_KEY)); sidebarChannelCount = [5, 8, 12, 20, 999].includes(n) ? n : 8; }
   inlineMode = localStorage.getItem(INLINE_MODE_KEY) === '1';
   miniEnabled = localStorage.getItem(MINI_KEY) !== '0';
   updateInlineToggleUI();
@@ -759,6 +879,7 @@ window.addEventListener('load', () => {
   });
   initGoogleAuth();
   restoreGoogleSession();
+  refreshProStatus(false);
 });
 
 window.addEventListener('popstate', () => {
@@ -831,7 +952,7 @@ function applyExtData(d) {
   lastError = null;
   try {
     localStorage.setItem(CHANNELS_CACHE_KEY, JSON.stringify(channels));
-    localStorage.setItem(VIDEOS_CACHE_KEY, JSON.stringify(allVideos.slice(0, 300)));
+    localStorage.setItem(VIDEOS_CACHE_KEY, JSON.stringify(allVideos.slice(0, isPro() ? PRO_VIDEO_CACHE_MAX : FREE_VIDEO_CACHE_MAX)));
   } catch (e) {}
   renderAuthArea();
   renderChannels();
@@ -1174,12 +1295,13 @@ async function fetchGoogleProfile(announce) {
     });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const d = await res.json();
-    currentUser = { name: d.name || d.given_name || '', picture: d.picture || '' };
+    currentUser = { name: d.name || d.given_name || '', picture: d.picture || '', email: d.email || '' };
     localStorage.setItem(ME_CACHE_KEY, JSON.stringify(currentUser));
     renderAuthArea();
     renderContent();
     updateSettingsLive();
     if (announce) toast('שלום, ' + String(currentUser.name || '').split(' ')[0]);
+    refreshProStatus(false);
   } catch (e) {
     console.error(e);
     accessToken = null;
@@ -1234,9 +1356,274 @@ function signOut() {
   updateSettingsLive();
   toggleUserMenu(false);
   toast('התנתקת');
+  applyAccentColor();
   if (tok && window.google && google.accounts && google.accounts.oauth2) {
     try { google.accounts.oauth2.revoke(tok, () => {}); } catch (e) {}
   }
+}
+
+/* ============ PRO SUBSCRIPTION ============ */
+// מנוי PRO מזוהה לפי כתובת המייל של חשבון Google שאיתו מתחברים.
+// מקור האמת היחיד הוא הגיליון ש-Google Apps Script מעדכן מתוך ה-Webhook של נדרים פלוס;
+// המטמון המקומי (localStorage) הוא רק לתצוגה מהירה בין טעינות דף.
+
+function loadProStatusCache() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(PRO_STATUS_KEY) || 'null');
+    if (raw && raw.email) proStatus = raw;
+  } catch (e) { /* ignore */ }
+}
+function saveProStatusCache() {
+  localStorage.setItem(PRO_STATUS_KEY, JSON.stringify(proStatus));
+}
+
+// האם המשתמש המחובר הוא מנוי PRO פעיל
+function isPro() {
+  return !!(currentUser && currentUser.email && proStatus.pro && proStatus.email === currentUser.email);
+}
+
+function appsScriptConfigured() {
+  return APPS_SCRIPT_URL && APPS_SCRIPT_URL.indexOf('http') === 0;
+}
+
+// שאילתת סטטוס מול ה-Apps Script. safe לקרוא הרבה פעמים - התוצאה נשמרת במטמון.
+async function refreshProStatus(showToast) {
+  if (!currentUser || !currentUser.email) return;
+  if (!appsScriptConfigured()) return; // הבדיקה עדיין לא חוברה - ראו APPS_SCRIPT_URL בתחילת הקובץ
+  if (proChecking) return;
+  proChecking = true;
+  try {
+    const url = APPS_SCRIPT_URL + (APPS_SCRIPT_URL.includes('?') ? '&' : '?') +
+      'action=status&email=' + encodeURIComponent(currentUser.email.toLowerCase());
+    const res = await fetch(url);
+    const data = await res.json();
+    const wasPro = isPro();
+    proStatus = { email: currentUser.email, pro: !!data.pro, checkedAt: Date.now() };
+    saveProStatusCache();
+    renderAuthArea();
+    updateSettingsLive();
+    applyAccentColor();
+    if (!wasPro && proStatus.pro && showToast !== false) {
+      toast('מנוי PRO הופעל בהצלחה! תודה על הרכישה 👑');
+    }
+  } catch (e) {
+    console.error('PRO status check failed', e);
+  } finally {
+    proChecking = false;
+  }
+}
+
+// בודק סטטוס שוב כל כמה שניות למשך דקה - שימושי מיד אחרי תשלום, עד שה-Webhook מגיע ל-Sheet
+function pollProStatusAfterPurchase() {
+  let tries = 0;
+  const iv = setInterval(() => {
+    tries++;
+    refreshProStatus(true);
+    if (isPro() || tries >= 10) clearInterval(iv);
+  }, 6000);
+}
+
+/* ---- צבע הדגשה (PRO) ---- */
+function applyAccentColor() {
+  const chosen = isPro() ? (localStorage.getItem(PRO_ACCENT_KEY) || '') : '';
+  if (chosen && PRO_ACCENTS.includes(chosen)) {
+    document.documentElement.style.setProperty('--red', chosen);
+    document.documentElement.style.setProperty('--red2', shadeColor(chosen, -18));
+  } else {
+    document.documentElement.style.removeProperty('--red');
+    document.documentElement.style.removeProperty('--red2');
+  }
+  updateSettingsLive();
+}
+function setAccentColor(hex) {
+  if (!isPro()) { toast('צבעי הדגשה נוספים זמינים למנויי PRO'); return; }
+  localStorage.setItem(PRO_ACCENT_KEY, hex);
+  applyAccentColor();
+}
+function shadeColor(hex, percent) {
+  const n = parseInt(hex.replace('#', ''), 16);
+  let r = (n >> 16) + Math.round(2.55 * percent);
+  let g = ((n >> 8) & 0xff) + Math.round(2.55 * percent);
+  let b = (n & 0xff) + Math.round(2.55 * percent);
+  r = Math.max(0, Math.min(255, r)); g = Math.max(0, Math.min(255, g)); b = Math.max(0, Math.min(255, b));
+  return '#' + (0x1000000 + r * 0x10000 + g * 0x100 + b).toString(16).slice(1);
+}
+
+/* ---- תשלום מול נדרים פלוס (אייפרם שיטה 3, הזרקה ישירה) ---- */
+let nedarimFrameReady = false;
+let nedarimListenerBound = false;
+let proPaying = false;
+
+function openProModal() {
+  if (isPro()) { openSettings('pro'); return; }
+  if (!currentUser || !currentUser.email) {
+    toast('קודם מתחברים עם Google, כדי לשייך את המנוי לחשבון שלך');
+    signIn();
+    return;
+  }
+  if (!appsScriptConfigured()) {
+    toast('תשתית ה-PRO עדיין לא חוברה במלואה (APPS_SCRIPT_URL). ראו את קובץ ההפעלה המצורף.');
+  }
+  updateProPriceUI();
+  document.getElementById('pro-modal').classList.add('open');
+  ensureNedarimFrame();
+}
+function updateProPriceUI() {
+  const txt = document.getElementById('pro-price-txt');
+  const btn = document.getElementById('pro-price-btn');
+  if (txt) txt.innerHTML = '₪' + PRO_PRICE + ' <span>תשלום חד-פעמי, PRO לצמיתות</span>';
+  if (btn) btn.textContent = PRO_PRICE;
+}
+function closeProModal() {
+  if (proPaying) { if (!confirm('התשלום עדיין בעיבוד. לסגור בכל זאת?')) return; }
+  document.getElementById('pro-modal').classList.remove('open');
+}
+
+function ensureNedarimFrame() {
+  if (!nedarimListenerBound) {
+    window.addEventListener('message', readNedarimMessage); // פעם אחת בלבד לכל חיי הדף
+    nedarimListenerBound = true;
+  }
+  const frame = document.getElementById('nedarim-frame');
+  if (!frame.src) {
+    frame.src = NEDARIM_IFRAME_URL + '?language=he';
+  }
+}
+
+function postNedarim(data) {
+  const frame = document.getElementById('nedarim-frame');
+  if (frame && frame.contentWindow) frame.contentWindow.postMessage(data, '*');
+}
+
+function startProPayment() {
+  if (!currentUser || !currentUser.email) { toast('יש להתחבר עם Google תחילה'); return; }
+  proPaying = true;
+  setProModalState('paying');
+  const nameParts = String(currentUser.name || '').trim().split(/\s+/);
+  const firstName = nameParts[0] || '';
+  const lastName = nameParts.slice(1).join(' ') || '';
+  postNedarim({
+    Name: 'StartPayment',
+    Value: {
+      Mosad: NEDARIM_MOSAD,
+      ApiValid: NEDARIM_API_VALID,
+      PaymentType: 'Ragil',
+      Amount: String(PRO_PRICE),
+      Currency: '1',
+      Tashlumim: '1',
+      FirstName: firstName,
+      LastName: lastName,
+      Phone: '',
+      Zeout: '',
+      Street: '',
+      City: '',
+      Mail: currentUser.email,
+      Groupe: PRO_GROUPE,
+      Comment: PRO_PURCHASE_TEXT,
+      Param1: '',
+      Param2: currentUser.email,               // להצלבה מול ה-Webhook
+      CallBack: appsScriptConfigured() ? APPS_SCRIPT_URL : '',
+      CallBackMailError: '',
+      ThirdPartyReceipt: '',
+      ForceUpdateMatching: '',
+      Day: '', StartFrom: '', Tokef: '',
+      MaxPayments: '', Methods: '',
+      ButtonText: 'רכישת מנוי PRO'
+    }
+  });
+}
+
+function readNedarimMessage(event) {
+  const d = event.data;
+  if (!d || !d.Name) return;
+  const frame = document.getElementById('nedarim-frame');
+  switch (d.Name) {
+    case 'Height':
+      if (frame) frame.style.height = (parseInt(d.Value, 10) + 15) + 'px';
+      break;
+    case 'Back':
+      proPaying = false;
+      setProModalState('form');
+      break;
+    case 'WalletCanceled':
+      proPaying = false;
+      setProModalState('form');
+      toast('התשלום בוטל');
+      break;
+    case 'TransactionResponse': {
+      const v = d.Value || {};
+      if (v.Status === 'OK') {
+        proPaying = false;
+        setProModalState('success');
+        // אישור בדפדפן הוא לחוויית המשתמש בלבד - הסטטוס הרשמי מתעדכן בגיליון
+        // דרך ה-Webhook (CallBack), ולכן בודקים מולו כמה פעמים ברצף.
+        pollProStatusAfterPurchase();
+      } else {
+        proPaying = false;
+        setProModalState('form');
+        toast('התשלום נכשל: ' + (v.Message || 'שגיאה לא ידועה'));
+      }
+      break;
+    }
+  }
+}
+
+function setProModalState(state) {
+  const modal = document.getElementById('pro-modal');
+  if (modal) modal.setAttribute('data-state', state);
+}
+
+/* ---- גיבוי / שחזור נתונים מקומיים (PRO) ---- */
+function exportBackup() {
+  if (!isPro()) { toast('גיבוי וייצוא נתונים זמינים למנויי PRO'); return; }
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    watchHistory, watchLater, likedVideos, seenMap,
+    settings: {
+      theme: localStorage.getItem(THEME_KEY),
+      sidebarCol: localStorage.getItem(SIDEBAR_KEY),
+      sidebarChannels: localStorage.getItem(SB_CH_KEY),
+      inlineMode: localStorage.getItem(INLINE_MODE_KEY),
+      mini: localStorage.getItem(MINI_KEY),
+      accent: localStorage.getItem(PRO_ACCENT_KEY)
+    }
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'mytube-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function importBackupFile(input) {
+  if (!isPro()) { toast('שחזור נתונים זמין למנויי PRO'); return; }
+  const file = input.files && input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if (Array.isArray(data.watchHistory)) { watchHistory = data.watchHistory; localStorage.setItem(WATCH_HISTORY_KEY, JSON.stringify(watchHistory)); }
+      if (Array.isArray(data.watchLater)) { watchLater = data.watchLater; localStorage.setItem(WATCH_LATER_KEY, JSON.stringify(watchLater)); }
+      if (Array.isArray(data.likedVideos)) { likedVideos = data.likedVideos; localStorage.setItem(LIKED_KEY, JSON.stringify(likedVideos)); }
+      if (data.seenMap) { seenMap = data.seenMap; localStorage.setItem(SEEN_KEY, JSON.stringify(seenMap)); }
+      if (data.settings) {
+        const s = data.settings;
+        if (s.theme) localStorage.setItem(THEME_KEY, s.theme);
+        if (s.sidebarCol != null) localStorage.setItem(SIDEBAR_KEY, s.sidebarCol);
+        if (s.sidebarChannels != null) localStorage.setItem(SB_CH_KEY, s.sidebarChannels);
+        if (s.inlineMode != null) localStorage.setItem(INLINE_MODE_KEY, s.inlineMode);
+        if (s.mini != null) localStorage.setItem(MINI_KEY, s.mini);
+        if (s.accent) localStorage.setItem(PRO_ACCENT_KEY, s.accent);
+      }
+      toast('הנתונים שוחזרו בהצלחה. טוען מחדש...');
+      setTimeout(() => location.reload(), 1200);
+    } catch (e) {
+      toast('קובץ הגיבוי אינו תקין');
+    }
+  };
+  reader.readAsText(file);
+  input.value = '';
 }
 
 /* ============ DATA LOADING (via Cloudflare Worker relay) ============ */
@@ -1302,7 +1689,7 @@ async function loadEverything(forceToast) {
     dataUpdatedAt = Date.now();
 
     localStorage.setItem(CHANNELS_CACHE_KEY, JSON.stringify(channels));
-    localStorage.setItem(VIDEOS_CACHE_KEY, JSON.stringify(allVideos.slice(0, 300)));
+    localStorage.setItem(VIDEOS_CACHE_KEY, JSON.stringify(allVideos.slice(0, isPro() ? PRO_VIDEO_CACHE_MAX : FREE_VIDEO_CACHE_MAX)));
     localStorage.setItem(ME_CACHE_KEY, JSON.stringify(currentUser));
 
     renderContent();
@@ -1368,14 +1755,22 @@ function renderAuthArea() {
   const signoutItem = document.getElementById('um-signout');
   const refreshItem = document.getElementById('um-refresh');
   if (currentUser) {
+    const crown = isPro() ? `<span class="pro-crown" title="מנוי PRO"><svg viewBox="0 0 24 24"><path d="M5 16L3 6l5.5 4L12 4l3.5 6L21 6l-2 10H5zm14 3H5v2h14v-2z"/></svg></span>` : '';
     el.innerHTML = `
       <div class="yt-user-chip" onclick="toggleUserMenu()">
         ${currentUser.picture ? `<img class="yt-user-av" src="${x(currentUser.picture)}">` : `<div class="yt-user-av" style="display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">${x((currentUser.name||'?').slice(0,2))}</div>`}
         <span class="yt-user-name">${x(currentUser.name||'')}</span>
+        ${crown}
       </div>`;
     if (signoutItem) signoutItem.style.display = '';
     if (refreshItem) refreshItem.style.display = '';
+    const proItem = document.getElementById('um-pro');
+    const proLabel = document.getElementById('um-pro-label');
+    if (proItem) proItem.style.display = '';
+    if (proLabel) proLabel.textContent = isPro() ? 'מנוי PRO שלי' : 'שדרג ל-PRO';
   } else {
+    const proItem = document.getElementById('um-pro');
+    if (proItem) proItem.style.display = 'none';
     el.innerHTML = `
       <button class="yt-login-btn" onclick="signIn()">
         <svg viewBox="0 0 24 24"><path fill="#fff" d="M21.35 11.1h-9.17v2.73h6.51c-.33 3.81-3.5 5.44-6.5 5.44C8.36 19.27 5 16.25 5 12c0-4.1 3.2-7.27 7.2-7.27 3.09 0 4.9 1.97 4.9 1.97L19 4.72S16.56 2 12.1 2C6.42 2 2.03 6.8 2.03 12c0 5.05 4.13 10 10.22 10 5.35 0 9.25-3.67 9.25-9.09 0-1.15-.15-1.81-.15-1.81z"/></svg>
@@ -1974,7 +2369,7 @@ function toggleLiked(id) {
     likedVideos.unshift(copy);
     toast('נוסף ל"אהבתי"');
   }
-  localStorage.setItem(LIKED_KEY, JSON.stringify(likedVideos.slice(0,300)));
+  localStorage.setItem(LIKED_KEY, JSON.stringify(likedVideos.slice(0, isPro() ? PRO_LIST_MAX : FREE_LIST_MAX)));
   if (section === 'liked' || section === 'recommended') renderContent();
   else updateLikeButtons();
 }
@@ -2012,7 +2407,7 @@ function toggleWatchLater(id) {
     watchLater.unshift(copy);
     toast('נוסף לצפייה מאוחרת');
   }
-  localStorage.setItem(WATCH_LATER_KEY, JSON.stringify(watchLater.slice(0,300)));
+  localStorage.setItem(WATCH_LATER_KEY, JSON.stringify(watchLater.slice(0, isPro() ? PRO_LIST_MAX : FREE_LIST_MAX)));
   if (section === 'watchlater') renderContent();
   else updateWatchLaterButtons();
 }
@@ -2113,6 +2508,14 @@ function toggleNotifPanel(force) {
 }
 
 /* ============ PLAYER MODAL ============ */
+// למנויי PRO: הנגן נטען עם YouTube IFrame API (enablejsapi=1) כדי לאפשר
+// בקרת מהירות ניגון וקיצורי מקלדת. למשתמש רגיל הנגן נטען כרגיל (iframe פשוט).
+let ytApiReady = false;
+window.onYouTubeIframeAPIReady = function () { ytApiReady = true; };
+let ytPlayer = null;
+const PLAYBACK_SPEEDS = [0.75, 1, 1.25, 1.5, 1.75, 2];
+let currentPlaybackSpeed = 1;
+
 function openPlayer(id) {
   closePip();
   const v = findVideoById(id);
@@ -2120,16 +2523,97 @@ function openPlayer(id) {
   const isShort = v && v.isShort;
   const wrap = document.getElementById('pm-frame-wrap');
   wrap.className = 'pm-frame-wrap' + (isShort ? ' short-mode' : '');
+  const pro = isPro();
+  const src = 'https://www.youtube.com/embed/' + encodeURIComponent(id) + '?autoplay=1'
+    + (pro ? '&enablejsapi=1&origin=' + encodeURIComponent(location.origin) : '');
   document.getElementById('pm-iframe-host').innerHTML =
-    `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(id)}?autoplay=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+    `<iframe id="pm-yt-iframe" src="${src}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
   document.getElementById('pm-title').textContent = (v && v.title) || '';
   document.getElementById('pm-ch').textContent = (v && v.channelTitle) || '';
   document.getElementById('player-modal').classList.add('open');
+  currentPlaybackSpeed = 1;
+  if (pro) {
+    setupYtPlayerControls();
+  } else {
+    document.getElementById('pm-tools').style.display = 'none';
+  }
 }
 function closePlayer() {
   document.getElementById('player-modal').classList.remove('open');
   document.getElementById('pm-iframe-host').innerHTML = '';
+  document.getElementById('pm-tools').style.display = 'none';
+  document.getElementById('pm-tools').innerHTML = '';
+  if (ytPlayer && ytPlayer.destroy) { try { ytPlayer.destroy(); } catch (e) {} }
+  ytPlayer = null;
 }
+
+function setupYtPlayerControls() {
+  const tools = document.getElementById('pm-tools');
+  const speedBtns = PLAYBACK_SPEEDS.map(s =>
+    `<button class="pm-speed-btn${s === 1 ? ' on' : ''}" data-speed="${s}" onclick="setPlaybackSpeed(${s})">${s}x</button>`
+  ).join('');
+  tools.innerHTML = speedBtns + '<span class="pm-tools-hint">קיצורי מקלדת: רווח = נגן/עצור · חצים = דילוג/עוצמה · M = השתקה · F = מסך מלא</span>';
+  tools.style.display = 'flex';
+
+  const bind = () => {
+    if (!window.YT || !YT.Player) { setTimeout(bind, 150); return; }
+    ytPlayer = new YT.Player('pm-yt-iframe', { events: { onReady: () => {} } });
+  };
+  if (ytApiReady) bind(); else setTimeout(bind, 300);
+}
+
+function setPlaybackSpeed(s) {
+  currentPlaybackSpeed = s;
+  document.querySelectorAll('.pm-speed-btn').forEach(b => b.classList.toggle('on', Number(b.dataset.speed) === s));
+  if (ytPlayer && ytPlayer.setPlaybackRate) { try { ytPlayer.setPlaybackRate(s); } catch (e) {} }
+}
+
+// קיצורי מקלדת בנגן - PRO בלבד, פעילים רק כשהחלון פתוח ולא מקלידים בשדה טקסט
+document.addEventListener('keydown', (e) => {
+  if (!isPro()) return;
+  if (!document.getElementById('player-modal').classList.contains('open')) return;
+  if (!ytPlayer) return;
+  const tag = (document.activeElement && document.activeElement.tagName) || '';
+  if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+  switch (e.key) {
+    case ' ':
+    case 'k':
+      e.preventDefault();
+      try {
+        const state = ytPlayer.getPlayerState();
+        if (state === 1) ytPlayer.pauseVideo(); else ytPlayer.playVideo();
+      } catch (err) {}
+      break;
+    case 'ArrowRight':
+      try { ytPlayer.seekTo(ytPlayer.getCurrentTime() + 5, true); } catch (err) {}
+      break;
+    case 'ArrowLeft':
+      try { ytPlayer.seekTo(Math.max(0, ytPlayer.getCurrentTime() - 5), true); } catch (err) {}
+      break;
+    case 'ArrowUp':
+      e.preventDefault();
+      try { ytPlayer.setVolume(Math.min(100, ytPlayer.getVolume() + 10)); } catch (err) {}
+      break;
+    case 'ArrowDown':
+      e.preventDefault();
+      try { ytPlayer.setVolume(Math.max(0, ytPlayer.getVolume() - 10)); } catch (err) {}
+      break;
+    case 'm':
+    case 'M':
+      try { if (ytPlayer.isMuted()) ytPlayer.unMute(); else ytPlayer.mute(); } catch (err) {}
+      break;
+    case 'f':
+    case 'F': {
+      const wrap = document.getElementById('pm-frame-wrap');
+      try {
+        if (document.fullscreenElement) document.exitFullscreen();
+        else if (wrap.requestFullscreen) wrap.requestFullscreen();
+      } catch (err) {}
+      break;
+    }
+  }
+});
+
 
 /* ============ INLINE PLAYBACK + MINI PLAYER ============ */
 // הנגן חי באלמנט אחד (#pip) שלא עובר מקום ב-DOM — רק ה-CSS שלו משתנה.
@@ -2333,6 +2817,7 @@ let settingsTab = 'display';
 
 const SP_ICON_REFRESH = 'M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08a5.99 5.99 0 01-5.65 4c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z';
 const SP_TABS = [
+  { id: 'pro', label: 'PRO', icon: 'M5 16L3 6l5.5 4L12 4l3.5 6L21 6l-2 10H5zm14 3H5v2h14v-2z' },
   { id: 'display', label: 'תצוגה', icon: 'M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z' },
   { id: 'netfree', label: 'נטפרי', icon: 'M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z' },
   { id: 'data', label: 'נתונים', icon: 'M2 20h20v-4H2v4zm2-3h2v2H4v-2zM2 4v4h20V4H2zm4 3H4V5h2v2zm-4 7h20v-4H2v4zm2-3h2v2H4v-2z' }
@@ -2362,14 +2847,48 @@ function renderSettingsPage(ct) {
     `<button class="sp-btn danger" id="sp-b-${kind}" data-label="נקה" onclick="spClear(this,'${kind}')">נקה</button>`
   );
 
+  const accentSwatches = PRO_ACCENTS.map(c =>
+    `<button class="accent-sw" data-c="${c}" style="background:${c}" title="${c}" onclick="setAccentColor('${c}')"></button>`
+  ).join('');
+
+  const pro = isPro() ?
+    spCard('', spRow(
+        '<span class="pro-tag">👑 PRO פעיל</span>',
+        'המנוי משויך לחשבון ' + x(currentUser ? (currentUser.email || currentUser.name || '') : '') + '. תודה שתמכת באתר!',
+        '<button class="sp-btn" onclick="refreshProStatus(true)">רענן סטטוס</button>'
+      )) +
+    spCard('צבע הדגשה',
+      spRow('בחירת צבע', 'צבע ההדגשה של האתר (כפתורים, סימונים ועוד).', `<div class="accent-row">${accentSwatches}</div>`)
+    ) +
+    spCard('גיבוי ושחזור',
+      spRow('ייצוא נתונים', 'הורדת קובץ גיבוי (יוטיוב שצפית, אהבתי, לצפייה מאוחרת וההגדרות שלך).',
+        '<button class="sp-btn" onclick="exportBackup()">ייצוא</button>') +
+      spRow('ייבוא נתונים', 'שחזור מקובץ גיבוי שהורד בעבר. הפעולה תטען מחדש את הדף.',
+        '<label class="sp-btn" style="cursor:pointer">ייבוא<input type="file" accept="application/json" style="display:none" onchange="importBackupFile(this)"></label>')
+    ) :
+    spCard('', `
+      <div style="padding:20px">
+        <div class="pro-price" id="sp-pro-price">₪${PRO_PRICE} <span>תשלום חד-פעמי, PRO לצמיתות</span></div>
+        <ul class="pro-benefits">
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg> רענון נתונים תכוף פי כמה ברקע</li>
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg> מכסות אחסון מוגדלות (מטמון, "אהבתי", לצפייה מאוחרת)</li>
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg> ערוצים נוספים בתפריט הצד</li>
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg> בקרת מהירות ניגון וקיצורי מקלדת בנגן</li>
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg> צבעי הדגשה נוספים לעיצוב האתר</li>
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg> גיבוי וייצוא/ייבוא של כל הנתונים שלך</li>
+        </ul>
+        <button class="pro-buy-btn" onclick="openProModal()">שדרוג ל-PRO ב-₪${PRO_PRICE}</button>
+      </div>
+    `);
+
   const display =
     spCard('מראה',
       spRow('ערכת נושא', 'בחר בין מראה כהה למראה בהיר. אפשר להחליף גם דרך הכפתור בסרגל העליון.',
         `<div class="seg" id="sp-theme"><button data-theme="dark" onclick="setTheme('dark')">כהה</button><button data-theme="light" onclick="setTheme('light')">בהיר</button></div>`) +
       spRow('תפריט צד מכווץ', 'מציג רק אייקונים בתפריט הצד ומפנה יותר מקום לתוכן. חל על מסכים רחבים.',
         spSwitch('sw-sidebar', 'תפריט צד מכווץ', 'toggleSidebarCol()')) +
-      spRow('ערוצים בתפריט הצד', 'כמה ערוצים אחרונים, כאלה שעלה מהם סרטון, יוצגו בתפריט הצד. את כל הערוצים אפשר לראות בדף "ערוצים".',
-        `<div class="seg" id="sp-sbn"><button data-n="5" onclick="setSidebarChannelCount(5)">5</button><button data-n="8" onclick="setSidebarChannelCount(8)">8</button><button data-n="12" onclick="setSidebarChannelCount(12)">12</button></div>`)
+      spRow('ערוצים בתפריט הצד', 'כמה ערוצים אחרונים, כאלה שעלה מהם סרטון, יוצגו בתפריט הצד. את כל הערוצים אפשר לראות בדף "ערוצים".' + (isPro() ? '' : ' (20 והכל — PRO)'),
+        `<div class="seg" id="sp-sbn"><button data-n="5" onclick="setSidebarChannelCount(5)">5</button><button data-n="8" onclick="setSidebarChannelCount(8)">8</button><button data-n="12" onclick="setSidebarChannelCount(12)">12</button><button data-n="20" onclick="setSidebarChannelCount(20)"${isPro() ? '' : ' class="pro-locked" title="PRO בלבד"'}>20</button><button data-n="999" onclick="setSidebarChannelCount(999)"${isPro() ? '' : ' class="pro-locked" title="PRO בלבד"'}>הכל</button></div>`)
     ) +
     spCard('צפייה',
       spRow('נגן מוטמע בדף', 'הסרטון מתנגן ישירות בתוך הכרטיס, ובדף הבית הכרטיסים מוגדלים. כשהאפשרות כבויה, הסרטון נפתח בחלון נפרד.',
@@ -2429,6 +2948,7 @@ function renderSettingsPage(ct) {
       <div class="sp-layout">
         <div class="sp-nav" role="tablist">${tabs}</div>
         <div class="sp-panels">
+          <div class="sp-panel" data-panel="pro">${pro}</div>
           <div class="sp-panel" data-panel="display">${display}</div>
           <div class="sp-panel" data-panel="netfree">${netfree}</div>
           <div class="sp-panel" data-panel="data">${data}</div>
@@ -2473,6 +2993,8 @@ function updateSettingsLive() {
   document.querySelectorAll('#sp-theme button').forEach(b => b.classList.toggle('on', (b.dataset.theme === 'dark') === dark));
   spSw('sw-sidebar', document.getElementById('sidebar').classList.contains('col'), false);
   document.querySelectorAll('#sp-sbn button').forEach(b => b.classList.toggle('on', Number(b.dataset.n) === sidebarChannelCount));
+  const currentAccent = localStorage.getItem(PRO_ACCENT_KEY) || '';
+  document.querySelectorAll('.accent-sw').forEach(b => b.classList.toggle('on', isPro() && b.dataset.c === currentAccent));
   spSw('sw-inline', inlineMode, false);
   spSw('sw-mini', miniEnabled, !inlineMode);
   spSw('sw-netfree', netfreeMode, !extMode);
@@ -2518,7 +3040,8 @@ function setSidebarCol(on) {
   updateSettingsLive();
 }
 function setSidebarChannelCount(n) {
-  sidebarChannelCount = [5, 8, 12].includes(n) ? n : 8;
+  if ([20, 999].includes(n) && !isPro()) { toast('כמות ערוצים מוגדלת זמינה למנויי PRO'); return; }
+  sidebarChannelCount = [5, 8, 12, 20, 999].includes(n) ? n : 8;
   localStorage.setItem(SB_CH_KEY, String(sidebarChannelCount));
   renderChannels();
   updateSettingsLive();
@@ -2605,9 +3128,17 @@ function bindUI() {
     if (e.target.id === 'player-modal') closePlayer();
   });
 
-  setInterval(() => {
+  scheduleBackgroundRefresh();
+}
+
+// מנויי PRO מקבלים רענון רקע תכוף בהרבה. הפונקציה קוראת מחדש את מצב ה-PRO
+// בכל מחזור, כך שקצב הרענון מתעדכן מיד אחרי רכישת מנוי, בלי צורך לרענן את הדף.
+function scheduleBackgroundRefresh() {
+  const ms = isPro() ? PRO_REFRESH_MS : FREE_REFRESH_MS;
+  setTimeout(() => {
     loadEverything(false);
-  }, 5 * 60 * 1000);
+    scheduleBackgroundRefresh();
+  }, ms);
 }
 
 let refreshSpinning = false;
